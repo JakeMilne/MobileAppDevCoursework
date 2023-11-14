@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.net.*;
+import java.io.*;
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link home#newInstance} factory method to
@@ -61,7 +63,11 @@ public class home extends Fragment {
         if (rootView != null) {
             RecyclerView recyclerView = rootView.findViewById(R.id.recycler);
             List<Item> items = new ArrayList<Item>();
-            getGames(items);
+            try {
+                getGames(items);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             // Now you can work with the recyclerView
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -77,9 +83,52 @@ public class home extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main_page, container, false);
     }
-    public List<Item> getGames(List<Item> items){
+    public List<Item> getGames(List<Item> items) throws IOException {
         //call api and fill items
         //items.add(new Item(title, date)
+
+
+        //https://api.sportmonks.com/v3/football/fixtures/between/2022-09-01/2022-09-30?api_token=YOUR_TOKEN
+
+        URL url =  new URL("https://api.sportmonks.com/v3/football/fixtures/between/2023-11-14/2023-12-14?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
+
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        //connection.setRequestMethod("GET");
+        //connection.setRequestProperty("Api-Token", apiKey);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String inputLine;
+        StringBuilder content = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            //System.out.println(inputLine.toString());
+            content.append(inputLine);
+        }
+
+        String jsonString = content.toString();
+
+
+
+        in.close();
+        connection.disconnect();
+
+        jsonString = jsonString.replaceAll("//[^\\n]*", "");
+        //JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        //System.out.println(jsonObject.getAsJsonObject("data").getAsJsonArray("statistics").get(0));
+        //System.out.println(jsonObject.getAsJsonObject("data").getAsJsonArray("statistics").get(1));
+        //JsonArray eventsArray = jsonObject.getAsJsonObject("data").getAsJsonArray("events");
+
+        //JsonElement dataElement = jsonObject.get("data");
+        // JsonObject dataObject = dataElement.getAsJsonObject();
+
+        //for (String key : dataObject.keySet()) {
+        //   JsonElement value = dataObject.get(key);
+        //System.out.println(key + ": " + value);
+        //}
+        //System.out.println(dataObject.get("name"));
+        //System.out.println(content.toString());
+        System.out.println(jsonString);
         return items;
     }
 }
