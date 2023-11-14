@@ -3,7 +3,11 @@ package com.example.mobileappdevcoursework;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +57,18 @@ public class home extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        View rootView = getView();
+        if (rootView != null) {
+            RecyclerView recyclerView = rootView.findViewById(R.id.recycler);
+            List<Item> items = new ArrayList<Item>();
+            getGames(items);
+
+            // Now you can work with the recyclerView
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+            recyclerView.setAdapter(new MyAdapter(getActivity().getApplicationContext(), items));
+        }
+
     }
 
     @Override
@@ -60,5 +76,10 @@ public class home extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main_page, container, false);
+    }
+    public List<Item> getGames(List<Item> items){
+        //call api and fill items
+        //items.add(new Item(title, date)
+        return items;
     }
 }
