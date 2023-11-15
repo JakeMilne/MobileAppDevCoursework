@@ -1,6 +1,9 @@
 package com.example.mobileappdevcoursework;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,11 +55,13 @@ public class home extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static home newInstance(String param1, String param2) {
+        Log.d("home", " newInstance: 1");
         home fragment = new home();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
+        Log.d("home", " newInstance: 2");
         return fragment;
     }
 
@@ -68,22 +73,46 @@ public class home extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        View rootView = getView();
-        if (rootView != null) {
-            RecyclerView recyclerView = rootView.findViewById(R.id.recycler);
-            List<Item> items = new ArrayList<Item>();
-            try {
-                getGames(items);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        // Create a background thread to perform network operations
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<Item> items = mainSearch();
+
+                // Update the UI on the main thread
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        handleResult(items);
+                    }
+                });
             }
+        }).start();
+    }
+
+    private void handleResult(List<Item> items) {
+        if (getView() != null) {
+            RecyclerView recyclerView = getView().findViewById(R.id.recycler);
 
             // Now you can work with the recyclerView
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            MyAdapter adapter = new MyAdapter(getActivity().getApplicationContext(), items);
+            recyclerView.setAdapter(adapter);
 
-            recyclerView.setAdapter(new MyAdapter(getActivity().getApplicationContext(), items));
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setLayoutManager(layoutManager);
+        } else {
+            Log.d("home", "onCreate: failed");
         }
+    }
+    private void updateUI(List<Item> items) {
+        // Access the RecyclerView and set the adapter here
+        RecyclerView recyclerView = getView().findViewById(R.id.recycler);
+        MyAdapter adapter = new MyAdapter(getActivity(), items);
+        recyclerView.setAdapter(adapter);
 
+        // Set the layout manager
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
     }
 
     @Override
@@ -92,10 +121,7 @@ public class home extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_main_page, container, false);
     }
-    public List<Item> getGames(List<Item> items) throws IOException {
-        items = mainSearch();
-        return items;
-    }
+
     public static List<Item> mainSearch(){
         List<Item> items = new ArrayList<Item>();
         try{
