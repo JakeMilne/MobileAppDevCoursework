@@ -1,19 +1,27 @@
 package com.example.mobileappdevcoursework;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import java.net.*;
-import java.io.*;
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link home#newInstance} factory method to
@@ -59,6 +67,7 @@ public class home extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
         View rootView = getView();
         if (rootView != null) {
             RecyclerView recyclerView = rootView.findViewById(R.id.recycler);
@@ -84,51 +93,76 @@ public class home extends Fragment {
         return inflater.inflate(R.layout.fragment_main_page, container, false);
     }
     public List<Item> getGames(List<Item> items) throws IOException {
-        //call api and fill items
-        //items.add(new Item(title, date)
+        items = mainSearch();
+        return items;
+    }
+    public static List<Item> mainSearch(){
+        List<Item> items = new ArrayList<Item>();
+        try{
 
 
-        //https://api.sportmonks.com/v3/football/fixtures/between/2022-09-01/2022-09-30?api_token=YOUR_TOKEN
+            String baseURL = "https://api.sportmonks.com/v3/football/fixtures/between/" + LocalDate.now() + "/" + addMonth() + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501";
+            URL url = new URL(baseURL);
 
-        URL url =  new URL("https://api.sportmonks.com/v3/football/fixtures/between/2023-11-14/2023-12-14?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        //connection.setRequestMethod("GET");
-        //connection.setRequestProperty("Api-Token", apiKey);
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String inputLine;
-        StringBuilder content = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                //System.out.println(inputLine.toString());
+                content.append(inputLine);
+            }
+            in.close();
+            connection.disconnect();
 
-        while ((inputLine = in.readLine()) != null) {
-            //System.out.println(inputLine.toString());
-            content.append(inputLine);
+            String jsonString = content.toString();
+
+            items = parseJson(jsonString);
+
+            for (Item item : items) {
+                System.out.println("Item(Title: " + item.getTitle() + ", date: " + item.getDate() + ")");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+    public static String addMonth(){
+        String date = LocalDate.now().plusMonths(1).toString();
+
+        return date;
+    }
+
+    private static List<Item> parseJson(String jsonString) {
+        List<Item> items = new ArrayList<>();
+
+        try {
+            JsonParser jsonParser = new JsonParser();
+            JsonElement root = jsonParser.parse(jsonString);
+
+            if (root.isJsonObject()) {
+                JsonObject jsonObject = root.getAsJsonObject();
+                JsonArray dataArray = jsonObject.getAsJsonArray("data");
+
+                for (JsonElement itemElement : dataArray) {
+                    JsonObject jsonItem = itemElement.getAsJsonObject();
+
+                    String name = jsonItem.get("name").getAsString();
+                    String startTime = jsonItem.get("starting_at").getAsString();
+
+                    Item item = new Item(name, startTime);
+                    items.add(item);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        String jsonString = content.toString();
 
-
-
-        in.close();
-        connection.disconnect();
-
-        jsonString = jsonString.replaceAll("//[^\\n]*", "");
-        //JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
-        //System.out.println(jsonObject.getAsJsonObject("data").getAsJsonArray("statistics").get(0));
-        //System.out.println(jsonObject.getAsJsonObject("data").getAsJsonArray("statistics").get(1));
-        //JsonArray eventsArray = jsonObject.getAsJsonObject("data").getAsJsonArray("events");
-
-        //JsonElement dataElement = jsonObject.get("data");
-        // JsonObject dataObject = dataElement.getAsJsonObject();
-
-        //for (String key : dataObject.keySet()) {
-        //   JsonElement value = dataObject.get(key);
-        //System.out.println(key + ": " + value);
-        //}
-        //System.out.println(dataObject.get("name"));
-        //System.out.println(content.toString());
-        System.out.println(jsonString);
         return items;
     }
 }
