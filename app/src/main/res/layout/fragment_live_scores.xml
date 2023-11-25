@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".liveScores">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+<!--    <data>-->
+<!--        <variable-->
+<!--            name="viewModel"-->
+<!--            type="com.example.mobileappdevcoursework.LiveViewModel" />-->
+<!--    </data>-->
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".liveScores">
 
-</FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/liveRecycler" />
+
+        <TextView
+            android:id="@+id/noLiveGamesTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="There are no live games on right now"
+            android:visibility="gone" />
+
+    </FrameLayout>
+</layout>

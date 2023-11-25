@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/liveScores">
+    app:startDestination="@id/HomeFragment">
 
     <fragment
         android:id="@+id/liveScores"
@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_homeFragment_to_userProfile"
             app:destination="@id/userProfile" />
+        <action
+            android:id="@+id/action_homeFragment_to_gameDetails"
+            app:destination="@id/gameDetails" />
     </fragment>
     <fragment
         android:id="@+id/userProfile"
@@ -46,4 +49,13 @@
         android:name="com.example.mobileappdevcoursework.MainActivity"
         android:label="activity_main"
         tools:layout="@layout/activity_main" />
+    <fragment
+        android:id="@+id/gameDetails"
+        android:name="com.example.mobileappdevcoursework.gameDetails"
+        android:label="fragment_game_details"
+        tools:layout="@layout/fragment_game_details" >
+        <argument
+            android:name="ITEM_ID"
+            app:argType="integer" />
+    </fragment>
 </navigation>

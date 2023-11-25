@@ -4,10 +4,20 @@ public class Item {
 
     String title;
     String date;
+    int id;
 
-    public Item(String title, String date) {
+    public Item(String title, String date, int id) {
         this.title = title;
         this.date = date;
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {

@@ -31,17 +31,18 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = navHostFragment.getNavController();
 
 
-        binding.bottomNavigationView.setOnItemReselectedListener(item -> {
+        binding.bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.main) {
                 navController.navigate(R.id.HomeFragment);
-                replaceFragment(new HomeFragment());
+                return true;
             } else if (item.getItemId() == R.id.profile) {
                 navController.navigate(R.id.userProfile);
-                replaceFragment(new userProfile());
+                return true;
             } else if (item.getItemId() == R.id.live) {
                 navController.navigate(R.id.liveScores);
-                replaceFragment(new liveScores());
+                return true;
             }
+            return false;
         });
 
 

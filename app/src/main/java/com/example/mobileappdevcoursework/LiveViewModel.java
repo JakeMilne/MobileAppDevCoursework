@@ -1,14 +1,8 @@
 package com.example.mobileappdevcoursework;
 
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,15 +11,12 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-public class HomeViewModel extends ViewModel {
+
+public class LiveViewModel extends ViewModel {
 
     private MutableLiveData<List<Item>> itemsLiveData;
-    private Executor executor = Executors.newSingleThreadExecutor(); // Executor for background tasks
 
-
-    public HomeViewModel() {
+    public LiveViewModel() {
         itemsLiveData = new MutableLiveData<>();
     }
 
@@ -35,24 +26,22 @@ public class HomeViewModel extends ViewModel {
 
     public void loadData() {
         // Perform network operations in a background thread
-        executor.execute(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                List<Item> items = mainSearch();
+                List<Item> items = liveSearch();
                 // Post the result to the LiveData on the main thread
                 itemsLiveData.postValue(items);
             }
-        });
+        }).start();
     }
 
-
-    public static List<Item> mainSearch(){
+    public static List<Item> liveSearch(){
         List<Item> items = new ArrayList<Item>();
         try{
 
+            URL url =  new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
 
-            String baseURL = "https://api.sportmonks.com/v3/football/fixtures/between/" + LocalDate.now() + "/" + addMonth() + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501";
-            URL url = new URL(baseURL);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -68,9 +57,11 @@ public class HomeViewModel extends ViewModel {
             in.close();
             connection.disconnect();
 
-            String jsonString = content.toString();
-            System.out.println(jsonString);
-            items = jsonParser.parseJson(jsonString);
+            if(content != null){
+                String jsonString = content.toString();
+                items = jsonParser.parseJson(jsonString);
+            }
+
 
 
 
@@ -82,11 +73,4 @@ public class HomeViewModel extends ViewModel {
 //        }
         return items;
     }
-    public static String addMonth(){
-        String date = LocalDate.now().plusMonths(1).toString();
-
-        return date;
-    }
-
-
 }
