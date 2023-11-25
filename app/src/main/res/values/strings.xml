@@ -13,4 +13,7 @@
     <string name="homeTeam">Home team</string>
     <string name="awayTeam">Away team</string>
     <string name="calender">Add to calender</string>
+    <string name="kickOff">kick off time</string>
+    <string name="score">score</string>
+    <string name="time">ingame time</string>
 </resources>

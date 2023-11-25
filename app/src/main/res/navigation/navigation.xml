@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_liveScores_to_userProfile"
             app:destination="@id/userProfile" />
+        <action
+            android:id="@+id/action_liveScores_to_liveGameDetails"
+            app:destination="@id/liveGameDetails" />
     </fragment>
     <fragment
         android:id="@+id/HomeFragment"
@@ -54,6 +57,15 @@
         android:name="com.example.mobileappdevcoursework.gameDetails"
         android:label="fragment_game_details"
         tools:layout="@layout/fragment_game_details" >
+        <argument
+            android:name="ITEM_ID"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/liveGameDetails"
+        android:name="com.example.mobileappdevcoursework.liveGameDetails"
+        android:label="fragment_live_game_details"
+        tools:layout="@layout/fragment_live_game_details" >
         <argument
             android:name="ITEM_ID"
             app:argType="integer" />

@@ -59,6 +59,7 @@ public class LiveViewModel extends ViewModel {
 
             if(content != null){
                 String jsonString = content.toString();
+                System.out.println(jsonString);
                 items = jsonParser.parseJson(jsonString);
             }
 
