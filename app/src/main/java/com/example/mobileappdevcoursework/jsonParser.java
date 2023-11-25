@@ -1,5 +1,7 @@
 package com.example.mobileappdevcoursework;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -36,23 +38,18 @@ public class jsonParser {
             e.printStackTrace();
         }
 
-
         return items;
     }
 
     public static gameInstance parseGame(String jsonString) {
-
-
         Gson gson = new Gson();
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
         JsonArray dataArray = jsonObject.getAsJsonArray("data");
-
 
         JsonObject gameObject = dataArray.get(0).getAsJsonObject();
         String gameName = gameObject.get("name").getAsString();
         String startTime = gameObject.get("starting_at").getAsString();
         String venue = gameObject.get("venue_id").getAsString();
-
 
         JsonArray participants = gameObject.getAsJsonArray("participants");
 
@@ -61,11 +58,8 @@ public class jsonParser {
         int homeTeamPosition = participants.get(0).getAsJsonObject().getAsJsonObject("meta").get("position").getAsInt();
         int awayTeamPosition = participants.get(1).getAsJsonObject().getAsJsonObject("meta").get("position").getAsInt();
 
-
         return new gameInstance(gameName, startTime, venue, homeTeamPosition, awayTeamPosition, homeName, awayName);
     }
-
-    ;
 
     public static LiveGameInstance parseLiveGame(String jsonData, int targetGameId) {
         Gson gson = new Gson();
@@ -78,6 +72,7 @@ public class jsonParser {
             int gameId = gameObject.getAsJsonPrimitive("id").getAsInt();
 
             if (gameId == targetGameId) {
+                Log.d("JsonResponse", gameObject.toString());
                 String gameName = gameObject.getAsJsonPrimitive("name").getAsString();
                 String startTime = gameObject.getAsJsonPrimitive("starting_at").getAsString();
                 int venueId = gameObject.getAsJsonPrimitive("venue_id").getAsInt();
@@ -98,48 +93,32 @@ public class jsonParser {
                 int team2Position = team2PositionElement != null && team2PositionElement.isJsonPrimitive()
                         ? team2PositionElement.getAsJsonPrimitive().getAsInt()
                         : 0;
-                JsonElement team1Meta = team1.getAsJsonObject("meta");
-                JsonElement team2Meta = team2.getAsJsonObject("meta");
 
-                System.out.println("Team 1 Meta: " + (team1Meta != null && !team1Meta.isJsonNull() ? team1Meta : "null"));
-                System.out.println("Team 2 Meta: " + (team2Meta != null && !team2Meta.isJsonNull() ? team2Meta : "null"));
-
-                int team1Score = 0;
-                JsonElement scoreElement1 = team1.getAsJsonObject("meta").get("score");
-                if (scoreElement1 != null && scoreElement1.isJsonPrimitive()) {
-                    team1Score = scoreElement1.getAsInt();
-                }
-
-                int team2Score = 0;
-                JsonElement scoreElement2 = team2.getAsJsonObject("meta").get("score");
-                if (scoreElement2 != null && scoreElement2.isJsonPrimitive()) {
-                    team2Score = scoreElement2.getAsInt();
-                }
-
-                // Get events array
                 JsonArray eventsArray = gameObject.getAsJsonArray("events");
-
-                // Create a list to store events
                 List<Event> events = new ArrayList<>();
 
-                // Parse each event and add to the list
                 for (JsonElement eventElement : eventsArray) {
                     JsonObject eventObject = eventElement.getAsJsonObject();
 
                     int eventId = eventObject.getAsJsonPrimitive("id").getAsInt();
+                    String eventName = "";
                     JsonElement infoElement = eventObject.get("info");
-                    String eventName = (infoElement != null && !infoElement.isJsonNull()) ? infoElement.getAsString() : "";
+
+                    if (infoElement != null && !infoElement.isJsonNull() && infoElement.isJsonPrimitive()) {
+                        eventName = infoElement.getAsString();
+                    }
 
                     int eventMinute = eventObject.getAsJsonPrimitive("minute").getAsInt();
+                    String result = eventObject.getAsJsonPrimitive("result").getAsString();
+                    String addition = eventObject.getAsJsonPrimitive("addition").getAsString();
 
-                    // You may need to extract more details based on your Event class structure
-
-                    // Create Event instance and add to the list
-                    Event event = new Event(eventId, eventName, eventMinute);
+                    Event event = new Event(eventId, eventName, eventMinute, result, addition);
                     events.add(event);
                 }
 
-                // Create and return LiveGameInstance with events
+                int team1Score = getScore(team1);
+                int team2Score = getScore(team2);
+
                 return new LiveGameInstance(gameName, startTime, venueId, team1Name, team2Name, team1Position, team2Position, events, team1Score, team2Score);
             }
         }
@@ -147,4 +126,9 @@ public class jsonParser {
         return null;
     }
 
+    // Helper method to extract the score from the team JSON object
+    private static int getScore(JsonObject team) {
+        JsonElement scoreElement = team.getAsJsonObject("meta").get("score");
+        return (scoreElement != null && scoreElement.isJsonPrimitive()) ? scoreElement.getAsInt() : 0;
+    }
 }
