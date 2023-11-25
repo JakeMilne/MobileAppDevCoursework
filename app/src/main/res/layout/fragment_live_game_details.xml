@@ -133,5 +133,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/kickOffView" />
 
+        <TextView
+            android:id="@+id/awayEventView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="236dp"
+            android:layout_marginTop="160dp"
+            android:maxLines="100"
+            android:scrollbars="vertical"
+            android:text="Your long text here"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/kickOffView" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

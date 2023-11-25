@@ -76,8 +76,10 @@ public class liveGameDetails extends Fragment {
                 public void run() {
                     int itemId = bundle.getInt("ITEM_ID", -1);
                     try {
-                        URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
-
+                        //denmark 1
+                        URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:271");
+                        //scotland 1
+                        //URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -105,10 +107,11 @@ public class liveGameDetails extends Fragment {
                                         TextView eventView = rootView.findViewById(R.id.eventView);
 
                                         timeView.setText("started at: " + liveGame.startTime);
-                                        scoreView.setText(liveGame.homeScore + ":" + liveGame.awayScore);
+                                        scoreView.setText(liveGame.score);
                                         titleTextView.setText(liveGame.title);
-                                        eventView.setText(liveGame.getEventList(liveGame.events));
-
+                                        eventView.setText(liveGame.getEventList(liveGame.homeEvents));
+                                        TextView awayEventView = rootView.findViewById(R.id.awayEventView);
+                                        awayEventView.setText(liveGame.getEventList(liveGame.awayEvents));
 
                                     }
                                 }

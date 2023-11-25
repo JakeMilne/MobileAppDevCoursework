@@ -12,11 +12,13 @@ public class LiveGameInstance {
     String awayName;
     int homePos;
     int awayPos;
-    List<Event> events;
-    int homeScore;
-    int awayScore;
+    List<Event> homeEvents;
 
-    public LiveGameInstance(String title, String startTime, int venueID, String homeName, String awayName, int homePos, int awayPos, List<Event> events, int homeScore, int awayScore) {
+    List<Event> awayEvents;
+
+    String score;
+
+    public LiveGameInstance(String title, String startTime, int venueID, String homeName, String awayName, int homePos, int awayPos, List<Event> homeEvents, List<Event> awayEvents, String score) {
         this.title = title;
         this.startTime = startTime;
         this.venueID = venueID;
@@ -25,27 +27,12 @@ public class LiveGameInstance {
         this.awayName = awayName;
         this.homePos = homePos;
         this.awayPos = awayPos;
-        this.events = events;
-        this.homeScore = homeScore;
-        this.awayScore = awayScore;
+        this.homeEvents = homeEvents;
+        this.awayEvents = awayEvents;
+        this.score = score;
     }
 
-    @Override
-    public String toString() {
-        return "LiveGameInstance{" +
-                "title='" + title + '\'' +
-                ", startTime='" + startTime + '\'' +
-                ", venueID=" + venueID +
-                ", venue='" + venue + '\'' +
-                ", homeName='" + homeName + '\'' +
-                ", awayName='" + awayName + '\'' +
-                ", homePos=" + homePos +
-                ", awayPos=" + awayPos +
-                ", events=" + events +
-                ", homeScore=" + homeScore +
-                ", awayScore=" + awayScore +
-                '}';
-    }
+
 
     public static String getEventList(List<Event> events) {
         StringBuilder stringBuilder = new StringBuilder();
