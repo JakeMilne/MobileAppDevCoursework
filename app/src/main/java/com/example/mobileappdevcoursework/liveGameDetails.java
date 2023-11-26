@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -77,9 +76,9 @@ public class liveGameDetails extends Fragment {
                     int itemId = bundle.getInt("ITEM_ID", -1);
                     try {
                         //denmark 1
-                        URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:271");
+                        //URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:271");
                         //scotland 1
-                        //URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
+                        URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -93,6 +92,7 @@ public class liveGameDetails extends Fragment {
                         connection.disconnect();
 
                         if (content != null) {
+                            System.out.println(content);
                             final LiveGameInstance liveGame = jsonParser.parseLiveGame(content.toString(), itemId);
 
                             // Update the UI on the main thread
@@ -104,14 +104,18 @@ public class liveGameDetails extends Fragment {
                                         TextView venueView = rootView.findViewById(R.id.venueLiveView);
                                         TextView scoreView = rootView.findViewById(R.id.scoreView);
                                         TextView titleTextView = rootView.findViewById(R.id.titleLiveTextView);
-                                        TextView eventView = rootView.findViewById(R.id.eventView);
-
-                                        timeView.setText("started at: " + liveGame.startTime);
-                                        scoreView.setText(liveGame.score);
-                                        titleTextView.setText(liveGame.title);
-                                        eventView.setText(liveGame.getEventList(liveGame.homeEvents));
+                                        TextView homeEventView = rootView.findViewById(R.id.homeEventView);
                                         TextView awayEventView = rootView.findViewById(R.id.awayEventView);
-                                        awayEventView.setText(liveGame.getEventList(liveGame.awayEvents));
+                                        TextView minuteView = rootView.findViewById(R.id.minuteView);
+
+                                        timeView.setText("Started at: " + liveGame.startTime);
+                                        venueView.setText("Venue: " + liveGame.venue);
+                                        scoreView.setText("Score: " + liveGame.score);
+                                        titleTextView.setText(liveGame.title);
+                                        homeEventView.setText(liveGame.getHomeEventList());
+                                        awayEventView.setText(liveGame.getAwayEventList());
+                                        minuteView.setText(liveGame.getMins());
+
 
                                     }
                                 }

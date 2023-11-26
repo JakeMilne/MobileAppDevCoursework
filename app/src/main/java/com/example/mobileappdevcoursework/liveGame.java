@@ -1,12 +1,12 @@
 package com.example.mobileappdevcoursework;
 
-public class Item {
+public class liveGame {
 
     String title;
     String date;
     int id;
 
-    public Item(String title, String date, int id) {
+    public liveGame(String title, String date, int id) {
         this.title = title;
         this.date = date;
         this.id = id;

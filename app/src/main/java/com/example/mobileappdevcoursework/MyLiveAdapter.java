@@ -1,5 +1,6 @@
 package com.example.mobileappdevcoursework;
 
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,39 +10,35 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
+public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private Context context;
-    private List<Game> games;
     private List<liveGame> liveGames;
     private OnItemClickListener onItemClickListener;
 
 
-    public MyAdapter(Context context, List<Game> games) {
+    public MyLiveAdapter(Context context, List<liveGame> games) {
         this.context = context;
-        this.games = games;
+        this.liveGames = games;
     }
 
-    public MyAdapter(Context context, List<Game> games, OnItemClickListener onItemClickListener) {
+
+    public MyLiveAdapter(Context context, List<liveGame> games, OnItemClickListener onItemClickListener) {
         this.context = context;
-        this.games = games;
+        this.liveGames = games;
         this.onItemClickListener = onItemClickListener;
     }
 
 
-
-    public void setGames(List<Game> games) {
+    public void setLiveGames(List<liveGame> games){
         Log.d("MyAdapter", "setItems: Setting items in adapter, count=" + games.size());
 
-        this.games = games;
+        this.liveGames = games;
         notifyDataSetChanged(); // Notify the adapter that the data has changed
-    }
-
-    public void setLiveGames(List<liveGame> games){
 
     }
-    public void addGame(Game game) {
-        games.add(game);
+    public void addGame(liveGame game) {
+        liveGames.add(game);
         notifyDataSetChanged();
     }
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -57,17 +54,17 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        final Game currentGame = games.get(position);
+        final liveGame currentGame = liveGames.get(position);
 
-        holder.titleView.setText(currentGame.getGameName());
-        holder.dateView.setText(currentGame.getStartTime());
+        holder.titleView.setText(currentGame.getTitle());
+        holder.dateView.setText(currentGame.getDate());
 
         // Set click listener for the button
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (onItemClickListener != null) {
-                    onItemClickListener.onItemClick(currentGame.getGameID());
+                    onItemClickListener.onItemClick(currentGame.getId());
                 }
             }
         });
@@ -76,7 +73,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public int getItemCount() {
-        return games.size();
+        return liveGames.size();
     }
 
     public interface OnItemClickListener {

@@ -16,4 +16,14 @@
     <string name="kickOff">kick off time</string>
     <string name="score">score</string>
     <string name="time">ingame time</string>
+    <string name="selectLeague">Select a league</string>
+    <string-array name="leagues">
+        <item>Scottish Premiership</item>
+        <item>Scottish Premiership Play-offs</item>
+        <item>Danish Superliga</item>
+        <item>Danish Superliga Play-offs</item>
+    </string-array>
+    <string name="profile">Your Profile</string>
+    <string name="entername">Enter your name</string>
+    <string name="name">name here</string>
 </resources>

@@ -12,13 +12,13 @@ public class LiveGameInstance {
     String awayName;
     int homePos;
     int awayPos;
-    List<Event> homeEvents;
+    List<Event> events;
 
-    List<Event> awayEvents;
+
 
     String score;
 
-    public LiveGameInstance(String title, String startTime, int venueID, String homeName, String awayName, int homePos, int awayPos, List<Event> homeEvents, List<Event> awayEvents, String score) {
+    public LiveGameInstance(String title, String startTime, int venueID, String homeName, String awayName, int homePos, int awayPos, List<Event> events, String score) {
         this.title = title;
         this.startTime = startTime;
         this.venueID = venueID;
@@ -27,25 +27,59 @@ public class LiveGameInstance {
         this.awayName = awayName;
         this.homePos = homePos;
         this.awayPos = awayPos;
-        this.homeEvents = homeEvents;
-        this.awayEvents = awayEvents;
+        this.events = events;
+
         this.score = score;
     }
 
 
 
-    public static String getEventList(List<Event> events) {
+    public String getHomeEventList() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (Event event : events) {
+        for (Event event : this.events) {
 //            stringBuilder.append("Event ID: ").append(event.getId()).append("\n");
 //            stringBuilder.append("Event Name: ").append(event.getName()).append("\n");
 //            stringBuilder.append("Event Minute: ").append(event.getMinute()).append("\n");
-            stringBuilder.append(event.getName());
-            stringBuilder.append(event.getMinute()).append("\n");
-            stringBuilder.append("---------------\n");
+            if(event.getTeam() == "home") {
+                stringBuilder.append(event.getName()).append("\n");
+                System.out.println("added home event");
+            }else{
+                stringBuilder.append("---------------\n");
+            }
+
+
         }
 
+        return stringBuilder.toString();
+    }
+
+    public String getAwayEventList() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Event event : this.events) {
+//            stringBuilder.append("Event ID: ").append(event.getId()).append("\n");
+//            stringBuilder.append("Event Name: ").append(event.getName()).append("\n");
+//            stringBuilder.append("Event Minute: ").append(event.getMinute()).append("\n");
+            if(event.getTeam() == "away") {
+                stringBuilder.append(event.getName()).append("\n");
+                System.out.println("added away event");
+            }else{
+                stringBuilder.append("---------------\n");
+            }
+
+
+
+        }
+
+        return stringBuilder.toString();
+    }
+    public String getMins(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Event event: this.events){
+            stringBuilder.append(event.getMinute()).append("\n");
+
+        }
         return stringBuilder.toString();
     }
 

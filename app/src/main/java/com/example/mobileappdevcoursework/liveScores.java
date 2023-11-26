@@ -27,7 +27,7 @@ import java.util.List;
  * Use the {@link liveScores#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class liveScores extends Fragment implements MyAdapter.OnItemClickListener{
+public class liveScores extends Fragment implements MyLiveAdapter.OnItemClickListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,7 +39,7 @@ public class liveScores extends Fragment implements MyAdapter.OnItemClickListene
     private String mParam2;
 
     private RecyclerView recyclerView;
-    private MyAdapter adapter;
+    private MyLiveAdapter adapter;
     private LiveViewModel viewModel;
 
     public liveScores() {
@@ -81,31 +81,21 @@ public class liveScores extends Fragment implements MyAdapter.OnItemClickListene
         recyclerView = rootView.findViewById(R.id.liveRecycler);
         TextView noLiveGamesTextView = rootView.findViewById(R.id.noLiveGamesTextView);
 
-//        adapter = new MyAdapter(getActivity().getApplicationContext(), new ArrayList<>());
+        adapter = new MyLiveAdapter(getActivity().getApplicationContext(), new ArrayList<>(), this);
 
-        adapter = new MyAdapter(getActivity().getApplicationContext(), new ArrayList<>(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
-
-
-        recyclerView.setAdapter(adapter);
-
-//        List<Item> sampleData = new ArrayList<>();
-//        sampleData.add(new Item("Sample Title 1", "2023-11-22 15:30:00"));
-//        sampleData.add(new Item("Sample Title 2", "2023-11-23 10:00:00"));
-//        adapter.setItems(sampleData);
-
         viewModel = new ViewModelProvider(this).get(LiveViewModel.class);
 
-        viewModel.getItems().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+        viewModel.getGames().observe(getViewLifecycleOwner(), new Observer<List<liveGame>>() {
             @Override
-            public void onChanged(List<Item> items) {
-                Log.d("HomeFragment", "onChanged: LiveData updated with " + items.size() + " items");
+            public void onChanged(List<liveGame> liveGames) {
+                Log.d("liveScores", "onChanged: LiveData updated with " + liveGames.size() + " live games");
 
-                if (items != null && !items.isEmpty()) {
+                if (liveGames != null && !liveGames.isEmpty()) {
                     noLiveGamesTextView.setVisibility(View.GONE);
-                    adapter.setItems(items);
+                    adapter.setLiveGames(liveGames);
                 } else {
                     noLiveGamesTextView.setVisibility(View.VISIBLE);
                 }

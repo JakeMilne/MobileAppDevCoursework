@@ -7,6 +7,13 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +31,8 @@ public class userProfile extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private databaseRepository databaseRepository;
+    //databaseRepository = databaseRepository.getRepository(application);
     public userProfile() {
         // Required empty public constructor
     }
@@ -58,7 +67,53 @@ public class userProfile extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_profile, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_user_profile, container, false);
+
+        // Find the Spinner by its ID
+        Spinner spinnerLanguages = rootView.findViewById(R.id.leagueSpinner);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(), R.array.leagues, android.R.layout.simple_spinner_item);
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        spinnerLanguages.setAdapter(adapter);
+
+        // Set a listener to capture the selected item
+        spinnerLanguages.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // Display a Toast with the selected item
+                int league;
+                Toast.makeText(requireContext(), "Selected: " + parentView.getItemAtPosition(position), Toast.LENGTH_SHORT).show();
+                switch(parentView.getItemAtPosition(position).toString()) {
+                    case "Scottish PremierShip":
+                        // code block
+                        league=501;
+                        break;
+                    case "Scottish PremierShip Play-offs":
+                        league=513;
+                        // code block
+                        break;
+                    case "Danish Superliga":
+                        league=271;
+                        break;
+
+                        default:
+                        league=1659;
+                        // code block
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Do nothing here
+            }
+        });
+
+        return rootView;
     }
 }

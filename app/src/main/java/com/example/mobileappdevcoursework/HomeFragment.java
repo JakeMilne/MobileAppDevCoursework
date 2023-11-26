@@ -42,12 +42,13 @@ public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListe
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         System.out.println("here\n\n\n\n\n\n\n\n\n");
         // Observe the data changes in the ViewModel
-        viewModel.getItems().observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+        viewModel.getItems().observe(getViewLifecycleOwner(), new Observer<List<Game>>() {
             @Override
-            public void onChanged(List<Item> items) {
-                Log.d("HomeFragment", "onChanged: LiveData updated with " + items.size() + " items");
+            public void onChanged(List<Game> games) {
+                Log.d("HomeFragment", "onChanged: LiveData updated with " + games.size() + " games");
 
-                adapter.setItems(items);
+                // Update the RecyclerView with the new list of games
+                adapter.setGames(games);
             }
         });
 
