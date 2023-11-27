@@ -40,7 +40,7 @@ arrange them. <br>
 • Details of how the functionalities are implemented in each page, for example: <br>
 o How users navigate through the app. This can be a screenshot of the
 navigation graph visualisation, with appropriate description. <br>
-o Which lifecycle events each page will respond to and how. <br>
+
 <h3>Life cycle events</h3>
 <h4>Main Activity</h4>
 Main activity handles the navigation bar, handling the fragment switching in the onCreate method
@@ -61,13 +61,14 @@ Again, The Live Game Details fragment is similar to its Game Details counterpart
 The onCreateView function is used to initialise and handle the user inputs via an EditText and a spinner, onItemSelected is used to retrieve user input from the spinner and something about editText, which is then saved to the userdb when the save button is pressed <br>
 
 
-o Which web service your app uses and how, including details of the data to be
-sent/received to/from it. <br>
 
 <h2>Web Service</h2>
 App Title makes use of the Sportmonks api, which allows a user to access the scottish and danish first divisions, as well as each leagues playoff rounds.<br>
 The three endpoints that this app uses are /football/fixtures/, /football/livescores/inplay, and /football/venues/. A fourth endpoint(/core/types), which produces a list of events types, along with information about them such as ID and name, was used to help understand, and format the json for live games in a readable manner, however is no longer used. The showTypes method which called this endpoint is in HomeViewModel<br>
-The /football/fixtures/ endpoint was used in the mainSearch function 
+The /football/fixtures/ endpoint was used in the mainSearch function in the homeviewmodel as well as gamedetails fragment to show details about upcoming matches. <br>
+The /football/livescores/inplay endpoint was used in the liveSearch function in the liveviewmodel as well as livegamedetails fragment to show details about live matches. <br>
+The /football/venues/ was used to retreive venue names, given an id. This was necessary since the livescores endpoint did not include venue name. <br>
+
 
 
 <h2>Room SQLite Database</h2>
