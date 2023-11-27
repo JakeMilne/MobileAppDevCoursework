@@ -58,10 +58,19 @@ The Live Scores fragment has a similar design to the homepage, with onCreateView
 Again, The Live Game Details fragment is similar to its Game Details counterpart. With the only difference being the data being showed. <br>
 
 <h4>profile</h4>
+The onCreateView function is used to initialise and handle the user inputs via an EditText and a spinner, onItemSelected is used to retrieve user input from the spinner and something about editText, which is then saved to the userdb when the save button is pressed <br>
+
 
 o Which web service your app uses and how, including details of the data to be
 sent/received to/from it. <br>
-o The structure of data stored in the Room SQLite database. <br>
+
+<h2>Web Service</h2>
+App Title makes use of the Sportmonks api, which allows a user to access the scottish and danish first divisions, as well as each leagues playoff rounds.<br>
+The three endpoints that this app uses are /football/fixtures/, /football/livescores/inplay, and /football/venues/. A fourth endpoint(/core/types), which produces a list of events types, along with information about them such as ID and name, was used to help understand, and format the json for live games in a readable manner, however is no longer used. The showTypes method which called this endpoint is in HomeViewModel<br>
+The /football/fixtures/ endpoint was used in the mainSearch function 
+
+
+<h2>Room SQLite Database</h2>
 The Room SQLite database contains 2 tables, titled "GameDatabase" and "UserDatabase". <br>
 The game database is used to store upcoming games retrieved from the api so that the app can partially function without internet access, which allow the user to see the most recently retrieved set of upcoming games.
 The user database acts as a configuration file, storing the name and league preference of the user so that when the app is loaded, details the user previously entered can be used <br>
