@@ -105,7 +105,13 @@ public class gameDetails extends Fragment {
                 TextView homPosView = rootView.findViewById(R.id.homePosView);
                 TextView awayPosView = rootView.findViewById(R.id.awayPosView);
 
-
+                titleTextView.setText(thisgame.gameName);
+                timeView.setText(thisgame.startTime);
+                venueView.setText(thisgame.venue);
+                homeView.setText(thisgame.homeName);
+                awayView.setText(thisgame.awayName);
+                homPosView.setText(thisgame.homeTeamPosition);
+                awayPosView.setText(thisgame.awayTeamPosition);
 
 
 

@@ -8,6 +8,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,7 +132,8 @@ public class jsonParser {
                 System.out.println("particiapnt " + gameObject.getAsJsonArray("participants"));
                 String gameName = gameObject.getAsJsonPrimitive("name").getAsString();
                 String startTime = gameObject.getAsJsonPrimitive("starting_at").getAsString();
-                int venueId = gameObject.getAsJsonPrimitive("venue_id").getAsInt();
+                String venueId = gameObject.getAsJsonPrimitive("venue_id").getAsString();
+
 
                 JsonObject team1 = gameObject.getAsJsonArray("participants").get(0).getAsJsonObject();
                 JsonObject team2 = gameObject.getAsJsonArray("participants").get(1).getAsJsonObject();
@@ -229,6 +236,43 @@ public class jsonParser {
     private static int getScore(JsonObject team) {
         JsonElement scoreElement = team.getAsJsonObject("meta").get("score");
         return (scoreElement != null && scoreElement.isJsonPrimitive()) ? scoreElement.getAsInt() : 0;
+    }
+
+    private static String getVenue(String venueID){
+        String venueName ="";
+        //https://api.sportmonks.com/v3/football/venues/8914?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr
+
+        String baseURL = ("https://api.sportmonks.com/v3/football/venues/" + venueID + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
+        try {
+
+
+            URL url = new URL(baseURL);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                //System.out.println(inputLine.toString());
+                content.append(inputLine);
+            }
+            in.close();
+            connection.disconnect();
+
+            if(content != null){
+                String jsonString = content.toString();
+                //System.out.println(jsonString);
+                JSONObject jsonObject = new JSONObject(jsonString);
+                venueName = jsonObject.getJSONObject("data").getString("name");
+
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return venueName;
     }
 }
 

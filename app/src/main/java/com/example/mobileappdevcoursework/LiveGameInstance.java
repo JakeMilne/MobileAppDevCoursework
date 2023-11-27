@@ -6,7 +6,6 @@ public class LiveGameInstance {
 
     String title;
     String startTime;
-    int venueID;
     String venue;
     String homeName;
     String awayName;
@@ -18,10 +17,10 @@ public class LiveGameInstance {
 
     String score;
 
-    public LiveGameInstance(String title, String startTime, int venueID, String homeName, String awayName, int homePos, int awayPos, List<Event> events, String score) {
+    public LiveGameInstance(String title, String startTime, String venue, String homeName, String awayName, int homePos, int awayPos, List<Event> events, String score) {
         this.title = title;
         this.startTime = startTime;
-        this.venueID = venueID;
+        this.venue = venue;
         this.venue = getVenue();
         this.homeName = homeName;
         this.awayName = awayName;

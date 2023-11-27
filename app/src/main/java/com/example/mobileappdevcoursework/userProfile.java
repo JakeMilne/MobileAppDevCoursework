@@ -78,10 +78,12 @@ public class userProfile extends Fragment {
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+
+
         // Apply the adapter to the spinner
         spinnerLanguages.setAdapter(adapter);
 
-        // Set a listener to capture the selected item
+        // Set a listener to capture the selected spinner item
         spinnerLanguages.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
