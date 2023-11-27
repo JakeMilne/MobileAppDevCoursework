@@ -16,6 +16,8 @@ words):
 • List of app functionalities your users will experience in your app. These should relate <br>
 to the app requirements outlined above. <br>
 
+<b>Jake Milne 2102515</b> <br>
+
 <br>
 The readme.md file should also include details of the app design (assessing LO1 and LO3)
 (up to 500 words) including: <br>
