@@ -5,8 +5,19 @@
     android:layout_height="match_parent"
     tools:context=".HomeFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <TextView
+        android:id="@+id/welcomeView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/recycler" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:padding="8dp"
+        android:text="@string/welcome" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/welcomeView" />
 </RelativeLayout>

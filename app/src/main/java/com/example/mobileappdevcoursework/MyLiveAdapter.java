@@ -6,6 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,32 +16,44 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private Context context;
-    private List<liveGame> liveGames;
+    private List<LiveGame> LiveGames;
     private OnItemClickListener onItemClickListener;
 
 
-    public MyLiveAdapter(Context context, List<liveGame> games) {
+    public MyLiveAdapter(Context context, List<LiveGame> games) {
         this.context = context;
-        this.liveGames = games;
+        this.LiveGames = games;
     }
 
 
-    public MyLiveAdapter(Context context, List<liveGame> games, OnItemClickListener onItemClickListener) {
+    public MyLiveAdapter(Context context, List<LiveGame> games, OnItemClickListener onItemClickListener) {
         this.context = context;
-        this.liveGames = games;
+        this.LiveGames = games;
         this.onItemClickListener = onItemClickListener;
     }
 
 
-    public void setLiveGames(List<liveGame> games){
+    public void setLiveGames(List<LiveGame> games){
         Log.d("MyAdapter", "setItems: Setting items in adapter, count=" + games.size());
 
-        this.liveGames = games;
+
+        // Sort the list of games by startTime in ascending order
+        Collections.sort(games, new Comparator<LiveGame>() {
+            @Override
+            public int compare(LiveGame game1, LiveGame game2) {
+                // Assuming startTime is a String, you may need to convert it to a comparable format
+                return game1.getStartTime().compareTo(game2.getStartTime());
+            }
+        });
+
+
+
+        this.LiveGames = games;
         notifyDataSetChanged(); // Notify the adapter that the data has changed
 
     }
-    public void addGame(liveGame game) {
-        liveGames.add(game);
+    public void addGame(LiveGame game) {
+        LiveGames.add(game);
         notifyDataSetChanged();
     }
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -54,7 +69,7 @@ public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        final liveGame currentGame = liveGames.get(position);
+        final LiveGame currentGame = LiveGames.get(position);
 
         holder.titleView.setText(currentGame.getTitle());
         holder.dateView.setText(currentGame.getDate());
@@ -73,7 +88,7 @@ public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public int getItemCount() {
-        return liveGames.size();
+        return LiveGames.size();
     }
 
     public interface OnItemClickListener {

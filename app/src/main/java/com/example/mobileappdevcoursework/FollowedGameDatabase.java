@@ -1,20 +1,26 @@
 package com.example.mobileappdevcoursework;
+
 import android.content.Context;
 
-import androidx.room.*;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 
-@Database(entities = {user.class}, version = 2)
-public abstract class UserDatabase extends RoomDatabase{
-    public abstract UserDAO UserDAO();
 
-    private static UserDatabase INSTANCE;
 
-    public static UserDatabase getDatabase(final Context context){
+@Database(entities = {FollowedGame.class}, version = 1)
+public abstract class FollowedGameDatabase extends RoomDatabase {
+
+    public abstract FollowedGameDAO followedGameDAO();
+
+    private static FollowedGameDatabase INSTANCE;
+
+    public static FollowedGameDatabase getDatabase(final Context context){
         if (INSTANCE == null){
-            synchronized (UserDatabase.class){
+            synchronized (FollowedGameDatabase.class){
                 if (INSTANCE == null){
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                    UserDatabase.class, "user_database")
+                                    FollowedGameDatabase.class, "followed_game_database")
                             .fallbackToDestructiveMigration()
                             // the following is only for testing / initial dev purposes
                             //.allowMainThreadQueries()

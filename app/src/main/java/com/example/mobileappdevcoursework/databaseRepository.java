@@ -2,12 +2,17 @@ package com.example.mobileappdevcoursework;
 
 import android.content.Context;
 
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+
 import java.util.List;
 
 public class databaseRepository {
 
     private GameDAO mGameDao;
     private UserDAO mUserDao;
+    private FollowedGameDAO mFollowedGameDao;
 
     private static databaseRepository INSTANCE;
 
@@ -21,6 +26,7 @@ public class databaseRepository {
         // setup for taskDao for accessing the database
         mGameDao = GameDatabase.getDatabase(context).GameDAO();
         mUserDao = UserDatabase.getDatabase(context).UserDAO();
+        mFollowedGameDao = FollowedGameDatabase.getDatabase(context).followedGameDAO();
     }
 
     public static databaseRepository getRepository(Context context){
@@ -53,10 +59,17 @@ public class databaseRepository {
 
     public String getName(){return mUserDao.getName();}
 
-    public void updateuser(user userUpdate){}
+    public void updateUser(user userUpdate){mUserDao.updateUser(userUpdate);};
+
+    public void deleteUser(){mUserDao.deleteUser();};
+
+    public List<FollowedGame> getAllFollowed(){return mFollowedGameDao.getAllFollowed();};
 
 
 
+    public void updateFollowedGames(FollowedGame game){mFollowedGameDao.updateFollowedGames(game);};
+
+    public void deleteFollowedGame(int ID){mFollowedGameDao.deleteFollowedGame(ID);};
 
 
 }

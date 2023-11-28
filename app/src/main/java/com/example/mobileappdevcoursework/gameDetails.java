@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +13,14 @@ import android.widget.TextView;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDate;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link gameDetails#newInstance} factory method to
  * create an instance of this fragment.
- */
-
-/*
-Fragment to show details of upcoming game
-accessed when user clicks on a game in HomeFragment
  */
 public class gameDetails extends Fragment {
 
@@ -36,6 +34,7 @@ public class gameDetails extends Fragment {
     private String mParam2;
 
     public gameDetails() {
+        // Required empty public constructor
     }
 
     /**
@@ -59,17 +58,16 @@ public class gameDetails extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("gameDetails", "onCreate: Fragment created");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //game Id is passed from HomeFragment, bundle handles this
-        Bundle bundle = getArguments();
         // Inflate the layout for this fragment
+        Bundle bundle = getArguments();
         View rootView = inflater.inflate(R.layout.fragment_game_details, container, false);
 
-        //getting textviews to fill out later
         TextView titleTextView = rootView.findViewById(R.id.titleTextView);
         TextView timeView = rootView.findViewById(R.id.timeView);
         TextView venueView = rootView.findViewById(R.id.venueView);
@@ -78,70 +76,79 @@ public class gameDetails extends Fragment {
         TextView homePosView = rootView.findViewById(R.id.homePosView);
         TextView awayPosView = rootView.findViewById(R.id.awayPosView);
 
-
-
         if (bundle != null) {
-            // Extract the item_id from the Bundle
-            int itemId = bundle.getInt("ITEM_ID", -1);
-            //calling the api for the specific game
-            String baseURL = "https://api.sportmonks.com/v3/football/fixtures/" + itemId + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501";
-            try{
-                
-                URL url = new URL(baseURL);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                    // Extract the item_id from the Bundle
+                    int itemId = bundle.getInt("ITEM_ID", -1);
+
+                    String baseURL = "https://api.sportmonks.com/v3/football/fixtures/" + itemId + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501";
+                    try{
 
 
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                StringBuilder content = new StringBuilder();
+                        URL url = new URL(baseURL);
 
-                while ((inputLine = in.readLine()) != null) {
-                    //System.out.println(inputLine.toString()); // used for testing
-                    content.append(inputLine);
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+
+                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String inputLine;
+                        StringBuilder content = new StringBuilder();
+
+                        while ((inputLine = in.readLine()) != null) {
+                            //System.out.println(inputLine.toString());
+                            content.append(inputLine);
+                        }
+                        in.close();
+                        connection.disconnect();
+
+                        String jsonString = content.toString();
+                        System.out.println(jsonString);
+                        gameInstance thisGame = jsonParser.parseGame(jsonString);
+
+                        if (thisGame != null) {
+                            System.out.println(thisGame.toString());
+                        } else {
+                            System.out.println("Failed to parse the game data.");
+                        }
+
+                        System.out.println(thisGame.toString());
+
+
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                titleTextView.setText(thisGame.getGameName());
+                                timeView.setText(thisGame.getStartTime());
+                                venueView.setText(thisGame.getVenue());
+                                homeView.setText(thisGame.getHomeName());
+                                awayView.setText(thisGame.getAwayName());
+                                homePosView.setText(String.valueOf(thisGame.getHomeTeamPosition()));
+                                awayPosView.setText(String.valueOf(thisGame.getAwayTeamPosition()));
+                            }
+                        });
+
+
+
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
                 }
-                in.close();
-                connection.disconnect();
+            }).start();
 
-                String jsonString = content.toString();
-                //System.out.println(jsonString); // used for testing if output matches the api result
-
-                //parsing the result and storing it as an instance of gameInstance
-                gameInstance thisGame = jsonParser.parseGame(jsonString);
+        };
 
 
-                //filling textviews with the instance of gameInstance
-
-                //name of match i.e. Celtic vs Rangers
-                titleTextView.setText(thisGame.gameName);
-
-                //date and time of kickoff
-                timeView.setText(thisGame.startTime);
-
-                //venue for the game, usually just the home teams stadium
-                venueView.setText(thisGame.venue);
-
-                //home team name
-                homeView.setText(thisGame.homeName);
-
-                //away team name
-                awayView.setText(thisGame.awayName);
-
-                //home teams position in their league
-                homePosView.setText(thisGame.homeTeamPosition);
-                //away teams position in their league
-                awayPosView.setText(thisGame.awayTeamPosition);
-                //league positions might break once the playoffs start, as I don't know if the json data for playoff rounds include league positions
 
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-        }
-
-
-        return inflater.inflate(R.layout.fragment_game_details, container, false);
+        return rootView;
     }
 
 

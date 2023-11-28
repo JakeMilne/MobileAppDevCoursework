@@ -5,6 +5,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,7 +16,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private Context context;
     private List<Game> games;
-    private List<liveGame> liveGames;
+    private List<LiveGame> LiveGames;
     private OnItemClickListener onItemClickListener;
 
 
@@ -33,11 +36,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     public void setGames(List<Game> games) {
         Log.d("MyAdapter", "setItems: Setting items in adapter, count=" + games.size());
 
+        // Sort the list of games by startTime in ascending order
+        Collections.sort(games, new Comparator<Game>() {
+            @Override
+            public int compare(Game game1, Game game2) {
+                // Assuming startTime is a String, you may need to convert it to a comparable format
+                return game1.getStartTime().compareTo(game2.getStartTime());
+            }
+        });
+
         this.games = games;
-        notifyDataSetChanged(); // Notify the adapter that the data has changed
+        notifyDataSetChanged();
     }
 
-    public void setLiveGames(List<liveGame> games){
+    public void setLiveGames(List<LiveGame> games){
 
     }
     public void addGame(Game game) {

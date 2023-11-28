@@ -12,10 +12,12 @@
     <Spinner
         android:id="@+id/leagueSpinner"
         android:layout_width="187dp"
-        android:layout_height="89dp"
+        android:layout_height="0dp"
         android:layout_marginStart="208dp"
         android:layout_marginTop="292dp"
+        android:layout_marginBottom="50dp"
         android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toTopOf="@+id/saveBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,12 +41,12 @@
         android:layout_marginEnd="28dp"
         android:text="@string/entername"
         android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/editText"
+        app:layout_constraintEnd_toStartOf="@+id/nameText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileTextView" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/nameText"
         android:layout_width="0dp"
         android:layout_height="51dp"
         android:layout_marginTop="56dp"
@@ -60,10 +62,21 @@
         android:id="@+id/leagueTextView"
         android:layout_width="110dp"
         android:layout_height="61dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="92dp"
         android:layout_marginEnd="56dp"
         android:text="@string/selectLeague"
         app:layout_constraintEnd_toStartOf="@+id/leagueSpinner"
         app:layout_constraintTop_toBottomOf="@+id/enterNameView" />
+
+    <Button
+        android:id="@+id/saveBtn"
+        android:layout_width="123dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="78dp"
+        android:layout_marginBottom="232dp"
+        android:text="@string/save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/leagueTextView"
+        app:layout_constraintTop_toBottomOf="@+id/leagueSpinner" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
