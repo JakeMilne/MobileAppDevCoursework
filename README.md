@@ -48,18 +48,13 @@ navigation graph visualisation, with appropriate description. <br>
 <h3>Life cycle events</h3>
 <h4>Main Activity</h4>
 Main activity handles the navigation bar, handling the fragment switching in the onCreate method
-<h4>Home Page</h4>
-onCreateView handles the creation of the recyclerView via an istance of the HomeViewModel class, with the nested onChanged function updating the recycler view, onStart uses the instance of HomeViewClass to load data from the database and the api. onItemClick is used to handle redirects to the game details fragment. <br>
+<h4>Home Page/Upcoming Games and Live Scores</h4>
+The Home Page and Live Scores page have similar life cycle events, onCreateView handles the creation of the recyclerView via an istance of the HomeViewModel class, with the nested onChanged function updating the recycler view, onStart uses the instance of HomeViewClass to load data from the database and the api. onItemClick is used to handle redirects to the game details or live game details fragment. <br>
 
-<h5>Game Details</h5>
-The onCreateView method takes the ID of the game selected in the homepage and calls the api to find and store more details about the game, these details are then displayed to the user in textViews. <br>
+<h5>Game Details And Live Game Details</h5>
+The onCreateView method handles , these details are then displayed to the user in textViews. <br>
 
-<h4>Live Scores</h4>
-The Live Scores fragment has a similar design to the homepage, with onCreateView, onStart, onItemClick and onChanged providing very similar functionality. The main difference being live scores uses a different API endpoint, which provides data for live games only. The onItemClick function also redirects to a different fragment, this time going to the live game details fragment.
-<br>
-<h5>Live Game Details</h5>
 
-Again, The Live Game Details fragment is similar to its Game Details counterpart. With the only difference being the data being showed. <br>
 
 <h4>profile</h4>
 The onCreateView function is used to initialise and handle the user inputs via an EditText and a spinner, onItemSelected is used to retrieve user input from the spinner and something about editText, which is then saved to the userdb when the save button is pressed <br>
@@ -83,7 +78,8 @@ The user database acts as a configuration file, storing the name and league pref
 
 o Any mobile specific functionalities that have been implemented. <br>
 
-
+<h2>Mobile Specific Functionalities</h2>
+App Title gives the user the option to add upcoming games to their calender, as well as the option to enable notifications for games in progress, so they never miss an event.
 
 
 <br>
