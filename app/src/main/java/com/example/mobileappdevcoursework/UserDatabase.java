@@ -3,7 +3,7 @@ import android.content.Context;
 
 import androidx.room.*;
 
-@Database(entities = {user.class}, version = 1)
+@Database(entities = {user.class}, version = 2)
 public abstract class UserDatabase extends RoomDatabase{
     public abstract UserDAO UserDAO();
 
@@ -14,7 +14,7 @@ public abstract class UserDatabase extends RoomDatabase{
             synchronized (UserDatabase.class){
                 if (INSTANCE == null){
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                    UserDatabase.class, "game_database")
+                                    UserDatabase.class, "user_database")
                             .fallbackToDestructiveMigration()
                             // the following is only for testing / initial dev purposes
                             //.allowMainThreadQueries()

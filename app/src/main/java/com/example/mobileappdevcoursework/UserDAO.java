@@ -16,10 +16,10 @@ public interface UserDAO {
     int getLeague();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void updateuser(user userUpdate);
+    void updateUser(user userUpdate);
 
 
 
     @Query("Delete from user")
-    void deleteAll();
+    void deleteUser();
 }

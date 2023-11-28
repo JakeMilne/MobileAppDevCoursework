@@ -29,4 +29,8 @@
     <string name="entername">Enter your name</string>
     <string name="name">name here</string>
     <string name="follow">Follow Match</string>
+    <string name="save">save settings</string>
+    <string name="welcome">Welcome</string>
+
+
 </resources>

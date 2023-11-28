@@ -59,6 +59,10 @@ public class databaseRepository {
 
     public String getName(){return mUserDao.getName();}
 
+    public void updateUser(user userUpdate){mUserDao.updateUser(userUpdate);};
+
+    public void deleteUser(){mUserDao.deleteUser();};
+
     public List<FollowedGame> getAllFollowed(){return mFollowedGameDao.getAllFollowed();};
 
 

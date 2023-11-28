@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -15,6 +16,10 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +28,7 @@ public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListe
     private RecyclerView recyclerView;
     private MyAdapter adapter;
     private HomeViewModel viewModel;
+    private databaseRepository databaseRepository;
 
     public HomeFragment() {
     }
@@ -32,11 +38,35 @@ public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d("HomeFragment", "onCreateView: Fragment created");
-        View rootView = inflater.inflate(R.layout.fragment_main_page, container, false);
-        recyclerView = rootView.findViewById(R.id.recycler);
+        databaseRepository = databaseRepository.getRepository(requireContext());
+        View view = inflater.inflate(R.layout.fragment_main_page, container, false);
+        recyclerView = view.findViewById(R.id.recycler);
         adapter = new MyAdapter(getActivity().getApplicationContext(), new ArrayList<>(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
+        TextView welcomeView = view.findViewById(R.id.welcomeView);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                String name = databaseRepository.getName();
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(name != null && !name.isEmpty()){
+                                welcomeView.setText("welcome " + name);
+
+                            }
+                        }
+                    });
+
+
+            }
+        }).start();
+
+
 
         // Initialize the ViewModel
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
@@ -52,7 +82,7 @@ public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListe
             }
         });
 
-        return rootView;
+        return view;
     }
 
     @Override

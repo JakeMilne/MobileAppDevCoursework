@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ public class userProfile extends Fragment {
     private String mParam2;
 
     private databaseRepository databaseRepository;
+    int league;
     //databaseRepository = databaseRepository.getRepository(application);
     public userProfile() {
         // Required empty public constructor
@@ -62,31 +65,44 @@ public class userProfile extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        databaseRepository = databaseRepository.getRepository(requireContext());
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                league = databaseRepository.getLeague();
+
+
+            }
+        }).start();
+
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_user_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
+        Button saveBtn = view.findViewById(R.id.saveBtn);
 
-        // Find the Spinner by its ID
-        Spinner spinnerLanguages = rootView.findViewById(R.id.leagueSpinner);
+        EditText nameText = view.findViewById(R.id.nameText);
 
-        // Create an ArrayAdapter using the string array and a default spinner layout
+
+        Spinner spinnerLanguages = view.findViewById(R.id.leagueSpinner);
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(), R.array.leagues, android.R.layout.simple_spinner_item);
 
-        // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        // Apply the adapter to the spinner
         spinnerLanguages.setAdapter(adapter);
 
-        // Set a listener to capture the selected item
         spinnerLanguages.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // Display a Toast with the selected item
-                int league;
+
                 Toast.makeText(requireContext(), "Selected: " + parentView.getItemAtPosition(position), Toast.LENGTH_SHORT).show();
                 switch(parentView.getItemAtPosition(position).toString()) {
                     case "Scottish PremierShip":
@@ -114,6 +130,40 @@ public class userProfile extends Fragment {
             }
         });
 
-        return rootView;
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = nameText.getText().toString();
+
+
+                final String finalName = name;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        databaseRepository.deleteUser();
+                        user userUpdate = new user();
+                        if(finalName == null || finalName.isEmpty()){
+
+                            String oldName = databaseRepository.getName();
+                            userUpdate.setName(oldName);
+
+                        }else{
+                            userUpdate.setName(finalName);
+                        }
+
+
+
+                        userUpdate.setFavouriteLeague(league);
+                        databaseRepository.updateUser(userUpdate);
+
+
+                    }
+                }).start();
+                Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        return view;
     }
 }
