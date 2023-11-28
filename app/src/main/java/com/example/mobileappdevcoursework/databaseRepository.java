@@ -53,6 +53,8 @@ public class databaseRepository {
 
     public String getName(){return mUserDao.getName();}
 
+    public void updateuser(user userUpdate){}
+
 
 
 

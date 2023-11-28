@@ -16,20 +16,20 @@ public class Game {
     @ColumnInfo(name = "start_time")
     String startTime;
 
-    @ColumnInfo(name = "venue_name")
-    String venue;
-
-    @ColumnInfo(name = "home_pos")
-    int homeTeamPosition;
-
-    @ColumnInfo(name = "away_pos")
-    int awayTeamPosition;
-
-    @ColumnInfo(name = "home_name")
-    String homeName;
-
-    @ColumnInfo(name = "away_name")
-    String awayName;
+//    @ColumnInfo(name = "venue_name")
+//    String venue;
+//
+//    @ColumnInfo(name = "home_pos")
+//    int homeTeamPosition;
+//
+//    @ColumnInfo(name = "away_pos")
+//    int awayTeamPosition;
+//
+//    @ColumnInfo(name = "home_name")
+//    String homeName;
+//
+//    @ColumnInfo(name = "away_name")
+//    String awayName;
 
     public int getGameID() {
         return gameID;
@@ -55,43 +55,43 @@ public class Game {
         this.startTime = startTime;
     }
 
-    public String getVenue() {
-        return venue;
-    }
-
-    public void setVenue(String venue) {
-        this.venue = venue;
-    }
-
-    public int getHomeTeamPosition() {
-        return homeTeamPosition;
-    }
-
-    public void setHomeTeamPosition(int homeTeamPosition) {
-        this.homeTeamPosition = homeTeamPosition;
-    }
-
-    public int getAwayTeamPosition() {
-        return awayTeamPosition;
-    }
-
-    public void setAwayTeamPosition(int awayTeamPosition) {
-        this.awayTeamPosition = awayTeamPosition;
-    }
-
-    public String getHomeName() {
-        return homeName;
-    }
-
-    public void setHomeName(String homeName) {
-        this.homeName = homeName;
-    }
-
-    public String getAwayName() {
-        return awayName;
-    }
-
-    public void setAwayName(String awayName) {
-        this.awayName = awayName;
-    }
+//    public String getVenue() {
+//        return venue;
+//    }
+//
+//    public void setVenue(String venue) {
+//        this.venue = venue;
+//    }
+//
+//    public int getHomeTeamPosition() {
+//        return homeTeamPosition;
+//    }
+//
+//    public void setHomeTeamPosition(int homeTeamPosition) {
+//        this.homeTeamPosition = homeTeamPosition;
+//    }
+//
+//    public int getAwayTeamPosition() {
+//        return awayTeamPosition;
+//    }
+//
+//    public void setAwayTeamPosition(int awayTeamPosition) {
+//        this.awayTeamPosition = awayTeamPosition;
+//    }
+//
+//    public String getHomeName() {
+//        return homeName;
+//    }
+//
+//    public void setHomeName(String homeName) {
+//        this.homeName = homeName;
+//    }
+//
+//    public String getAwayName() {
+//        return awayName;
+//    }
+//
+//    public void setAwayName(String awayName) {
+//        this.awayName = awayName;
+//    }
 }

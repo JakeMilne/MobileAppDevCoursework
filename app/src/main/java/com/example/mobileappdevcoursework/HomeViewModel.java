@@ -19,7 +19,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 public class HomeViewModel extends AndroidViewModel {
 
-    private MutableLiveData<List<Game>> gamesLiveData;
+    private MutableLiveData<List<Game>> gamesLiveData; //https://developer.android.com/topic/libraries/architecture/livedata
     private Executor executor = Executors.newSingleThreadExecutor(); // Executor for background tasks
     private databaseRepository databaseRepository;
 
@@ -34,26 +34,25 @@ public class HomeViewModel extends AndroidViewModel {
         return gamesLiveData;
     }
 
+
+    //function to get upcoming games
     public void loadData() {
-        // Perform database query in a background thread
+
+        // put it in a thread since it contains network and database operations
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                // Step 1: Fetch data from the local database
-                List<Game> localData = databaseRepository.getAll();
-                gamesLiveData.postValue(localData);
 
-                // Step 2: Fetch data from the API
-                List<Game> apiData = mainSearch();
+                List<Game> localData = databaseRepository.getAll(); //gets stored games from the database
+                gamesLiveData.postValue(localData); //updates live data
 
-                // Step 3: Delete existing data in the local database
-                databaseRepository.deleteAll();
+                List<Game> apiData = mainSearch(); //gets upcoming games from the API
 
-                // Step 4: Insert new data into the local database
-                databaseRepository.insertGames(apiData);
+                databaseRepository.deleteAll(); //deletes existing games from the database from
 
-                // Step 5: Update the UI with the combined data
-                gamesLiveData.postValue(apiData);
+                databaseRepository.insertGames(apiData); //adds games from the API to the database for the next time loadData is used
+
+                gamesLiveData.postValue(apiData); //updating livedata again, with the new set of upcoming games
             }
         });
     }
@@ -86,13 +85,15 @@ public class HomeViewModel extends AndroidViewModel {
 
     }
 
-    public static List<Game> mainSearch(){
+    //function that calls the API for upcoming games
+    public List<Game> mainSearch(){
         List<Game> games = new ArrayList<Game>();
-
+        int leagueID = databaseRepository.getLeague();
         try{
 
 
-            String baseURL = "https://api.sportmonks.com/v3/football/fixtures/between/" + LocalDate.now() + "/" + addMonth() + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501";
+            String baseURL = "https://api.sportmonks.com/v3/football/fixtures/between/" + LocalDate.now() + "/" + addMonth() + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID;
+            //LocalDate.now() and addMonth() are used so the API finds games within the next month
             URL url = new URL(baseURL);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -123,6 +124,8 @@ public class HomeViewModel extends AndroidViewModel {
 //        }
         return games;
     }
+
+    //returns todays date + 1 month
     public static String addMonth(){
         String date = LocalDate.now().plusMonths(1).toString();
 

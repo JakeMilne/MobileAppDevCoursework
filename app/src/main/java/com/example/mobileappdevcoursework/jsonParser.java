@@ -19,6 +19,7 @@ import java.util.List;
 
 public class jsonParser {
 
+    //function used to parse an API call, and return a list of games
     public static List<Game> parseJson(String jsonString) {
         List<Game> games = new ArrayList<>();
 
@@ -36,13 +37,13 @@ public class jsonParser {
                     int gameID = jsonItem.get("id").getAsInt();
                     String gameName = jsonItem.get("name").getAsString();
                     String startTime = jsonItem.get("starting_at").getAsString();
-                    // ... other fields
+
 
                     Game game = new Game();
                     game.setGameID(gameID);
                     game.setGameName(gameName);
                     game.setStartTime(startTime);
-                    // ... set other fields
+
 
                     games.add(game);
                 }
@@ -71,11 +72,9 @@ public class jsonParser {
                     int gameID = jsonItem.get("id").getAsInt();
                     String gameName = jsonItem.get("name").getAsString();
                     String startTime = jsonItem.get("starting_at").getAsString();
-                    // ... other fields
+
 
                     liveGame game = new liveGame(gameName, startTime, gameID);
-
-                    // ... set other fields
 
                     liveGames.add(game);
                 }

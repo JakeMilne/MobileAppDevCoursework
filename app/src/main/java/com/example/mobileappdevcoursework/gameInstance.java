@@ -1,5 +1,8 @@
 package com.example.mobileappdevcoursework;
 
+/*
+This class is used in the GameDetails Fragment to store information about the game a user has selected in HomeFragment
+ */
 public class gameInstance {
 
     String gameName;
