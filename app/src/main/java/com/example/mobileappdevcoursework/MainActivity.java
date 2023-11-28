@@ -7,6 +7,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -24,6 +25,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
@@ -34,9 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_main);
 
-        createNotificationChannel();
-        Notifications notificationManager = new Notifications(this);
-        notificationManager.run();
+
         //code for the navigation bar comes from https://www.youtube.com/watch?v=jOFLmKMOcK0 , accessed 14/11/2023 at 10am the switch case at 7:54 was adapted to a series of if else statements to fix a constant expression required error
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -46,6 +48,15 @@ public class MainActivity extends AppCompatActivity {
 
         //replaceFragment(new HomeFragment());
         NavController navController = navHostFragment.getNavController();
+
+
+        new Thread(() -> {
+            createNotificationChannel();
+            LiveViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(LiveViewModel.class);
+            DatabaseRepository databaseRepository = DatabaseRepository.getRepository(this);
+            Notifications notificationManager = new Notifications(this, viewModel, databaseRepository);
+            notificationManager.run();
+        }).start();
 
 
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
@@ -101,65 +112,77 @@ public class MainActivity extends AppCompatActivity {
 class Notifications implements Runnable {
 
     private Context context;
-    private databaseRepository databaseRepository;
+    private LiveViewModel liveViewModel;
+    private DatabaseRepository databaseRepository;
 
-
-    public Notifications(Context context) {
+    public Notifications(Context context, LiveViewModel liveViewModel, DatabaseRepository databaseRepository) {
         this.context = context;
-        databaseRepository = databaseRepository.getRepository(context);
-
+        this.liveViewModel = liveViewModel;
+        this.databaseRepository = databaseRepository;
     }
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Override
     public void run() {
-        while (true) {
-            try {
-                // Your function or code to be executed every 10 seconds
-                notifCheck();
-
-                // Sleep for 10 seconds
-                Thread.sleep(10000);  // 10,000 milliseconds = 10 seconds
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        scheduler.scheduleAtFixedRate(() -> {
+            long startTime = System.currentTimeMillis();
+            notifCheck();
+            long endTime = System.currentTimeMillis();
+            System.out.println("Execution time: " + (endTime - startTime) + " ms");
+        }, 0, 10, TimeUnit.SECONDS);
     }
 
     private void notifCheck() {
         // Your code to be executed every 10 seconds
-        List<LiveGame> liveGames = LiveViewModel.liveSearch();
-        List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
-        Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
-        for (FollowedGame followedGame : followedGames) {
-            // Check if the FollowedGame is not in liveGames
-            boolean isFollowedGameInLiveGames = false;
+        long startTime = System.currentTimeMillis();
+        new Thread(() -> {
+            try{
+            // Perform network-related operation in a background thread
+                Thread.sleep(10000);
+            List<LiveGame> liveGames = liveViewModel.liveSearch();
 
-            for (LiveGame liveGame : liveGames) {
-                if (liveGame.getId() == followedGame.getGameID()) {
-                    isFollowedGameInLiveGames = true;
-                    break;
-                }
-            }
+            // Continue processing the data in the background thread
+            List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
+            Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
+            for (FollowedGame followedGame : followedGames) {
+                // Check if the FollowedGame is not in liveGames
+                boolean isFollowedGameInLiveGames = false;
 
-            // If the FollowedGame is not in liveGames, delete it
-            if (!isFollowedGameInLiveGames) {
-                databaseRepository.deleteFollowedGame(followedGame.getGameID());
-            }
-        }
-        for (LiveGame game : liveGames) {
-            if (followedGamesMap.get(game.getId()) != null) {
-                if (game.eventCount() > followedGamesMap.get(game.getId())) {
-                    for (int i = followedGamesMap.get(game.getId()); i < game.eventCount(); i++) {
-                        Event event = game.getEventAtIndex(i);
-                        sendNotif(event);
+                for (LiveGame liveGame : liveGames) {
+                    if (liveGame.getId() == followedGame.getGameID()) {
+                        isFollowedGameInLiveGames = true;
+                        break;
                     }
                 }
 
+                // If the FollowedGame is not in liveGames, delete it
+                if (!isFollowedGameInLiveGames) {
+                    databaseRepository.deleteFollowedGame(followedGame.getGameID());
+                }
+            }
+            for (LiveGame game : liveGames) {
+                if (followedGamesMap.get(game.getId()) != null) {
+                    if (game.eventCount() > followedGamesMap.get(game.getId())) {
+                        for (int i = followedGamesMap.get(game.getId()); i < game.eventCount(); i++) {
+                            Event event = game.getEventAtIndex(i);
+                            sendNotif(event);
+                        }
+                    }
+                }
             }
 
-        }
-        System.out.println("Executing myFunction every 10 seconds");
+            System.out.println("Executing myFunction every 10 seconds");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        long endTime = System.currentTimeMillis();
+        System.out.println("notifCheck execution time: " + (endTime - startTime) + " ms");
+
     }
+
+    // ... rest of the code ...
 
 
     private static Map<Integer, Integer> convertListToMap(List<FollowedGame> followedGamesList) {
@@ -170,7 +193,7 @@ class Notifications implements Runnable {
         return gameIdToEventCountMap;
     }
 
-    private void sendNotif(Event event) {
+    public void sendNotif(Event event) {
         final String CHANNEL_ID = "App_Title_id";
         List<String> notif = new ArrayList<>();
         notif = parseForNotif(event);

@@ -2,24 +2,20 @@ package com.example.mobileappdevcoursework;
 
 import android.content.Context;
 
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
-
 import java.util.List;
 
-public class databaseRepository {
+public class DatabaseRepository {
 
     private GameDAO mGameDao;
     private UserDAO mUserDao;
     private FollowedGameDAO mFollowedGameDao;
 
-    private static databaseRepository INSTANCE;
+    private static DatabaseRepository INSTANCE;
 
     private Context context;
 
 
-    private databaseRepository(Context context){
+    private DatabaseRepository(Context context){
         super();
         this.context = context;
 
@@ -29,11 +25,11 @@ public class databaseRepository {
         mFollowedGameDao = FollowedGameDatabase.getDatabase(context).followedGameDAO();
     }
 
-    public static databaseRepository getRepository(Context context){
+    public static DatabaseRepository getRepository(Context context){
         if (INSTANCE == null){
-            synchronized (databaseRepository.class) {
+            synchronized (DatabaseRepository.class) {
                 if (INSTANCE == null)
-                    INSTANCE = new databaseRepository(context);
+                    INSTANCE = new DatabaseRepository(context);
             }
         }
         return INSTANCE;

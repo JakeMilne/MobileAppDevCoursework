@@ -7,9 +7,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -33,7 +30,7 @@ public class userProfile extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private databaseRepository databaseRepository;
+    private DatabaseRepository databaseRepository;
     int league;
     //databaseRepository = databaseRepository.getRepository(application);
     public userProfile() {
@@ -88,7 +85,21 @@ public class userProfile extends Fragment {
         Button saveBtn = view.findViewById(R.id.saveBtn);
 
         EditText nameText = view.findViewById(R.id.nameText);
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String name = databaseRepository.getName();
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Code to be executed on the UI thread
+                        // This can include UI updates or interactions with UI elements
+                        // For example:
+                        nameText.setText(name);
+                    }
+                });
+            }
+        }).start();
 
         Spinner spinnerLanguages = view.findViewById(R.id.leagueSpinner);
 
@@ -105,11 +116,11 @@ public class userProfile extends Fragment {
 
                 Toast.makeText(requireContext(), "Selected: " + parentView.getItemAtPosition(position), Toast.LENGTH_SHORT).show();
                 switch(parentView.getItemAtPosition(position).toString()) {
-                    case "Scottish PremierShip":
+                    case "Scottish Premiership":
                         // code block
                         league=501;
                         break;
-                    case "Scottish PremierShip Play-offs":
+                    case "Scottish Premiership Play-offs":
                         league=513;
                         // code block
                         break;
@@ -117,8 +128,10 @@ public class userProfile extends Fragment {
                         league=271;
                         break;
 
-                        default:
+                    case "Danish Superliga Play-offs":
                         league=1659;
+                        default:
+                        league=501;
                         // code block
                 }
 

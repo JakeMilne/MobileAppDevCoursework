@@ -1,8 +1,10 @@
     package com.example.mobileappdevcoursework;
 
+    import android.app.Application;
+
+    import androidx.lifecycle.AndroidViewModel;
     import androidx.lifecycle.LiveData;
     import androidx.lifecycle.MutableLiveData;
-    import androidx.lifecycle.ViewModel;
 
     import java.io.BufferedReader;
     import java.io.InputStreamReader;
@@ -11,67 +13,80 @@
     import java.util.ArrayList;
     import java.util.List;
 
-    public class LiveViewModel extends ViewModel {
+    public class LiveViewModel extends AndroidViewModel {
 
         private MutableLiveData<List<LiveGame>> liveGamesLiveData;
+        private DatabaseRepository databaseRepository;
 
-        public LiveViewModel() {
+        private boolean isDataLoading = false;
+
+        public LiveViewModel(Application application) {
+            super(application);
             liveGamesLiveData = new MutableLiveData<>();
+            databaseRepository = DatabaseRepository.getRepository(application);
+
+
         }
+
+
 
         public LiveData<List<LiveGame>> getGames() {
             return liveGamesLiveData;
         }
 
         public void loadData() {
+            if (isDataLoading) {
+                // Don't start a new data loading process if one is already in progress
+                return;
+            }
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    List<LiveGame> LiveGames = liveSearch();
-                    liveGamesLiveData.postValue(LiveGames);
+                    isDataLoading = true;
+
+                    List<LiveGame> liveGames = liveSearch();
+
+                    // Check if data was successfully loaded
+                    if (!liveGames.isEmpty()) {
+                        liveGamesLiveData.postValue(liveGames);
+                    }
+
+                    isDataLoading = false;
                 }
             }).start();
         }
 
-        public static List<LiveGame> liveSearch(){
-            List<LiveGame> LiveGames = new ArrayList<>();
-            try{
+        public List<LiveGame> liveSearch() {
+            List<LiveGame> liveGames = new ArrayList<>();
+            int leagueID = databaseRepository.getLeague();
 
-                //denmark 1
-                URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:271");
-                //scotland 1
-                //URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
-
+            try {
+                System.out.println(leagueID);
+                URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID);
 
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String inputLine;
                 StringBuilder content = new StringBuilder();
 
                 while ((inputLine = in.readLine()) != null) {
-                    //System.out.println(inputLine.toString());
                     content.append(inputLine);
                 }
                 in.close();
                 connection.disconnect();
 
-                if(content != null){
+                if (content != null) {
                     String jsonString = content.toString();
-                    System.out.println(jsonString);
-                    LiveGames = jsonParser.parseLiveJson(jsonString);
+                    System.out.println("here " + jsonString);
+
+                    liveGames = jsonParser.parseLiveJson(jsonString);
+                    liveGamesLiveData.postValue(liveGames);
                 }
-
-
-
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-    //        for (Item item : items) {
-    //            System.out.println("Item(Title: " + item.getTitle() + ", date: " + item.getDate() + ")");
-    //        }
-            return LiveGames;
+
+            return liveGames;
         }
     }

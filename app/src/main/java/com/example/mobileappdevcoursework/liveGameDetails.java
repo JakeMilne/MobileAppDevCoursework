@@ -33,7 +33,7 @@ public class liveGameDetails extends Fragment implements View.OnClickListener{
     private String mParam2;
     private int itemId;
     private LiveGame liveGame;
-    private databaseRepository databaseRepository;
+    private DatabaseRepository databaseRepository;
 
     public liveGameDetails() {
         // Required empty public constructor

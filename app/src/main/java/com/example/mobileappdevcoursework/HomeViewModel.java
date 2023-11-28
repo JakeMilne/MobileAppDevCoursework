@@ -21,7 +21,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<Game>> gamesLiveData; //https://developer.android.com/topic/libraries/architecture/livedata
     private Executor executor = Executors.newSingleThreadExecutor(); // Executor for background tasks
-    private databaseRepository databaseRepository;
+    private DatabaseRepository databaseRepository;
 
 
     public HomeViewModel(@NonNull Application application) {
@@ -88,6 +88,7 @@ public class HomeViewModel extends AndroidViewModel {
     //function that calls the API for upcoming games
     public List<Game> mainSearch(){
         List<Game> games = new ArrayList<Game>();
+
         int leagueID = databaseRepository.getLeague();
         try{
 

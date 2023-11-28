@@ -16,10 +16,6 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +24,7 @@ public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListe
     private RecyclerView recyclerView;
     private MyAdapter adapter;
     private HomeViewModel viewModel;
-    private databaseRepository databaseRepository;
+    private DatabaseRepository databaseRepository;
 
     public HomeFragment() {
     }
