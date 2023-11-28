@@ -6,6 +6,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,18 +124,159 @@ public class jsonParser {
     }
 
     private static List<Event> parseEvents(JsonArray eventsArray) {
+//        List<Event> events = new ArrayList<>();
+//
+//        for (JsonElement eventElement : eventsArray) {
+//            JsonObject eventObject = eventElement.getAsJsonObject();
+//            int eventId = eventObject.getAsJsonPrimitive("id").getAsInt();
+//            String eventName = eventObject.getAsJsonPrimitive("type").getAsString();
+//            String eventMinute = eventObject.getAsJsonPrimitive("minute").getAsString();
+//            String addition = "";
+//            JsonElement additionElement = eventObject.get("addition");
+//
+//            if (additionElement != null && additionElement.isJsonPrimitive()) {
+//                addition = additionElement.getAsJsonPrimitive().getAsString();
+//            }
+//            String result = "";
+//            JsonElement resultElement = eventObject.get("result");
+//
+//            if (resultElement != null && resultElement.isJsonPrimitive()) {
+//                result = resultElement.getAsJsonPrimitive().getAsString();
+//                if (result != null) {
+//                    lastResult = result;  // Update lastResult when result is non-null
+//                }
+//            }
+//            events.add(new Event(eventId, eventName, eventMinute, "", addition, ""));
+//        }
+//
+//        return events;
         List<Event> events = new ArrayList<>();
+        String lastResult = null;
+
 
         for (JsonElement eventElement : eventsArray) {
             JsonObject eventObject = eventElement.getAsJsonObject();
+            System.out.println(eventElement.toString());
             int eventId = eventObject.getAsJsonPrimitive("id").getAsInt();
-            String eventName = eventObject.getAsJsonPrimitive("type").getAsString();
-            String eventMinute = eventObject.getAsJsonPrimitive("minute").getAsString();
-            events.add(new Event(eventId, eventName, eventMinute, "", "", ""));
-        }
+            String eventName = "";
+            //JsonElement infoElement = eventObject.get("info");
+            if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 18) {
+                eventName = "Substitution";
+            } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 19) {
+                eventName = "Yellow Card " + eventObject.getAsJsonPrimitive("player_name").getAsString();
+            } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 14) {
+                eventName = "Goal " + eventObject.getAsJsonPrimitive("player_name").getAsString();
+            } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 16) {
+                eventName = "(P) Goal " + eventObject.getAsJsonPrimitive("player_name").getAsString();
+            } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 17) {
+                eventName = "(P) Miss " + eventObject.getAsJsonPrimitive("player_name").getAsString();
+            } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 15) {
+                eventName = "OG " + eventObject.getAsJsonPrimitive("player_name").getAsString(); //not sure how the api classes the team id for this, so it might appear on the wrong side
+            } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 20 || eventObject.getAsJsonPrimitive("type_id").getAsInt() == 21) {//20 is straight red, 21 is second yellow so both have same outcome
+                eventName = "red card " + eventObject.getAsJsonPrimitive("player_name").getAsString();
+            }
+                    //18 sub
+                    //19 yellow
+                    //16 goal
+//                    if (infoElement != null && !infoElement.isJsonNull() && infoElement.isJsonPrimitive()) {
+//                        eventName = infoElement.getAsString();
+//                    }
 
-        return events;
+            String eventMinute = eventObject.getAsJsonPrimitive("minute").getAsString();
+            JsonElement extraMinuteElement = eventObject.get("extra_minute");
+
+            if (extraMinuteElement != null && !extraMinuteElement.isJsonNull()) {
+                eventMinute += " + " + extraMinuteElement.getAsJsonPrimitive().getAsString();
+            }
+
+            int team = eventObject.getAsJsonPrimitive("participant_id").getAsInt();
+            JsonElement teamElement = eventObject.get("participant_id");
+            String teamName = "";
+
+
+
+
+            try{
+
+                //denmark 1
+                URL url = new URL("https://api.sportmonks.com/v3/football/teams/" + team + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
+                //scotland 1
+                //URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
+
+
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                StringBuilder content = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    //System.out.println(inputLine.toString());
+                    content.append(inputLine);
+                }
+                in.close();
+                connection.disconnect();
+
+                if(content != null){
+                    String jsonString = content.toString();
+                    Gson gson = new Gson();
+                    JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
+                    String name = jsonObject.getAsJsonObject("data").get("name").getAsString();
+                }
+
+
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+
+
+
+            if (teamElement != null && !teamElement.isJsonNull()) {
+
+            }
+
+
+            String result = "";
+            JsonElement resultElement = eventObject.get("result");
+
+            if (resultElement != null && resultElement.isJsonPrimitive()) {
+                result = resultElement.getAsJsonPrimitive().getAsString();
+                if (result != null) {
+                            lastResult = result;  // Update lastResult when result is non-null
+                }
+            }
+
+                    String addition = "";
+                    JsonElement additionElement = eventObject.get("addition");
+
+                    if (additionElement != null && additionElement.isJsonPrimitive()) {
+                        addition = additionElement.getAsJsonPrimitive().getAsString();
+                    }
+
+                    int participantId = eventObject.getAsJsonPrimitive("participant_id").getAsInt();
+                    String team = "";  // Initialize team to empty string
+
+                    if (eventName != "") {
+                        if (participantId == homeTeamId) {
+                            team = "home";
+                            System.out.println("home");
+                        } else if (participantId == awayTeamId) {
+                            team = "away";
+                            System.out.println("away");
+                        }
+
+                        events.add(new Event(eventId, eventName, eventMinute, result, addition, team));
+
+                    }
+                }
     }
+
+    public static String parseForNotif
     public static gameInstance parseGame(String jsonString) {
         Gson gson = new Gson();
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();

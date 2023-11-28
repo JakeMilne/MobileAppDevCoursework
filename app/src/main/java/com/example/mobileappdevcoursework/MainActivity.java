@@ -34,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
         //setContentView(R.layout.activity_main);
 
         createNotificationChannel();
-
+        Notifications notificationManager = new Notifications(this);
+        notificationManager.run();
         //code for the navigation bar comes from https://www.youtube.com/watch?v=jOFLmKMOcK0 , accessed 14/11/2023 at 10am the switch case at 7:54 was adapted to a series of if else statements to fix a constant expression required error
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -149,7 +150,7 @@ class Notifications implements Runnable {
                 if (game.eventCount() > followedGamesMap.get(game.getId())) {
                     for (int i = followedGamesMap.get(game.getId()); i < game.eventCount(); i++) {
                         Event event = game.getEventAtIndex(i);
-
+                        sendNotif(event);
                     }
                 }
 
