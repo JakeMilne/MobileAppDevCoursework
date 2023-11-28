@@ -1,9 +1,13 @@
 # cm3110-coursework-JakeMilne
 cm3110-coursework-JakeMilne created by GitHub Classroom
 
-gson
-relevance of mobile specific features
-colour/design
+gson <br>
+
+colour/design<br>
+
+![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/3488d0de-8509-40bc-a9d7-52640eb9e9a0)
+
+<br>
 </br></br>
 App Description
 <br>
