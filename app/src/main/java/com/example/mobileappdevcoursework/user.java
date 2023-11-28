@@ -1,10 +1,12 @@
 package com.example.mobileappdevcoursework;
+import androidx.annotation.NonNull;
 import androidx.room.*;
 
 @Entity
 public class user {
 
     @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "name")
     String name;
 

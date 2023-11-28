@@ -13,32 +13,32 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private Context context;
-    private List<liveGame> liveGames;
+    private List<LiveGame> LiveGames;
     private OnItemClickListener onItemClickListener;
 
 
-    public MyLiveAdapter(Context context, List<liveGame> games) {
+    public MyLiveAdapter(Context context, List<LiveGame> games) {
         this.context = context;
-        this.liveGames = games;
+        this.LiveGames = games;
     }
 
 
-    public MyLiveAdapter(Context context, List<liveGame> games, OnItemClickListener onItemClickListener) {
+    public MyLiveAdapter(Context context, List<LiveGame> games, OnItemClickListener onItemClickListener) {
         this.context = context;
-        this.liveGames = games;
+        this.LiveGames = games;
         this.onItemClickListener = onItemClickListener;
     }
 
 
-    public void setLiveGames(List<liveGame> games){
+    public void setLiveGames(List<LiveGame> games){
         Log.d("MyAdapter", "setItems: Setting items in adapter, count=" + games.size());
 
-        this.liveGames = games;
+        this.LiveGames = games;
         notifyDataSetChanged(); // Notify the adapter that the data has changed
 
     }
-    public void addGame(liveGame game) {
-        liveGames.add(game);
+    public void addGame(LiveGame game) {
+        LiveGames.add(game);
         notifyDataSetChanged();
     }
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -54,7 +54,7 @@ public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        final liveGame currentGame = liveGames.get(position);
+        final LiveGame currentGame = LiveGames.get(position);
 
         holder.titleView.setText(currentGame.getTitle());
         holder.dateView.setText(currentGame.getDate());
@@ -73,7 +73,7 @@ public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public int getItemCount() {
-        return liveGames.size();
+        return LiveGames.size();
     }
 
     public interface OnItemClickListener {

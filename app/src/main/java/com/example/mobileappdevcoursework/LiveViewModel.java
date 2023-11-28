@@ -8,19 +8,18 @@
     import java.io.InputStreamReader;
     import java.net.HttpURLConnection;
     import java.net.URL;
-    import java.time.LocalDate;
     import java.util.ArrayList;
     import java.util.List;
 
     public class LiveViewModel extends ViewModel {
 
-        private MutableLiveData<List<liveGame>> liveGamesLiveData;
+        private MutableLiveData<List<LiveGame>> liveGamesLiveData;
 
         public LiveViewModel() {
             liveGamesLiveData = new MutableLiveData<>();
         }
 
-        public LiveData<List<liveGame>> getGames() {
+        public LiveData<List<LiveGame>> getGames() {
             return liveGamesLiveData;
         }
 
@@ -28,20 +27,20 @@
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    List<liveGame> liveGames = liveSearch();
-                    liveGamesLiveData.postValue(liveGames);
+                    List<LiveGame> LiveGames = liveSearch();
+                    liveGamesLiveData.postValue(LiveGames);
                 }
             }).start();
         }
 
-        public static List<liveGame> liveSearch(){
-            List<liveGame> liveGames = new ArrayList<>();
+        public static List<LiveGame> liveSearch(){
+            List<LiveGame> LiveGames = new ArrayList<>();
             try{
 
                 //denmark 1
-                //URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:271");
+                URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:271");
                 //scotland 1
-                URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
+                //URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
 
 
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -61,7 +60,7 @@
                 if(content != null){
                     String jsonString = content.toString();
                     System.out.println(jsonString);
-                    liveGames = jsonParser.parseLiveJson(jsonString);
+                    LiveGames = jsonParser.parseLiveJson(jsonString);
                 }
 
 
@@ -73,6 +72,6 @@
     //        for (Item item : items) {
     //            System.out.println("Item(Title: " + item.getTitle() + ", date: " + item.getDate() + ")");
     //        }
-            return liveGames;
+            return LiveGames;
         }
     }

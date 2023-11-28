@@ -13,7 +13,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private Context context;
     private List<Game> games;
-    private List<liveGame> liveGames;
+    private List<LiveGame> LiveGames;
     private OnItemClickListener onItemClickListener;
 
 
@@ -37,7 +37,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
         notifyDataSetChanged(); // Notify the adapter that the data has changed
     }
 
-    public void setLiveGames(List<liveGame> games){
+    public void setLiveGames(List<LiveGame> games){
 
     }
     public void addGame(Game game) {

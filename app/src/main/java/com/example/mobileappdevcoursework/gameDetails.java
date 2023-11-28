@@ -68,59 +68,87 @@ public class gameDetails extends Fragment {
         Bundle bundle = getArguments();
         View rootView = inflater.inflate(R.layout.fragment_game_details, container, false);
 
+        TextView titleTextView = rootView.findViewById(R.id.titleTextView);
+        TextView timeView = rootView.findViewById(R.id.timeView);
+        TextView venueView = rootView.findViewById(R.id.venueView);
+        TextView homeView = rootView.findViewById(R.id.homeView);
+        TextView awayView = rootView.findViewById(R.id.awayView);
+        TextView homePosView = rootView.findViewById(R.id.homePosView);
+        TextView awayPosView = rootView.findViewById(R.id.awayPosView);
+
         if (bundle != null) {
-            // Extract the item_id from the Bundle
-            int itemId = bundle.getInt("ITEM_ID", -1);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-            String baseURL = "https://api.sportmonks.com/v3/football/fixtures/" + itemId + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501";
-            try{
+                    // Extract the item_id from the Bundle
+                    int itemId = bundle.getInt("ITEM_ID", -1);
+
+                    String baseURL = "https://api.sportmonks.com/v3/football/fixtures/" + itemId + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501";
+                    try{
 
 
-                URL url = new URL(baseURL);
+                        URL url = new URL(baseURL);
 
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 
-                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String inputLine;
-                StringBuilder content = new StringBuilder();
+                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String inputLine;
+                        StringBuilder content = new StringBuilder();
 
-                while ((inputLine = in.readLine()) != null) {
-                    //System.out.println(inputLine.toString());
-                    content.append(inputLine);
+                        while ((inputLine = in.readLine()) != null) {
+                            //System.out.println(inputLine.toString());
+                            content.append(inputLine);
+                        }
+                        in.close();
+                        connection.disconnect();
+
+                        String jsonString = content.toString();
+                        System.out.println(jsonString);
+                        gameInstance thisGame = jsonParser.parseGame(jsonString);
+
+                        if (thisGame != null) {
+                            System.out.println(thisGame.toString());
+                        } else {
+                            System.out.println("Failed to parse the game data.");
+                        }
+
+                        System.out.println(thisGame.toString());
+
+
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                titleTextView.setText(thisGame.getGameName());
+                                timeView.setText(thisGame.getStartTime());
+                                venueView.setText(thisGame.getVenue());
+                                homeView.setText(thisGame.getHomeName());
+                                awayView.setText(thisGame.getAwayName());
+                                homePosView.setText(String.valueOf(thisGame.getHomeTeamPosition()));
+                                awayPosView.setText(String.valueOf(thisGame.getAwayTeamPosition()));
+                            }
+                        });
+
+
+
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
                 }
-                in.close();
-                connection.disconnect();
+            }).start();
 
-                String jsonString = content.toString();
-                System.out.println(jsonString);
-                gameInstance thisgame = jsonParser.parseGame(jsonString);
-
-
-                TextView titleTextView = rootView.findViewById(R.id.titleTextView);
-                TextView timeView = rootView.findViewById(R.id.timeView);
-                TextView venueView = rootView.findViewById(R.id.venueView);
-                TextView homeView = rootView.findViewById(R.id.homeView);
-                TextView awayView = rootView.findViewById(R.id.awayView);
-                TextView homPosView = rootView.findViewById(R.id.homePosView);
-                TextView awayPosView = rootView.findViewById(R.id.awayPosView);
+        };
 
 
 
 
-
-
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-        }
-
-
-        return inflater.inflate(R.layout.fragment_game_details, container, false);
+        return rootView;
     }
 
 

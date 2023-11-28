@@ -17,8 +17,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.mobileappdevcoursework.databinding.FragmentLiveScoresBinding;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,14 +86,14 @@ public class liveScores extends Fragment implements MyLiveAdapter.OnItemClickLis
 
         viewModel = new ViewModelProvider(this).get(LiveViewModel.class);
 
-        viewModel.getGames().observe(getViewLifecycleOwner(), new Observer<List<liveGame>>() {
+        viewModel.getGames().observe(getViewLifecycleOwner(), new Observer<List<LiveGame>>() {
             @Override
-            public void onChanged(List<liveGame> liveGames) {
-                Log.d("liveScores", "onChanged: LiveData updated with " + liveGames.size() + " live games");
+            public void onChanged(List<LiveGame> LiveGames) {
+                Log.d("liveScores", "onChanged: LiveData updated with " + LiveGames.size() + " live games");
 
-                if (liveGames != null && !liveGames.isEmpty()) {
+                if (LiveGames != null && !LiveGames.isEmpty()) {
                     noLiveGamesTextView.setVisibility(View.GONE);
-                    adapter.setLiveGames(liveGames);
+                    adapter.setLiveGames(LiveGames);
                 } else {
                     noLiveGamesTextView.setVisibility(View.VISIBLE);
                 }
