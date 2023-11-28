@@ -217,12 +217,11 @@ public class jsonParser {
                 }
                 in.close();
                 connection.disconnect();
-
                 if(content != null){
                     String jsonString = content.toString();
                     Gson gson = new Gson();
                     JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
-                    String name = jsonObject.getAsJsonObject("data").get("name").getAsString();
+                    teamName = jsonObject.getAsJsonObject("data").get("name").getAsString();
                 }
 
 
@@ -247,7 +246,10 @@ public class jsonParser {
             if (resultElement != null && resultElement.isJsonPrimitive()) {
                 result = resultElement.getAsJsonPrimitive().getAsString();
                 if (result != null) {
-                            lastResult = result;  // Update lastResult when result is non-null
+                    lastResult = result;  // Update lastResult when result is non-null
+
+                }else{
+                    result = lastResult;
                 }
             }
 
@@ -258,25 +260,16 @@ public class jsonParser {
                         addition = additionElement.getAsJsonPrimitive().getAsString();
                     }
 
-                    int participantId = eventObject.getAsJsonPrimitive("participant_id").getAsInt();
-                    String team = "";  // Initialize team to empty string
 
-                    if (eventName != "") {
-                        if (participantId == homeTeamId) {
-                            team = "home";
-                            System.out.println("home");
-                        } else if (participantId == awayTeamId) {
-                            team = "away";
-                            System.out.println("away");
-                        }
 
-                        events.add(new Event(eventId, eventName, eventMinute, result, addition, team));
+                    events.add(new Event(eventId, eventName, eventMinute, result, addition, teamName));
 
-                    }
-                }
+
+        }
+        return events;
     }
 
-    public static String parseForNotif
+
     public static gameInstance parseGame(String jsonString) {
         Gson gson = new Gson();
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();

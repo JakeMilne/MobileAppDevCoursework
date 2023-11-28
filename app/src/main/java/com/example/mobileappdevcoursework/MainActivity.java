@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,8 +172,10 @@ class Notifications implements Runnable {
 
     private void sendNotif(Event event) {
         final String CHANNEL_ID = "App_Title_id";
-        String textTitle = "";
-        String textContent = "";
+        List<String> notif = new ArrayList<>();
+        notif = parseForNotif(event);
+        String textTitle = notif.get(0);
+        String textContent = notif.get(1);
         Context context = this.context;
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -210,6 +213,29 @@ class Notifications implements Runnable {
         }
 
         return sum;
+    }
+    public static List<String> parseForNotif(Event event){
+        List<String> notif = new ArrayList<>();
+
+        //(new Event(eventId, eventName, eventMinute, result, addition, teamName))
+        if (event.getAddition().isEmpty()){
+            notif.add(event.getMinute() + "' "  + event.getName() + " " + event.getTeam() + " " + event.getResult());
+
+        }else{
+            notif.add(event.getMinute() + " + " + event.getAddition() + "' "  + event.getName() + " " + event.getTeam() + " " + event.getResult());
+        }
+        if (event.getAddition().isEmpty()){
+            notif.add(event.getName() + " for  " + event.getTeam() + " at minute " + event.getMinute() + "' "  +  " the score is: " + event.getResult());
+
+
+        }else{
+            notif.add(event.getName() + " for  " + event.getTeam() + " at minute " + event.getMinute() + " + " + event.getAddition() + "' "  +  " the score is: " + event.getResult());
+
+        }
+
+
+
+        return notif;
     }
 }
 
