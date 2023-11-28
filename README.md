@@ -76,8 +76,6 @@ The game database is used to store upcoming games retrieved from the api so that
 The user database acts as a configuration file, storing the name and league preference of the user so that when the app is loaded, details the user previously entered can be used <br>
 
 
-o Any mobile specific functionalities that have been implemented. <br>
-
 <h2>Mobile Specific Functionalities</h2>
 App Title gives the user the option to add upcoming games to their calender, as well as the option to enable notifications for games in progress, so they never miss an event.
 
