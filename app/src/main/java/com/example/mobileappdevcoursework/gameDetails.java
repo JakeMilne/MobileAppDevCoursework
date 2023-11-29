@@ -35,6 +35,8 @@ public class gameDetails extends Fragment{
     private String mParam1;
     private String mParam2;
 
+    private DatabaseRepository databaseRepository;
+
     public gameDetails() {
         // Required empty public constructor
     }
@@ -61,6 +63,8 @@ public class gameDetails extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("gameDetails", "onCreate: Fragment created");
+        databaseRepository = databaseRepository.getRepository(getContext());
+
     }
 
     @Override
@@ -89,8 +93,8 @@ public class gameDetails extends Fragment{
 
                     // Extract the item_id from the Bundle
                     int itemId = bundle.getInt("ITEM_ID", -1);
-
-                    String baseURL = "https://api.sportmonks.com/v3/football/fixtures/" + itemId + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501";
+                    int leagueID = databaseRepository.getLeague();
+                    String baseURL = "https://api.sportmonks.com/v3/football/fixtures/" + itemId + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID;
                     try{
 
 

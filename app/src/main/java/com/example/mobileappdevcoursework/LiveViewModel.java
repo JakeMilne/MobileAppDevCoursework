@@ -61,7 +61,7 @@
             int leagueID = databaseRepository.getLeague();
 
             try {
-                System.out.println(leagueID);
+                //System.out.println(leagueID);
                 URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID);
 
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -77,7 +77,9 @@
 
                 if (content != null) {
                     String jsonString = content.toString();
-                    System.out.println("here " + jsonString);
+                    //System.out.println("here " + jsonString);
+
+
 
                     liveGames = jsonParser.parseLiveJson(jsonString);
                     liveGamesLiveData.postValue(liveGames);

@@ -21,6 +21,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,13 +54,13 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = navHostFragment.getNavController();
 
 
-//        new Thread(() -> {
-//            createNotificationChannel();
-//            LiveViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(LiveViewModel.class);
-//            DatabaseRepository databaseRepository = DatabaseRepository.getRepository(this);
-//            Notifications notificationManager = new Notifications(this, viewModel, databaseRepository);
-//            notificationManager.run();
-//        }).start();
+        new Thread(() -> {
+            createNotificationChannel();
+            LiveViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(LiveViewModel.class);
+            DatabaseRepository databaseRepository = DatabaseRepository.getRepository(this);
+            Notifications notificationManager = new Notifications(this,  databaseRepository);
+            notificationManager.run();
+        }).start();
 
 
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
@@ -112,77 +116,73 @@ public class MainActivity extends AppCompatActivity {
 class Notifications implements Runnable {
 
     private Context context;
-    private LiveViewModel liveViewModel;
     private DatabaseRepository databaseRepository;
 
-    public Notifications(Context context, LiveViewModel liveViewModel, DatabaseRepository databaseRepository) {
+    public Notifications(Context context, DatabaseRepository databaseRepository) {
         this.context = context;
-        this.liveViewModel = liveViewModel;
         this.databaseRepository = databaseRepository;
     }
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    @Override
+
+@Override // https://chat.openai.com/share/44cc401f-7c49-4484-830b-f51375a05d0a
     public void run() {
-        scheduler.scheduleAtFixedRate(() -> {
+        while (true) {
             long startTime = System.currentTimeMillis();
-            notifCheck();
+            boolean shouldSleep = notifCheck();
             long endTime = System.currentTimeMillis();
             System.out.println("Execution time: " + (endTime - startTime) + " ms");
-        }, 0, 10, TimeUnit.SECONDS);
+
+            if (shouldSleep) {
+                try {
+                    // Sleep for 1 minute if the condition is met
+                    System.out.println("Sleep for 1 min");
+                    Thread.sleep(60000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    // Sleep for the specified interval before the next execution
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
-    private void notifCheck() {
-        // Your code to be executed every 10 seconds
+    private boolean notifCheck() {
         long startTime = System.currentTimeMillis();
-        new Thread(() -> {
-            try{
+        // Your code to be executed every 10 seconds
+        try {
             // Perform network-related operation in a background thread
-                Thread.sleep(10000);
-            List<LiveGame> liveGames = liveViewModel.liveSearch();
+            Thread.sleep(10000);
+            List<LiveGame> liveGames = this.notificationSearch();
+            if (liveGames == null) {
+                System.out.println("Sleep for 1 min");
+                Thread.sleep(60000);
+                return true; // Return true if you want to sleep for 1 minute
+            } else {
+                System.out.println(liveGames.toString());
+                List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
+                Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
 
-            // Continue processing the data in the background thread
-            List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
-            Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
-            for (FollowedGame followedGame : followedGames) {
-                // Check if the FollowedGame is not in liveGames
-                boolean isFollowedGameInLiveGames = false;
+                // ... rest of your code ...
 
-                for (LiveGame liveGame : liveGames) {
-                    if (liveGame.getId() == followedGame.getGameID()) {
-                        isFollowedGameInLiveGames = true;
-                        break;
-                    }
-                }
-
-                // If the FollowedGame is not in liveGames, delete it
-                if (!isFollowedGameInLiveGames) {
-                    databaseRepository.deleteFollowedGame(followedGame.getGameID());
-                }
+                System.out.println("Executing myFunction every 10 seconds");
+                return false; // Return false if you don't want to sleep for 1 minute
             }
-            for (LiveGame game : liveGames) {
-                if (followedGamesMap.get(game.getId()) != null) {
-                    if (game.eventCount() > followedGamesMap.get(game.getId())) {
-                        for (int i = followedGamesMap.get(game.getId()); i < game.eventCount(); i++) {
-                            Event event = game.getEventAtIndex(i);
-                            sendNotif(event);
-                        }
-                    }
-                }
-            }
-
-            System.out.println("Executing myFunction every 10 seconds");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-        long endTime = System.currentTimeMillis();
-        System.out.println("notifCheck execution time: " + (endTime - startTime) + " ms");
-
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            long endTime = System.currentTimeMillis();
+            System.out.println("notifCheck execution time: " + (endTime - startTime) + " ms");
+        }
     }
 
-    // ... rest of the code ...
 
 
     private static Map<Integer, Integer> convertListToMap(List<FollowedGame> followedGamesList) {
@@ -259,6 +259,44 @@ class Notifications implements Runnable {
 
 
         return notif;
+    }
+
+    public List<LiveGame> notificationSearch() {
+        List<LiveGame> liveGames = new ArrayList<>();
+        int leagueID = databaseRepository.getLeague();
+
+        try {
+            //System.out.println(leagueID);
+            URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            connection.disconnect();
+
+            if (content != null) {
+                String jsonString = content.toString();
+                //System.out.println("here " + jsonString);
+                boolean shouldDelay = false;
+                if (jsonString.contains("\"message\":\"No result(s) found matching your request.")) {
+                    return null;
+                }
+
+
+                liveGames = jsonParser.parseLiveJson(jsonString);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return liveGames;
     }
 }
 
