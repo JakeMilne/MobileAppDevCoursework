@@ -117,6 +117,40 @@ public class liveGameDetails extends Fragment implements View.OnClickListener{
                                 }
                             }
 
+                            System.out.println("venue");
+                            URL url2 = new URL("https://api.sportmonks.com/v3/football/venues/{" + liveGame.venue + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
+                            HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
+
+                            BufferedReader in2 = new BufferedReader(new InputStreamReader(connection2.getInputStream()));
+                            String inputLine2;
+                            StringBuilder content2 = new StringBuilder();
+
+                            while ((inputLine2 = in2.readLine()) != null) {
+                                content2.append(inputLine2);
+                            }
+                            in2.close();
+                            connection2.disconnect();
+
+
+                            if (content2 != null) {
+                                System.out.println(content2);
+                                String venue = jsonParser.getVenue(content2.toString());
+
+                                // Update the UI on the main thread
+                                requireActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+
+                                        venueView.setText("Venue: " + venue);
+
+
+                                    }
+                                });
+                            } else {
+                                System.out.println("null venue");
+                            }
+
                             // Update the UI on the main thread
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -125,7 +159,6 @@ public class liveGameDetails extends Fragment implements View.OnClickListener{
 
 
                                         timeView.setText("Started at: " + liveGame.startTime);
-                                        venueView.setText("Venue: " + liveGame.venue);
                                         scoreView.setText("Score: " + liveGame.score);
                                         titleTextView.setText(liveGame.title);
                                         homeEventView.setText(liveGame.getHomeEventList());
@@ -140,6 +173,8 @@ public class liveGameDetails extends Fragment implements View.OnClickListener{
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+
                 }
             }).start();
 

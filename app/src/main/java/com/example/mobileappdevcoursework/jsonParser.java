@@ -330,7 +330,6 @@ public class jsonParser {
         String gameName = dataObject.get("name").getAsString();
         String startTime = dataObject.get("starting_at").getAsString();
         String venue = dataObject.get("venue_id").getAsString();
-
         JsonArray participants = dataObject.getAsJsonArray("participants");
 
         String homeName = participants.get(0).getAsJsonObject().get("name").getAsString();
@@ -470,18 +469,15 @@ public class jsonParser {
 //    }
 
     public static String getVenue(String jsonData) {
+        System.out.println("getvenue ");
         Gson gson = new Gson();
         String venueName = "";
         JsonObject dataObject = gson.fromJson(jsonData, JsonObject.class);
-        JsonArray dataArray = dataObject.getAsJsonArray("data");
+        JsonObject data = dataObject.getAsJsonObject("data");
 
-        for (JsonElement element : dataArray) {
-            JsonObject venueObject = element.getAsJsonObject();
-            venueName = venueObject.getAsJsonObject("data").get("name").getAsString();
-
-
-
-        }
+        // Access the venue name from the "data" object
+        venueName = data.get("name").getAsString();
+        System.out.println(venueName);
         return venueName;
 
     }

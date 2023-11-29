@@ -50,13 +50,13 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = navHostFragment.getNavController();
 
 
-        new Thread(() -> {
-            createNotificationChannel();
-            LiveViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(LiveViewModel.class);
-            DatabaseRepository databaseRepository = DatabaseRepository.getRepository(this);
-            Notifications notificationManager = new Notifications(this, viewModel, databaseRepository);
-            notificationManager.run();
-        }).start();
+//        new Thread(() -> {
+//            createNotificationChannel();
+//            LiveViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(LiveViewModel.class);
+//            DatabaseRepository databaseRepository = DatabaseRepository.getRepository(this);
+//            Notifications notificationManager = new Notifications(this, viewModel, databaseRepository);
+//            notificationManager.run();
+//        }).start();
 
 
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
