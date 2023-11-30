@@ -11,6 +11,10 @@ public interface FollowedGameDAO {
     @Query("SELECT * FROM FollowedGame")
     List<FollowedGame> getAllFollowed();
 
+    @Query("SELECT event_count FROM FOLLOWEDGAME WHERE gameID = :id")
+    int getEventCount(int id);
+
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void updateFollowedGames(FollowedGame game);
 

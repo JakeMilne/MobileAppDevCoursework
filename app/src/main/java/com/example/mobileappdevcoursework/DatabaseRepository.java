@@ -59,6 +59,8 @@ public class DatabaseRepository {
 
     public void deleteUser(){mUserDao.deleteUser();};
 
+    int getEventCount(int id){return mFollowedGameDao.getEventCount(id);};
+
     public List<FollowedGame> getAllFollowed(){return mFollowedGameDao.getAllFollowed();};
 
 

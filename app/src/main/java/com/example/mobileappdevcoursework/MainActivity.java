@@ -130,9 +130,19 @@ class Notifications implements Runnable {
     public void run() {
         while (true) {
             long startTime = System.currentTimeMillis();
-            boolean shouldSleep = notifCheck();
+            Map<Integer, Integer> followedGames = notifCheck();
+
+            boolean shouldSleep = false;
+            if(followedGames == null){
+                shouldSleep = true;
+            } else{
+                //logic to send notifications
+                //for game in followed game
+//                int oldCount = databaseRepository.getEventCount() // followed game id
+            }
+            //boolean shouldSleep = notifCheck(); // change to Map<Integer, Integer> followedGames, and do if !followedGames == null shouldSleep = true
             long endTime = System.currentTimeMillis();
-            System.out.println("Execution time: " + (endTime - startTime) + " ms");
+            //System.out.println("Execution time: " + (endTime - startTime) + " ms");
 
             if (shouldSleep) {
                 try {
@@ -153,7 +163,9 @@ class Notifications implements Runnable {
         }
     }
 
-    private boolean notifCheck() {
+//    private boolean notifCheck() {
+    private Map<Integer, Integer> notifCheck() {
+
         long startTime = System.currentTimeMillis();
         // Your code to be executed every 10 seconds
         try {
@@ -163,20 +175,20 @@ class Notifications implements Runnable {
             if (liveGames == null) {
                 System.out.println("Sleep for 1 min");
                 Thread.sleep(60000);
-                return true; // Return true if you want to sleep for 1 minute
+                return null; // Return true if you want to sleep for 1 minute
             } else {
                 System.out.println(liveGames.toString());
                 List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
                 Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
 
-                // ... rest of your code ...
+
 
                 System.out.println("Executing myFunction every 10 seconds");
-                return false; // Return false if you don't want to sleep for 1 minute
+                return followedGamesMap; // Return false if you don't want to sleep for 1 minute
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
-            return false;
+            return null;
         } finally {
             long endTime = System.currentTimeMillis();
             System.out.println("notifCheck execution time: " + (endTime - startTime) + " ms");
