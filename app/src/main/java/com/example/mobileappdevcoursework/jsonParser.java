@@ -17,6 +17,7 @@ import java.util.List;
 
 public class jsonParser {
 
+    //method that takes json produced by the endpoint /v3/football/fixtures/ and formats it into a List of type Game, this is used in HomeViewModel to fill the recyclerView in the HomeFragment
     public static List<Game> parseJson(String jsonString) {
         List<Game> games = new ArrayList<>();
 
