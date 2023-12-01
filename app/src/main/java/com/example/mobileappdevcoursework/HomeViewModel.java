@@ -94,9 +94,8 @@ public class HomeViewModel extends AndroidViewModel {
 
 
             String baseURL = "https://api.sportmonks.com/v3/football/fixtures/between/" + LocalDate.now() + "/" + addMonth() + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID;
-            //LocalDate.now() and addMonth() are used so the API finds games within the next month
+            //LocalDate.now() and addMonth() are used so the API finds games within the next month, this may not show games towards the end of the period, I think this has to do with there being a limit on how many games the api is willing to send
             URL url = new URL(baseURL);
-
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 

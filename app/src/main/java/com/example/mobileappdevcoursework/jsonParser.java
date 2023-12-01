@@ -186,7 +186,7 @@ public class jsonParser {
         return liveGames;
     }
 
-    private static List<Event> parseEvents(JsonArray eventsArray) {
+    public static List<Event> parseEvents(JsonArray eventsArray) {
 //        List<Event> events = new ArrayList<>();
 //
 //        for (JsonElement eventElement : eventsArray) {

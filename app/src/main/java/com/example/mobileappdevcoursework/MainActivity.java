@@ -141,9 +141,15 @@ class Notifications implements Runnable {
 //                int oldCount = databaseRepository.getEventCount() // followed game id
 
                 for (LiveGame game : liveGames){
-                    if(followedGames.get(game.getGameId) != null){
-                        int newCount = parseEvents() // change to accept LiveGame
-                        game.getEvents().size;
+                    if(followedGames.get(game.getId()) != null){
+                        int newCount = game.getEvents().size();
+                        int oldCount = followedGames.get(game.getId());
+                        if(newCount > oldCount){
+                            for(int i=newCount; i >oldCount; i++){
+                                sendNotif(game.getEventAtIndex(i));
+                            }
+                        }
+
                     }
                 
                 
