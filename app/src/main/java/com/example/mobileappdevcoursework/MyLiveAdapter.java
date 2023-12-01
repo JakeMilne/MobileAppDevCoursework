@@ -13,6 +13,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+//adapter for the live scores fragment
 public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private Context context;
