@@ -8,10 +8,10 @@ public class user {
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "name")
-    String name;
+    String name; //users name, gets displayed on the upcoming games page
 
     @ColumnInfo(name = "league")
-    int favouriteLeague;
+    int favouriteLeague; // league id
 
     public String getName() {
         return name;
