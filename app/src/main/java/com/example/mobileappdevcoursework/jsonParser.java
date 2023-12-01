@@ -85,9 +85,11 @@ public class jsonParser {
 //        return LiveGames;
 //    }
 
+
+    //method that takes json produced by the endpoint /v3/football/livescores/ and formats it into a List of type Game, this is used in LiveViewModel to fill the recyclerView in the live scores fragment, as well as the live details page, and the mainactivity, as it is used to produce notifications
     public static List<LiveGame> parseLiveJson(String jsonString) {
         List<LiveGame> liveGames = new ArrayList<>();
-        String lastResult = "0-0";
+        String lastResult = "0-0"; //last result is the current score. if an event is a goal it will contain the score, however if it isnt a goal result will be null, lastresult is used to track the score so that it can be displayed on all notifications, not just goals
 
 
         try {
@@ -96,7 +98,7 @@ public class jsonParser {
 
             if (root.isJsonObject()) {
                 JsonObject jsonObject = root.getAsJsonObject();
-                System.out.println(jsonObject);
+                // System.out.println(jsonObject);
                 JsonArray dataArray = jsonObject.getAsJsonArray("data");
                 if (dataArray != null) {
                     for (JsonElement dataElement : dataArray) {
@@ -110,6 +112,7 @@ public class jsonParser {
                             int eventId = eventObject.getAsJsonPrimitive("id").getAsInt();
                             String eventName = "";
                             //JsonElement infoElement = eventObject.get("info");
+                            //converting event ids to their equivalent values, which can be found by calling the endpoint /v3/core/types
                             if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 18) {
                                 eventName = "Substitution";
                             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 19) {
@@ -117,11 +120,11 @@ public class jsonParser {
                             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 14) {
                                 eventName = "Goal " + eventObject.getAsJsonPrimitive("player_name").getAsString();
                             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 16) {
-                                eventName = "(P) Goal " + eventObject.getAsJsonPrimitive("player_name").getAsString();
+                                eventName = "(P) Goal " + eventObject.getAsJsonPrimitive("player_name").getAsString(); // penalty goal
                             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 17) {
-                                eventName = "(P) Miss " + eventObject.getAsJsonPrimitive("player_name").getAsString();
+                                eventName = "(P) Miss " + eventObject.getAsJsonPrimitive("player_name").getAsString(); //penalty miss
                             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 15) {
-                                eventName = "OG " + eventObject.getAsJsonPrimitive("player_name").getAsString(); //not sure how the api classes the team id for this, so it might appear on the wrong side
+                                eventName = "OG " + eventObject.getAsJsonPrimitive("player_name").getAsString(); //own goal. not sure how the api classes the team id for this, so it might appear on the wrong side
                             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 20 || eventObject.getAsJsonPrimitive("type_id").getAsInt() == 21) {//20 is straight red, 21 is second yellow so both have same outcome
                                 eventName = "red card " + eventObject.getAsJsonPrimitive("player_name").getAsString();
                             }
@@ -136,7 +139,7 @@ public class jsonParser {
                             JsonElement extraMinuteElement = eventObject.get("extra_minute");
 
                             if (extraMinuteElement != null && !extraMinuteElement.isJsonNull()) {
-                                eventMinute += " + " + extraMinuteElement.getAsJsonPrimitive().getAsString();
+                                eventMinute += " + " + extraMinuteElement.getAsJsonPrimitive().getAsString(); // if extra minute isn't null the game is in injury time, and so the minute field gets combined with the extra_minute field to get the overall minute (i.e. 45+2)
                             }
                             String result = "";
                             JsonElement resultElement = eventObject.get("result");
@@ -330,6 +333,7 @@ public class jsonParser {
     }
 
 
+    //used for game details since the game objects that get stored in the database dont have all the details needed.
     public static gameInstance parseGame(String jsonString) {
         Gson gson = new Gson();
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
@@ -476,6 +480,7 @@ public class jsonParser {
 //        return null;
 //    }
 
+    // takes json produced by /v3/football/venues/ and returns the name of the venue, this is necessary because some endpoints have venue ids, but not venue names
     public static String getVenue(String jsonData) {
         System.out.println("getvenue ");
         Gson gson = new Gson();
@@ -490,7 +495,7 @@ public class jsonParser {
 
     }
 
-    public static int countEvents(){
+    public static int countEvents(){ // dont call this??? delete sometime soon
         return 2;
     }
 }
