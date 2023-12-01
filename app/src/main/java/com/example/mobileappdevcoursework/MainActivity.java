@@ -131,7 +131,7 @@ class Notifications implements Runnable {
         while (true) {
             long startTime = System.currentTimeMillis();
             Map<Integer, Integer> followedGames = notifCheck();
-
+            List<LiveGame> liveGames = this.notificationSearch();
             boolean shouldSleep = false;
             if(followedGames == null){
                 shouldSleep = true;
@@ -139,6 +139,21 @@ class Notifications implements Runnable {
                 //logic to send notifications
                 //for game in followed game
 //                int oldCount = databaseRepository.getEventCount() // followed game id
+
+                for (LiveGame game : liveGames){
+                    if(followedGames.get(game.getGameId) != null){
+                        int newCount = parseEvents() // change to accept LiveGame
+                        game.getEvents().size;
+                    }
+                
+                
+                
+                }
+                //https://sentry.io/answers/iterate-hashmap-java/
+                
+                 for (Map.Entry<Integer, Integer> entry : followedGames.entrySet()){
+                     
+                 }
             }
             //boolean shouldSleep = notifCheck(); // change to Map<Integer, Integer> followedGames, and do if !followedGames == null shouldSleep = true
             long endTime = System.currentTimeMillis();
