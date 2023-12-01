@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+//custom OnClickListener so I can pass a gameInstance into the calendar app
 public class OnCalendarClickListener implements View.OnClickListener {
     private gameInstance thisGame;
 
@@ -25,7 +26,7 @@ public class OnCalendarClickListener implements View.OnClickListener {
                 .setData(CalendarContract.Events.CONTENT_URI)
                 .putExtra(CalendarContract.Events.TITLE, thisGame.getGameName())
                 .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, getMilliseconds(thisGame.getStartTime()))
-                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, getMilliseconds(thisGame.getStartTime()) + DateUtils.HOUR_IN_MILLIS + DateUtils.HOUR_IN_MILLIS)
+                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, getMilliseconds(thisGame.getStartTime()) + DateUtils.HOUR_IN_MILLIS + DateUtils.HOUR_IN_MILLIS) // adds 2 hours to the kick off time which is roughly the length of a game
                 .putExtra(CalendarContract.Events.EVENT_LOCATION, thisGame.getVenue())
                 .putExtra(CalendarContract.Events.DESCRIPTION, thisGame.getGameName() + " at " + thisGame.getStartTime());
 
