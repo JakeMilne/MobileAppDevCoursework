@@ -19,6 +19,7 @@ import android.widget.Toast;
  * Use the {@link userProfile#newInstance} factory method to
  * create an instance of this fragment.
  */
+//user profile fragment - allows the user to change their name/ league preferences, which is then stored in the UserDatabase
 public class userProfile extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -92,16 +93,14 @@ public class userProfile extends Fragment {
                 requireActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        // Code to be executed on the UI thread
-                        // This can include UI updates or interactions with UI elements
-                        // For example:
-                        nameText.setText(name);
+                        
+                        nameText.setText(name); // getting the same and displaying it in the name editText
                     }
                 });
             }
         }).start();
 
-        Spinner spinnerLanguages = view.findViewById(R.id.leagueSpinner);
+        Spinner spinnerLanguages = view.findViewById(R.id.leagueSpinner); //dropdown used for selecting leagues
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(), R.array.leagues, android.R.layout.simple_spinner_item);
 
@@ -115,14 +114,14 @@ public class userProfile extends Fragment {
                 // Display a Toast with the selected item
 
                 Toast.makeText(requireContext(), "Selected: " + parentView.getItemAtPosition(position), Toast.LENGTH_SHORT).show();
-                switch(parentView.getItemAtPosition(position).toString()) {
+                switch(parentView.getItemAtPosition(position).toString()) { //converting league names into ids for api calls
                     case "Scottish Premiership":
-                        // code block
+                       
                         league=501;
                         break;
                     case "Scottish Premiership Play-offs":
                         league=513;
-                        // code block
+                       
                         break;
                     case "Danish Superliga":
                         league=271;
@@ -131,8 +130,8 @@ public class userProfile extends Fragment {
                     case "Danish Superliga Play-offs":
                         league=1659;
                         default:
-                        league=501;
-                        // code block
+                        league=501; //if it breaks for some reason this should just set it to the scottish premiership
+                        
                 }
 
             }
