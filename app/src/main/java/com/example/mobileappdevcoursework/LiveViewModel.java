@@ -79,11 +79,12 @@
 
                 if (content != null) {
                     String jsonString = content.toString();
-                    //System.out.println("here " + jsonString);
+                    System.out.println("here " + jsonString);
 
 
 
-                    liveGames = jsonParser.parseLiveJson(jsonString);
+                    liveGames = jsonParser.parseLiveJson(jsonString, leagueID);
+                    System.out.println(liveGames);
                     liveGamesLiveData.postValue(liveGames);
                 }
 

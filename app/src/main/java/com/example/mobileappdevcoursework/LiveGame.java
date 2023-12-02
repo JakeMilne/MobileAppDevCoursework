@@ -3,13 +3,15 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
 public class LiveGame {
 
     String title;
-    String date;
     int id;
     String startTime;
     int venueID;
@@ -20,12 +22,13 @@ public class LiveGame {
     int awayPos;
     List<Event> events;
     String score;
+    int leagueId;
 
     public LiveGame(String title, String date, int id, int venueID,
                             String homeName, String awayName, int homePos, int awayPos,
-                            List<Event> events, String score) {
+                            List<Event> events, String score, int leagueId) {
         this.title = title;
-        this.date = date;
+        this.startTime = date;
         this.id = id;
         this.venueID = venueID;
         this.venue = getVenue();
@@ -33,21 +36,38 @@ public class LiveGame {
         this.awayName = awayName;
         this.homePos = homePos;
         this.awayPos = awayPos;
-        this.events = events;
+        this.events = events != null ? events : new ArrayList<>();
+        sortEventsByMinute();
         this.score = score;
+        this.leagueId = leagueId;
     }
 
     public int getId() {
         return id;
     }
 
+    @Override
+    public String toString() {
+        return "LiveGame{" +
+                "title='" + title + '\'' +
+                ", id=" + id +
+                ", startTime='" + startTime + '\'' +
+                ", venueID=" + venueID +
+                ", venue='" + venue + '\'' +
+                ", homeName='" + homeName + '\'' +
+                ", awayName='" + awayName + '\'' +
+                ", homePos=" + homePos +
+                ", awayPos=" + awayPos +
+                ", events=" + events +
+                ", score='" + score + '\'' +
+                ", leagueId=" + leagueId +
+                '}';
+    }
+
     public String getTitle() {
         return title;
     }
 
-    public String getDate() {
-        return date;
-    }
 
     public String getStartTime() {
         return startTime;
@@ -85,41 +105,46 @@ public class LiveGame {
     public int eventCount() {
         return this.events.size();
     }
-    public String getVenue(){
-        String venue = "";
+    public String getVenue() {
+        final StringBuilder venue = new StringBuilder();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("https://api.sportmonks.com/v3/football/venues/" + venueID + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String inputLine;
+                    StringBuilder content = new StringBuilder();
+
+                    while ((inputLine = in.readLine()) != null) {
+                        content.append(inputLine);
+                    }
+                    in.close();
+                    connection.disconnect();
+
+                    if (content != null) {
+                        String jsonString = content.toString();
+                        venue.append(jsonParser.getVenue(jsonString));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+
         try {
-
-
-            URL url = new URL("https://api.sportmonks.com/v3/football/venues/id=" + this.venueID + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:271");
-            //scotland 1
-            //URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
-
-
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String inputLine;
-            StringBuilder content = new StringBuilder();
-
-            while ((inputLine = in.readLine()) != null) {
-                //System.out.println(inputLine.toString());
-                content.append(inputLine);
-            }
-            in.close();
-            connection.disconnect();
-
-            if (content != null) {
-                String jsonString = content.toString();
-                System.out.println(jsonString);
-                venue = jsonParser.getVenue(jsonString);
-            }
-        }catch(Exception e){
+            // Wait for the thread to finish
+            thread.join();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-
-        return venue;
+        return venue.toString();
     }
 
 
@@ -179,6 +204,26 @@ public class LiveGame {
         } else {
             throw new IndexOutOfBoundsException("Invalid index: " + index);
         }
+    }
+    public void sortEventsByMinute() {
+        // Use Collections.sort with a custom comparator to sort events based on the minute
+        Collections.sort(events, Comparator.comparing(this::parseMinute));
+    }
+
+    private int parseMinute(Event event) {
+        String minuteString = event.getMinute();
+
+        // Split the string to separate main time and additional time
+        String[] parts = minuteString.split("\\+");
+
+        // Parse the main time
+        int mainTime = Integer.parseInt(parts[0].trim());
+
+        // Add additional time if available
+        int additionalTime = (parts.length > 1) ? Integer.parseInt(parts[1].trim()) : 0;
+
+        // Calculate the total minute value
+        return mainTime * 100 + additionalTime;
     }
 }
 

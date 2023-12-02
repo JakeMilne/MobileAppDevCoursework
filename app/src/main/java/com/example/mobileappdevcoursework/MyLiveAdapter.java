@@ -42,15 +42,25 @@ public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
         Collections.sort(games, new Comparator<LiveGame>() {
             @Override
             public int compare(LiveGame game1, LiveGame game2) {
-                // Assuming startTime is a String, you may need to convert it to a comparable format
+                String startTime1 = game1.getStartTime();
+                String startTime2 = game2.getStartTime();
+
+                if (startTime1 == null && startTime2 == null) {
+                    return 0;
+                } else if (startTime1 == null) {
+                    return -1;
+                } else if (startTime2 == null) {
+                    return 1;
+                }
+
                 return game1.getStartTime().compareTo(game2.getStartTime());
             }
         });
 
+        LiveGames.clear();
+        LiveGames.addAll(games);
 
-
-        this.LiveGames = games;
-        notifyDataSetChanged(); // Notify the adapter that the data has changed
+        notifyDataSetChanged();// Notify the adapter that the data has changed
 
     }
     public void addGame(LiveGame game) {
@@ -73,7 +83,7 @@ public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
         final LiveGame currentGame = LiveGames.get(position);
 
         holder.titleView.setText(currentGame.getTitle());
-        holder.dateView.setText(currentGame.getDate());
+        holder.dateView.setText(currentGame.getStartTime());
 
         // Set click listener for the button
         holder.button.setOnClickListener(new View.OnClickListener() {

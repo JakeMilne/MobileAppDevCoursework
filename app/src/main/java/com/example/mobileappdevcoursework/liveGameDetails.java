@@ -93,12 +93,18 @@ public class liveGameDetails extends Fragment implements View.OnClickListener{
                 @Override
                 public void run() {
                     itemId = bundle.getInt("ITEM_ID", -1);
+                    int leagueid = bundle.getInt("LEAGUE_ID", -1);
+
                     try {
+
+                        if (leagueid == -1) {
+                            leagueid = databaseRepository.getLeague();
+                        }
+                        System.out.println(leagueid);
                         //denmark 1
-                        int leagueid = databaseRepository.getLeague();
                         URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueid);
                         //scotland 1
-                       // URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
+                        // URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -110,70 +116,71 @@ public class liveGameDetails extends Fragment implements View.OnClickListener{
                         }
                         in.close();
                         connection.disconnect();
-
+                        System.out.println("live details \n\n\n\n\n\n\n\n\n\n");
                         if (content != null) {
-                            System.out.println(content);
+                            // System.out.println(content);
                             //liveGame = jsonParser.parseLiveJson(content.toString(), itemId);
-                            List<LiveGame> liveGames = jsonParser.parseLiveJson(content.toString());
-                            for(LiveGame game : liveGames){
-                                if(game.getId() == itemId){
+                            List<LiveGame> liveGames = jsonParser.parseLiveJson(content.toString(), leagueid);
+                            for (LiveGame game : liveGames) {
+                                if (game.getId() == itemId) {
+                                    System.out.println(game.toString());
+
                                     liveGame = game;
                                 }
                             }
 
-                            System.out.println("venue");
-                            URL url2 = new URL("https://api.sportmonks.com/v3/football/venues/{" + liveGame.venue + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
-                            HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
-
-                            BufferedReader in2 = new BufferedReader(new InputStreamReader(connection2.getInputStream()));
-                            String inputLine2;
-                            StringBuilder content2 = new StringBuilder();
-
-                            while ((inputLine2 = in2.readLine()) != null) {
-                                content2.append(inputLine2);
-                            }
-                            in2.close();
-                            connection2.disconnect();
-
-
-                            if (content2 != null) {
-                                System.out.println(content2);
-                                String venue = jsonParser.getVenue(content2.toString());
-
-                                // Update the UI on the main thread
-                                requireActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-
-                                        venueView.setText("Venue: " + venue);
-
-
-                                    }
-                                });
-                            } else {
-                                System.out.println("null venue");
-                            }
+//                            URL url2 = new URL("https://api.sportmonks.com/v3/football/venues/" + liveGame.getVenueID() + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
+//                            HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
+//
+//                            BufferedReader in2 = new BufferedReader(new InputStreamReader(connection2.getInputStream()));
+//                            String inputLine2;
+//                            StringBuilder content2 = new StringBuilder();
+//
+//                            while ((inputLine2 = in2.readLine()) != null) {
+//                                content2.append(inputLine2);
+//                            }
+//                            in2.close();
+//                            connection2.disconnect();
+//
+//
+//                            if (content2 != null) {
+//                                String venue = jsonParser.getVenue(content2.toString());
 
                             // Update the UI on the main thread
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (liveGame != null) {
+
+                                    //System.out.println(venue);
+                                    venueView.setText("Venue: " + liveGame.getVenue());
 
 
-                                        timeView.setText("Started at: " + liveGame.startTime);
-                                        scoreView.setText("Score: " + liveGame.score);
-                                        titleTextView.setText(liveGame.title);
-                                        homeEventView.setText(liveGame.getHomeEventList());
-                                        awayEventView.setText(liveGame.getAwayEventList());
-                                        minuteView.setText(liveGame.getMins());
-
-
-                                    }
                                 }
                             });
+                        } else {
+                            System.out.println("null venue");
                         }
+
+                        // Update the UI on the main thread
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (liveGame != null) {
+
+                                    System.out.println(liveGame.toString());
+                                    System.out.println(liveGame.getStartTime());
+                                    timeView.setText("Started at: " + liveGame.getStartTime());
+                                    scoreView.setText("Score: " + liveGame.getScore());
+                                    titleTextView.setText(liveGame.getTitle());
+                                    homeEventView.setText(liveGame.getHomeEventList());
+                                    awayEventView.setText(liveGame.getAwayEventList());
+                                    minuteView.setText(liveGame.getMins());
+
+
+                                }
+                            }
+                        });
+                    //}
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -190,7 +197,19 @@ public class liveGameDetails extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         FollowedGame followedGame = new FollowedGame();
         followedGame.setGameID(itemId);
+        System.out.println(" event count      " + liveGame.eventCount());
         followedGame.setEventCount(liveGame.eventCount());
-        databaseRepository.updateFollowedGames(followedGame);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // Perform database update in a separate thread
+                databaseRepository.updateFollowedGames(followedGame);
+
+                // If you need to update the UI based on the result, you can use a handler or other mechanisms
+                // Example: handler.post(new Runnable() { ... });
+            }
+        }).start();
+
     }
 }

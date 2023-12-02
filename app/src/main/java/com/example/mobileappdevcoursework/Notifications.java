@@ -57,7 +57,7 @@ class Notifications implements Runnable {
                         int oldCount = followedGames.get(game.getId());
                         if(newCount > oldCount){
                             for(int i=newCount; i >oldCount; i++){
-                                sendNotif(game.getEventAtIndex(i), game.getId());
+                                sendNotif(game.getEventAtIndex(i), game.getId(), game.leagueId);
                             }
                         }
 
@@ -87,7 +87,7 @@ class Notifications implements Runnable {
             } else {
                 try {
                     // Sleep for the specified interval before the next execution
-                    Thread.sleep(1000);
+                    Thread.sleep(10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -137,7 +137,7 @@ class Notifications implements Runnable {
         return gameIdToEventCountMap;
     }
 
-    public void sendNotif(Event event, int id) {
+    public void sendNotif(Event event, int id, int leagueId) {
         // https://developer.android.com/develop/ui/views/notifications/build-notification#java
         // https://chat.openai.com/share/b2695ba0-3441-4722-9de4-665c551640c7
         final String CHANNEL_ID = "App_Title_id";
@@ -148,6 +148,7 @@ class Notifications implements Runnable {
         Context context = this.context;
         Intent intent = new Intent(context, liveGameDetails.class);
         intent.putExtra("ITEM_ID", id);
+        intent.putExtra("LEAGUE_ID", leagueId);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
@@ -240,7 +241,7 @@ class Notifications implements Runnable {
                 }
 
 
-                liveGames = jsonParser.parseLiveJson(jsonString);
+                liveGames = jsonParser.parseLiveJson(jsonString, leagueID);
             }
 
         } catch (Exception e) {
