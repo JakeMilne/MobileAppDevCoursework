@@ -1,7 +1,8 @@
-package com.example.mobileappdevcoursework;
+package com.example.mobileappdevcoursework.data;
 
 import androidx.room.*;
-import android.content.Context;
+
+import com.example.mobileappdevcoursework.data.FollowedGame;
 
 import java.util.List;
 

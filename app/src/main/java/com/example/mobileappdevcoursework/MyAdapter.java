@@ -12,6 +12,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mobileappdevcoursework.data.Game;
+
 public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private Context context;

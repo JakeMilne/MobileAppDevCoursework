@@ -2,6 +2,7 @@ package com.example.mobileappdevcoursework;
 
 import android.util.Log;
 
+import com.example.mobileappdevcoursework.data.Game;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

@@ -16,6 +16,9 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mobileappdevcoursework.data.DatabaseRepository;
+import com.example.mobileappdevcoursework.data.Game;
+
 import java.util.ArrayList;
 import java.util.List;
 

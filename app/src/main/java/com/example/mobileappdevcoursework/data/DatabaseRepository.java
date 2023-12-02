@@ -1,4 +1,4 @@
-package com.example.mobileappdevcoursework;
+package com.example.mobileappdevcoursework.data;
 
 import android.content.Context;
 

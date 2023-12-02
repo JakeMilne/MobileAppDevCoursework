@@ -1,8 +1,6 @@
-package com.example.mobileappdevcoursework;
+package com.example.mobileappdevcoursework.data;
 
 import androidx.room.*;
-
-import java.util.List;
 
 @Dao
 public interface UserDAO {

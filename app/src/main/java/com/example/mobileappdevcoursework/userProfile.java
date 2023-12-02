@@ -14,6 +14,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.mobileappdevcoursework.data.DatabaseRepository;
+import com.example.mobileappdevcoursework.data.user;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link userProfile#newInstance} factory method to
