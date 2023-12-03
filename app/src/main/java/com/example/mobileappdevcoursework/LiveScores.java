@@ -22,10 +22,10 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link liveScores#newInstance} factory method to
+ * Use the {@link LiveScores#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class liveScores extends Fragment implements MyLiveAdapter.OnItemClickListener{
+public class LiveScores extends Fragment implements MyLiveAdapter.OnItemClickListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -40,7 +40,7 @@ public class liveScores extends Fragment implements MyLiveAdapter.OnItemClickLis
     private MyLiveAdapter adapter;
     private LiveViewModel viewModel;
 
-    public liveScores() {
+    public LiveScores() {
         // Required empty public constructor
     }
 
@@ -50,11 +50,11 @@ public class liveScores extends Fragment implements MyLiveAdapter.OnItemClickLis
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment liveScores.
+     * @return A new instance of fragment LiveScores.
      */
     // TODO: Rename and change types and number of parameters
-    public static liveScores newInstance(String param1, String param2) {
-        liveScores fragment = new liveScores();
+    public static LiveScores newInstance(String param1, String param2) {
+        LiveScores fragment = new LiveScores();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -89,7 +89,7 @@ public class liveScores extends Fragment implements MyLiveAdapter.OnItemClickLis
         viewModel.getGames().observe(getViewLifecycleOwner(), new Observer<List<LiveGame>>() {
             @Override
             public void onChanged(List<LiveGame> LiveGames) {
-                Log.d("liveScores", "onChanged: LiveData updated with " + LiveGames.size() + " live games");
+                Log.d("LiveScores", "onChanged: LiveData updated with " + LiveGames.size() + " live games");
 
                 if (LiveGames != null && !LiveGames.isEmpty()) {
                     noLiveGamesTextView.setVisibility(View.GONE);

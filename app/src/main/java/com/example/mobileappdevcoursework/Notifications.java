@@ -63,13 +63,18 @@ class Notifications implements Runnable {
 
                     }
 
-
-
                 }
-                //https://sentry.io/answers/iterate-hashmap-java/
 
-                for (Map.Entry<Integer, Integer> entry : followedGames.entrySet()){
+                for (Map.Entry<Integer, Integer> entry : followedGames.entrySet()){ //https://chat.openai.com/share/99c6ed7e-ed94-4ab5-a15a-3c708848e7bb
+                    Integer gameId = entry.getKey();
 
+                    // Check if the game with gameId is in liveGames
+                    boolean isGameInLiveGames = liveGames.stream().anyMatch(game -> game.getId() == gameId);
+
+                    if (!isGameInLiveGames) {
+                        // Call your method here for games that are in followedGames but not in liveGames
+                        databaseRepository.deleteFollowedGame(gameId);
+                    }
                 }
             }
             //boolean shouldSleep = notifCheck(); // change to Map<Integer, Integer> followedGames, and do if !followedGames == null shouldSleep = true
@@ -109,7 +114,7 @@ class Notifications implements Runnable {
                 Thread.sleep(60000);
                 return null; // Return true if you want to sleep for 1 minute
             } else {
-                System.out.println(liveGames.toString());
+                System.out.println(liveGames);
                 List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
                 Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
 
@@ -146,7 +151,7 @@ class Notifications implements Runnable {
         String textTitle = notif.get(0);
         String textContent = notif.get(1);
         Context context = this.context;
-        Intent intent = new Intent(context, liveGameDetails.class);
+        Intent intent = new Intent(context, LiveGameDetails.class);
         intent.putExtra("ITEM_ID", id);
         intent.putExtra("LEAGUE_ID", leagueId);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -168,7 +173,7 @@ class Notifications implements Runnable {
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
+            // to handle the case where the User grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
@@ -241,7 +246,7 @@ class Notifications implements Runnable {
                 }
 
 
-                liveGames = jsonParser.parseLiveJson(jsonString, leagueID);
+                liveGames = JsonParse.parseLiveJson(jsonString, leagueID);
             }
 
         } catch (Exception e) {

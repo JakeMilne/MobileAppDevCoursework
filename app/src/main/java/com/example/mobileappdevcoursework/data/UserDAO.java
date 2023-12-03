@@ -7,17 +7,17 @@ public interface UserDAO {
 
 
 
-    @Query("Select name from user")
+    @Query("Select name from User")
     String getName();
 
-    @Query("Select league from user")
+    @Query("Select league from User")
     int getLeague();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void updateUser(user userUpdate);
+    void updateUser(User userUpdate);
 
 
 
-    @Query("Delete from user")
+    @Query("Delete from User")
     void deleteUser();
 }

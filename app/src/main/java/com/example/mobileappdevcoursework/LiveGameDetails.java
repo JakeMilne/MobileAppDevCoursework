@@ -21,10 +21,10 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link liveGameDetails#newInstance} factory method to
+ * Use the {@link LiveGameDetails#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class liveGameDetails extends Fragment implements View.OnClickListener{
+public class LiveGameDetails extends Fragment implements View.OnClickListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,7 +38,7 @@ public class liveGameDetails extends Fragment implements View.OnClickListener{
     private LiveGame liveGame;
     private DatabaseRepository databaseRepository;
 
-    public liveGameDetails() {
+    public LiveGameDetails() {
         // Required empty public constructor
     }
 
@@ -48,11 +48,11 @@ public class liveGameDetails extends Fragment implements View.OnClickListener{
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment liveGameDetails.
+     * @return A new instance of fragment LiveGameDetails.
      */
     // TODO: Rename and change types and number of parameters
-    public static liveGameDetails newInstance(String param1, String param2) {
-        liveGameDetails fragment = new liveGameDetails();
+    public static LiveGameDetails newInstance(String param1, String param2) {
+        LiveGameDetails fragment = new LiveGameDetails();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -96,7 +96,9 @@ public class liveGameDetails extends Fragment implements View.OnClickListener{
                     int leagueid = bundle.getInt("LEAGUE_ID", -1);
 
                     try {
-
+                        // if the user clicks on a notification, it should bring them to this fragment. since they could follow a game,
+                        // then change their league selection, the league in the database might not be correct for the game.
+                        // To prevent issues arising from this, the leagueId of the followed game is passed
                         if (leagueid == -1) {
                             leagueid = databaseRepository.getLeague();
                         }
@@ -120,7 +122,7 @@ public class liveGameDetails extends Fragment implements View.OnClickListener{
                         if (content != null) {
                             // System.out.println(content);
                             //liveGame = jsonParser.parseLiveJson(content.toString(), itemId);
-                            List<LiveGame> liveGames = jsonParser.parseLiveJson(content.toString(), leagueid);
+                            List<LiveGame> liveGames = JsonParse.parseLiveJson(content.toString(), leagueid);
                             for (LiveGame game : liveGames) {
                                 if (game.getId() == itemId) {
                                     System.out.println(game.toString());

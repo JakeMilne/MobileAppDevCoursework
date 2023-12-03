@@ -63,7 +63,7 @@ public class HomeViewModel extends AndroidViewModel {
     public static void showTypes(){
         //this function prints all events and their IDs, should be used if adding more events to the json parsing functions. This is no longer used, however could be useful if someone were to update the app
         try{
-            String baseURL = "https://api.sportmonks.com/v3/core/types" + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr";
+            String baseURL = "https://api.sportmonks.com/v3/core/types?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr";
             URL url = new URL(baseURL);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -115,7 +115,7 @@ public class HomeViewModel extends AndroidViewModel {
 
             String jsonString = content.toString();
             System.out.println(jsonString);
-            games = jsonParser.parseJson(jsonString);
+            games = JsonParse.parseJson(jsonString);
 
 
 

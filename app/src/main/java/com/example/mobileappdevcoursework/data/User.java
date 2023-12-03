@@ -3,7 +3,7 @@ import androidx.annotation.NonNull;
 import androidx.room.*;
 
 @Entity
-public class user {
+public class User {
 
     @PrimaryKey
     @NonNull
@@ -11,7 +11,7 @@ public class user {
     String name; //users name, gets displayed on the upcoming games page
 
     @ColumnInfo(name = "league")
-    int favouriteLeague; // league id
+    int favouriteLeague; // id of league selected using spinner
 
     public String getName() {
         return name;

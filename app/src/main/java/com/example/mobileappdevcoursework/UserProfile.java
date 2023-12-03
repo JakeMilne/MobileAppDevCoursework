@@ -15,15 +15,15 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.mobileappdevcoursework.data.DatabaseRepository;
-import com.example.mobileappdevcoursework.data.user;
+import com.example.mobileappdevcoursework.data.User;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link userProfile#newInstance} factory method to
+ * Use the {@link UserProfile#newInstance} factory method to
  * create an instance of this fragment.
  */
-//user profile fragment - allows the user to change their name/ league preferences, which is then stored in the UserDatabase
-public class userProfile extends Fragment {
+//User profile fragment - allows the User to change their name/ league preferences, which is then stored in the UserDatabase
+public class UserProfile extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -37,7 +37,7 @@ public class userProfile extends Fragment {
     private DatabaseRepository databaseRepository;
     int league;
     //databaseRepository = databaseRepository.getRepository(application);
-    public userProfile() {
+    public UserProfile() {
         // Required empty public constructor
     }
 
@@ -47,11 +47,11 @@ public class userProfile extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment userProfile.
+     * @return A new instance of fragment UserProfile.
      */
     // TODO: Rename and change types and number of parameters
-    public static userProfile newInstance(String param1, String param2) {
-        userProfile fragment = new userProfile();
+    public static UserProfile newInstance(String param1, String param2) {
+        UserProfile fragment = new UserProfile();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -156,7 +156,7 @@ public class userProfile extends Fragment {
                     @Override
                     public void run() {
                         databaseRepository.deleteUser();
-                        user userUpdate = new user();
+                        User userUpdate = new User();
                         if(finalName == null || finalName.isEmpty()){
 
                             String oldName = databaseRepository.getName();

@@ -36,7 +36,11 @@ public class LiveGame {
         this.awayName = awayName;
         this.homePos = homePos;
         this.awayPos = awayPos;
-        this.events = events != null ? events : new ArrayList<>();
+        if (events != null) {
+            this.events = events;
+        } else {
+            this.events = new ArrayList<>();
+        }
         sortEventsByMinute();
         this.score = score;
         this.leagueId = leagueId;
@@ -125,10 +129,10 @@ public class LiveGame {
                     in.close();
                     connection.disconnect();
 
-                    if (content != null) {
-                        String jsonString = content.toString();
-                        venue.append(jsonParser.getVenue(jsonString));
-                    }
+
+                    String jsonString = content.toString();
+                    venue.append(JsonParse.getVenue(jsonString));
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -149,6 +153,7 @@ public class LiveGame {
 
 
 
+    // the next three methods are used to create a timeline of events in a game, where the events related to the home team are in a textView on the left, the minutes in the middle textView, and events related to the awayteam are on the right. if an event is not related to a team, a line of ---- will be shown instead
     public String getHomeEventList() {
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -156,11 +161,11 @@ public class LiveGame {
 //            stringBuilder.append("Event ID: ").append(event.getId()).append("\n");
 //            stringBuilder.append("Event Name: ").append(event.getName()).append("\n");
 //            stringBuilder.append("Event Minute: ").append(event.getMinute()).append("\n");
-            if(event.getTeam() == "home") {
+            if(event.getTeam().equals("home")) {
                 stringBuilder.append(event.getName()).append("\n");
                 System.out.println("added home event");
             }else{
-                stringBuilder.append("---------------\n");
+                stringBuilder.append("---------------\n\n");
             }
 
 
@@ -176,11 +181,11 @@ public class LiveGame {
 //            stringBuilder.append("Event ID: ").append(event.getId()).append("\n");
 //            stringBuilder.append("Event Name: ").append(event.getName()).append("\n");
 //            stringBuilder.append("Event Minute: ").append(event.getMinute()).append("\n");
-            if(event.getTeam() == "away") {
+            if(event.getTeam().equals("away")) {
                 stringBuilder.append(event.getName()).append("\n");
                 System.out.println("added away event");
             }else{
-                stringBuilder.append("---------------\n");
+                stringBuilder.append("---------------\n\n");
             }
 
 
@@ -205,25 +210,22 @@ public class LiveGame {
             throw new IndexOutOfBoundsException("Invalid index: " + index);
         }
     }
-    public void sortEventsByMinute() {
-        // Use Collections.sort with a custom comparator to sort events based on the minute
-        Collections.sort(events, Comparator.comparing(this::parseMinute));
-    }
+    public void sortEventsByMinute() { // https://chat.openai.com/share/895a4d68-ea9e-4919-9c00-1bf9fbb1711d
+        Collections.sort(events, new Comparator<Event>() {
+            @Override
+            public int compare(Event event1, Event event2) {
+                // Split on '+' if present to get the first part of the minute
+                String minute1 = event1.getMinute().split("\\+")[0];
+                String minute2 = event2.getMinute().split("\\+")[0];
 
-    private int parseMinute(Event event) {
-        String minuteString = event.getMinute();
+                // Convert to integers for comparison
+                int minuteValue1 = Integer.parseInt(minute1);
+                int minuteValue2 = Integer.parseInt(minute2);
 
-        // Split the string to separate main time and additional time
-        String[] parts = minuteString.split("\\+");
-
-        // Parse the main time
-        int mainTime = Integer.parseInt(parts[0].trim());
-
-        // Add additional time if available
-        int additionalTime = (parts.length > 1) ? Integer.parseInt(parts[1].trim()) : 0;
-
-        // Calculate the total minute value
-        return mainTime * 100 + additionalTime;
+                // Compare the minutes
+                return Integer.compare(minuteValue1, minuteValue2);
+            }
+        });
     }
 }
 

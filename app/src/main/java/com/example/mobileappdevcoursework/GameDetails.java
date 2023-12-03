@@ -20,40 +20,27 @@ import java.net.URL;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link gameDetails#newInstance} factory method to
+ * Use the {@link GameDetails#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class gameDetails extends Fragment{
+public class GameDetails extends Fragment{
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+//    private static final String ARG_PARAM1 = "param1";
+//    private static final String ARG_PARAM2 = "param2";
+//
+//    private String mParam1;
+//    private String mParam2;
 
     private DatabaseRepository databaseRepository;
 
-    public gameDetails() {
+    public GameDetails() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment gameDetails.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static gameDetails newInstance(String param1, String param2) {
-        gameDetails fragment = new gameDetails();
+    public static GameDetails newInstance() {
+        GameDetails fragment = new GameDetails();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -115,15 +102,8 @@ public class gameDetails extends Fragment{
 
                         String jsonString = content.toString();
                         System.out.println(jsonString);
-                        gameInstance thisGame = jsonParser.parseGame(jsonString);
+                        GameInstance thisGame = JsonParse.parseGame(jsonString);
 
-                        if (thisGame != null) {
-                            System.out.println(thisGame.toString());
-                        } else {
-                            System.out.println("Failed to parse the game data.");
-                        }
-
-                        System.out.println(thisGame.toString());
 
                         System.out.println("venue");
                         URL url2 = new URL("https://api.sportmonks.com/v3/football/venues/" + thisGame.getVenue() + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
@@ -142,7 +122,7 @@ public class gameDetails extends Fragment{
 
                         if (content2 != null) {
                             System.out.println(content2);
-                            String venue = jsonParser.getVenue(content2.toString());
+                            String venue = JsonParse.getVenue(content2.toString());
                             System.out.println(venue);
                             thisGame.setVenue(venue);
                             // Update the UI on the main thread

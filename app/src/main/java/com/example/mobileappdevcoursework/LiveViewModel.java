@@ -83,7 +83,7 @@
 
 
 
-                    liveGames = jsonParser.parseLiveJson(jsonString, leagueID);
+                    liveGames = JsonParse.parseLiveJson(jsonString, leagueID);
                     System.out.println(liveGames);
                     liveGamesLiveData.postValue(liveGames);
                 }

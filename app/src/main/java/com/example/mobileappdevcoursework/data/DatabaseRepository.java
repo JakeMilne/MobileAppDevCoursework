@@ -55,7 +55,7 @@ public class DatabaseRepository {
 
     public String getName(){return mUserDao.getName();}
 
-    public void updateUser(user userUpdate){mUserDao.updateUser(userUpdate);};
+    public void updateUser(User userUpdate){mUserDao.updateUser(userUpdate);};
 
     public void deleteUser(){mUserDao.deleteUser();};
 

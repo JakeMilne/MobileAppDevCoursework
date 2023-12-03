@@ -1,8 +1,8 @@
 package com.example.mobileappdevcoursework.data;
 
 import androidx.room.*;
-//import androidx.room.PrimaryKey;
 
+//users can "follow" a live game, which enables notifications, this is used to store details about those games
 @Entity
 public class FollowedGame {
 

@@ -9,11 +9,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-//custom OnClickListener so I can pass a gameInstance into the calendar app
+//custom OnClickListener so I can pass a GameInstance into the calendar app
 public class OnCalendarClickListener implements View.OnClickListener {
-    private gameInstance thisGame;
+    private GameInstance thisGame;
 
-    public OnCalendarClickListener(gameInstance thisGame) {
+    public OnCalendarClickListener(GameInstance thisGame) {
         this.thisGame = thisGame;
     }
 
