@@ -15,8 +15,8 @@ words):
 • List of app functionalities your users will experience in your app. These should relate <br>
 to the app requirements outlined above. <br>
 
-<b>Jake Milne 2102515</b>         <h1>App title</h1><br>
-Live football, without the bookies <b> change that </b> <br>
+<b>Jake Milne 2102515</b>         <h1>YouScore</h1><br>
+Your scores, your football, without the bookies <br>
 
 App Title allows you to keep track of your favourite teams and leagues in realtime, without the temptations and distractions of the gambling sponsers which cast a shadow over the industry. We allow you to track goals, bookings and more! <br>
 In the app you get a choice of which league to follow, the options and the scottish premiership, and the danish superliga, as well as both leagues playoffs. You can change league whenever you feel like it thanks to our profile system. <br>
@@ -36,11 +36,8 @@ The readme.md file should also include details of the app design (assessing LO1 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/6e585a1f-d106-46d2-9ac8-55ddbbf26541)
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/9be0bb25-e36b-4dc9-a9cc-4b7b7c2b9c32)
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/0f853680-b1f3-4775-97d0-b795aa9bdd0f)
-
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/ebd1203a-06c5-463e-bb60-7b9968f6433d)
-
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/2a1f920c-6795-4104-806b-dcbfc1d23f65)
-
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/513d1629-4cb3-4cb5-a246-1368e5d3585a)
 
 
