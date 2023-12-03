@@ -8,12 +8,7 @@ App Description
 <br>
 Your readme.md file should include an app overview (assessing LO1 and LO3) (up to 300
 words):
-<br>
-• Developer name (for this, use your name and ID number) <br>
-• App title. <br>
-• One line, promo text summary of your app. <br>
-• List of app functionalities your users will experience in your app. These should relate <br>
-to the app requirements outlined above. <br>
+
 
 <b>Jake Milne 2102515</b>         <h1>YouScore</h1><br>
 Your scores, your football, without the bookies <br>
@@ -118,3 +113,6 @@ consider details of the tools used and your experience of them, examples of how 
 samples from third parties (e.g. generative AI, StackOverflow) were used and the challenges
 encountered with their use, what was successful about the project, what could have gone
 better, and any lessons you learnt that will be useful for future development projects
+
+
+Overall I think the biggest challenge faced was the testing of anything that made use of the /football/livescores/inplay API endpoint, due to a lack of free APIs that met my requirements I had to go with one that only supplied 2 leagues, because of this there weren't as many testing opportunities as I would have liked, In future I'm going to consider things like this more when I'm deciding on a project. Another thing worth mentioning about the API is the amount of parsing I had to do, the livescores and fixtures endpoints held completely different data, fixtures had the venue name, while livescores didn't. As far as I'm aware livescores doesn't have an option of searching for a specific game id, this meant looping over each live game when I needed to access a specific game, because of this and the previous point I had to write quite a lot of code to handle the responses whereas with another API this may or may not have been an issue. Most of the third party code was taken from generative AI, and I aimed to use it for methods that could be written without much context, however this sometimes required multiple iterations or giving the AI code to reference. I also used it to find solutions for a small number of errors, which worked quite well. Some of the other external sources included the android documentation and youtube. Using non-AI sources such as the documentation felt more benifencial as the code given wasn't tailored to my app already, so I had to interpret the code more than if I used AI.
