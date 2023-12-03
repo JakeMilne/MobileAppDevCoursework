@@ -86,7 +86,6 @@ public class LiveGameDetails extends Fragment implements View.OnClickListener{
         TextView minuteView = view.findViewById(R.id.minuteView);
         Button followBtn = view.findViewById(R.id.followBtn);
         followBtn.setOnClickListener(this);
-        System.out.println("created");
         if (bundle != null) {
             // Extract the item_id from the Bundle
             new Thread(new Runnable() {
@@ -102,7 +101,6 @@ public class LiveGameDetails extends Fragment implements View.OnClickListener{
                         if (leagueid == -1) {
                             leagueid = databaseRepository.getLeague();
                         }
-                        System.out.println(leagueid);
                         //denmark 1
                         URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueid);
                         //scotland 1
@@ -118,14 +116,12 @@ public class LiveGameDetails extends Fragment implements View.OnClickListener{
                         }
                         in.close();
                         connection.disconnect();
-                        System.out.println("live details \n\n\n\n\n\n\n\n\n\n");
                         if (content != null) {
                             // System.out.println(content);
                             //liveGame = jsonParser.parseLiveJson(content.toString(), itemId);
                             List<LiveGame> liveGames = JsonParse.parseLiveJson(content.toString(), leagueid);
                             for (LiveGame game : liveGames) {
                                 if (game.getId() == itemId) {
-                                    System.out.println(game.toString());
 
                                     liveGame = game;
                                 }
@@ -169,8 +165,6 @@ public class LiveGameDetails extends Fragment implements View.OnClickListener{
                             public void run() {
                                 if (liveGame != null) {
 
-                                    System.out.println(liveGame.toString());
-                                    System.out.println(liveGame.getStartTime());
                                     timeView.setText("Started at: " + liveGame.getStartTime());
                                     scoreView.setText("Score: " + liveGame.getScore());
                                     titleTextView.setText(liveGame.getTitle());
@@ -198,7 +192,7 @@ public class LiveGameDetails extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         FollowedGame followedGame = new FollowedGame(itemId, liveGame.eventCount());
-
+        System.out.println(followedGame + "\n\n\n\n\n\n");
         new Thread(new Runnable() {
             @Override
             public void run() {

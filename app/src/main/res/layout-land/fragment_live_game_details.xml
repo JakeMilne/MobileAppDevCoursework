@@ -102,14 +102,15 @@
 
         <TextView
             android:id="@+id/venueLiveView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="164dp"
-            android:layout_marginTop="32dp"
+            android:layout_width="219dp"
+            android:layout_height="31dp"
+            android:layout_marginStart="80dp"
+            android:layout_marginTop="28dp"
             android:text="@string/venue"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scoreView" />
+            app:layout_constraintTop_toBottomOf="@+id/scoreView"
+            tools:textAlignment="center" />
 
         <TextView
             android:id="@+id/scoreView"

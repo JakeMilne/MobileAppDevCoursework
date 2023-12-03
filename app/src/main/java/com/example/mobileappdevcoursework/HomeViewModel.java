@@ -115,7 +115,6 @@ public class HomeViewModel extends AndroidViewModel {
             connection.disconnect();
 
             String jsonString = content.toString();
-            System.out.println(jsonString);
             games = JsonParse.parseJson(jsonString);
 
 

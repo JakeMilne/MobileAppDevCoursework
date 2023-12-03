@@ -79,7 +79,11 @@ public class LiveGame {
                     i--;
                 }
             }
-            score = events.get(events.size() - 1).getResult();
+            if(events.size()==0){
+                score = "0-0";
+            }else {
+                score = events.get(events.size() - 1).getResult();
+            }
         }
     }
 
@@ -178,7 +182,6 @@ public class LiveGame {
 //            stringBuilder.append("Event Minute: ").append(event.getMinute()).append("\n");
             if(event.isHome()) {
                 stringBuilder.append(event.getName()).append("\n");
-                System.out.println("added home event");
             }else{
                 stringBuilder.append("---------------\n\n");
             }
@@ -198,7 +201,6 @@ public class LiveGame {
 //            stringBuilder.append("Event Minute: ").append(event.getMinute()).append("\n");
             if(!event.isHome()) {
                 stringBuilder.append(event.getName()).append("\n");
-                System.out.println("added away event");
             }else{
                 stringBuilder.append("---------------\n\n");
             }
@@ -219,9 +221,7 @@ public class LiveGame {
     }
 
     public Event getEventAtIndex(int index) {
-        System.out.println("index at " + index);
-        System.out.println("size is " + events.size());
-        System.out.println("event 1 is " + events.get(1));
+
         return events.get(index);
 
     }

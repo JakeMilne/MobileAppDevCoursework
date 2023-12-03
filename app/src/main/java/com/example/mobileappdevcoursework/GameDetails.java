@@ -103,7 +103,6 @@ public class GameDetails extends Fragment{
                         GameInstance thisGame = JsonParse.parseGame(jsonString);
 
 
-                        System.out.println("venue");
                         URL url2 = new URL("https://api.sportmonks.com/v3/football/venues/" + thisGame.getVenue() + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
                         HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
 
@@ -119,9 +118,8 @@ public class GameDetails extends Fragment{
 
 
                         if (content2 != null) {
-                            System.out.println(content2);
                             String venue = JsonParse.getVenue(content2.toString());
-                            System.out.println(venue);
+
                             thisGame.setVenue(venue);
                             // Update the UI on the main thread
                             requireActivity().runOnUiThread(new Runnable() {

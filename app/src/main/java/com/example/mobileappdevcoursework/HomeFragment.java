@@ -71,7 +71,6 @@ public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListe
 
         // Initialize the ViewModel
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        System.out.println("here\n\n\n\n\n\n\n\n\n");
         // Observe the data changes in the ViewModel
         viewModel.getItems().observe(getViewLifecycleOwner(), new Observer<List<Game>>() {
             @Override
