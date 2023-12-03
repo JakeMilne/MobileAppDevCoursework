@@ -1371,24 +1371,507 @@ The main method demonstrates an example usage of the function with the string "H
 
 
 
+explain why notifications might not be showing up for my java android studio app
+ChatGPT
+There could be several reasons why notifications might not be showing up for your Java Android Studio app. Here are some common issues and solutions you can consider:
+
+Permissions:
+
+Ensure that your app has the necessary permissions to show notifications. In the AndroidManifest.xml file, make sure you have the <uses-permission android:name="android.permission.INTERNET" /> permission if your notifications involve network operations.
+Notification Channel:
+
+Starting from Android 8.0 (API level 26), you need to use notification channels. Make sure you are creating and assigning notifications to the correct notification channel.
+Example of creating a notification channel:
+java
+Copy code
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    NotificationChannel channel = new NotificationChannel("channel_id", "Channel Name", NotificationManager.IMPORTANCE_DEFAULT);
+    NotificationManager manager = getSystemService(NotificationManager.class);
+    manager.createNotificationChannel(channel);
+}
+Notification Builder:
+
+Double-check your Notification Builder code to ensure that you are setting the required properties such as content title, content text, and small icon.
+Example of creating a simple notification:
+java
+Copy code
+NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel_id")
+        .setSmallIcon(R.drawable.ic_notification)
+        .setContentTitle("Title")
+        .setContentText("Content text")
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+Doze Mode:
+
+On Android devices running Android 6.0 (API level 23) and higher, the Doze mode may affect how notifications are delivered. Check if your app is exempted from Doze mode restrictions.
+Background Restrictions:
+
+Starting from Android 8.0, background execution limits may affect your app's ability to show notifications in the background. Ensure that your app handles background restrictions appropriately.
+Testing on Emulator/Device:
+
+Test your app on a real device rather than just the emulator, as some features related to notifications may behave differently on real devices.
+Logcat:
+
+Check the Logcat output in Android Studio for any error messages or warnings related to notifications. This can provide insights into what might be going wrong.
+Other Libraries/Services:
+
+If you are using any third-party libraries or services for notifications, make sure they are correctly configured and integrated.
+App State:
+
+Notifications might not show up if your app is in a state where it's not actively running. Ensure that your app's logic for triggering notifications is working as expected.
+Update Libraries:
+
+Ensure that you are using the latest versions of the Android Support Library and other relevant dependencies.
+By carefully checking these points, you should be able to identify and resolve the issue preventing notifications from showing up in your Java Android Studio app.
+
+User
+here is the code that manages the notifications
+ package com.example.mobileappdevcoursework;
+
+
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import com.example.mobileappdevcoursework.data.DatabaseRepository;
+import com.example.mobileappdevcoursework.data.FollowedGame;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+class Notifications implements Runnable {
+
+    private Context context;
+    private DatabaseRepository databaseRepository;
+    private static final String TAG = "Notifications";
+
+
+    public Notifications(Context context, DatabaseRepository databaseRepository) {
+        this.context = context;
+        this.databaseRepository = databaseRepository;
+    }
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+
+    @Override // https://chat.openai.com/share/44cc401f-7c49-4484-830b-f51375a05d0a
+    public void run() {
+        while (true) {
+            long startTime = System.currentTimeMillis();
+            List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
+            Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
+            List<LiveGame> liveGames = this.notificationSearch();
+            boolean shouldSleep = false;
+            if(followedGamesMap == null){
+                shouldSleep = true;
+            } else{
+                //logic to send notifications
+                //for game in followed game
+//                int oldCount = databaseRepository.getEventCount() // followed game id
+
+                for (LiveGame game : liveGames) {
+                    if (followedGamesMap.get(game.getId()) != null) {
+                        int newCount = game.getEvents().size();
+                        int oldCount = followedGamesMap.get(game.getId());
+                        System.out.println(followedGamesMap.get(game.getId()));
+                        Log.d(TAG, String.valueOf(newCount));
+                        Log.d(TAG, String.valueOf(oldCount));
+
+                        if (newCount > oldCount) {
+                            for (int i = oldCount; i < newCount; i++) {
+                                if (i < game.getEvents().size()) {
+                                    Event event = game.getEventAtIndex(i);
+                                    sendNotif(event, game.getId(), game.leagueId);
+                                    // System.out.println("Event at index " + i + ": " + event);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                for (Map.Entry<Integer, Integer> entry : followedGamesMap.entrySet()){ //https://chat.openai.com/share/99c6ed7e-ed94-4ab5-a15a-3c708848e7bb
+                    Integer gameId = entry.getKey();
+
+                    // Check if the game with gameId is in liveGames
+                    boolean isGameInLiveGames = liveGames.stream().anyMatch(game -> game.getId() == gameId);
+
+                    if (!isGameInLiveGames) {
+                        // Call your method here for games that are in followedGames but not in liveGames
+                        databaseRepository.deleteFollowedGame(gameId);
+                    }
+                }
+            }
+
+
+            if (shouldSleep) {
+                try {
+                    // Sleep for 1 minute if the condition is met
+                    System.out.println("Sleep for 1 min");
+                    Thread.sleep(60000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    // Sleep for the specified interval before the next execution
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
 
 
+    private static Map<Integer, Integer> convertListToMap(List<FollowedGame> followedGamesList) {
+        Map<Integer, Integer> gameIdToEventCountMap = new HashMap<>();
+        for (FollowedGame game : followedGamesList) {
+            gameIdToEventCountMap.put(game.getGameID(), game.getEventCount());
+        }
+        return gameIdToEventCountMap;
+    }
+
+    public void sendNotif(Event event, int id, int leagueId) {
+        // https://developer.android.com/develop/ui/views/notifications/build-notification#java
+        // https://chat.openai.com/share/b2695ba0-3441-4722-9de4-665c551640c7
+        final String CHANNEL_ID = "App_Title_id";
+        List<String> notif = new ArrayList<>();
+        notif = parseForNotif(event);
+        String textTitle = notif.get(0);
+        String textContent = notif.get(1);
+        Context context = this.context;
+        Intent intent = new Intent(context, LiveGameDetails.class);
+        intent.putExtra("ITEM_ID", id);
+        intent.putExtra("LEAGUE_ID", leagueId);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setContentTitle(textTitle)
+                .setContentText(textContent)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        int notificationId = createID(textTitle);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        //this if statement auto generated by android studio
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the User grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        notificationManager.notify(notificationId, builder.build());
+        Log.d(TAG, "Notification sent");
+    }
+
+    public static int createID(String input) {
+        int sum = 0;
+
+        // Check for null or empty string
+        if (input != null && !input.isEmpty()) {
+            // Iterate through each character in the string
+            for (char c : input.toCharArray()) {
+                // Add the ASCII value of the character to the sum
+                sum += (int) c;
+            }
+        }
+
+        return sum;
+    }
+    public static List<String> parseForNotif(Event event){
+        List<String> notif = new ArrayList<>();
+
+        //(new Event(eventId, eventName, eventMinute, result, addition, teamName))
+        if (event.getAddition().isEmpty()){
+            notif.add(event.getMinute() + "' "  + event.getName() + " " + event.getTeam() + " " + event.getResult());
+
+        }else{
+            notif.add(event.getMinute() + " + " + event.getAddition() + "' "  + event.getName() + " " + event.getTeam() + " " + event.getResult());
+        }
+        if (event.getAddition().isEmpty()){
+            notif.add(event.getName() + " for  " + event.getTeam() + " at minute " + event.getMinute() + "' "  +  " the score is: " + event.getResult());
+
+
+        }else{
+            notif.add(event.getName() + " for  " + event.getTeam() + " at minute " + event.getMinute() + " + " + event.getAddition() + "' "  +  " the score is: " + event.getResult());
+
+        }
 
 
 
+        return notif;
+    }
+
+    public List<LiveGame> notificationSearch() {
+        List<LiveGame> liveGames = new ArrayList<>();
+        int leagueID = databaseRepository.getLeague();
+
+        try {
+            //System.out.println(leagueID);
+            URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            connection.disconnect();
+
+            if (content != null) {
+                String jsonString = content.toString();
+                //System.out.println("here " + jsonString);
+                boolean shouldDelay = false;
+                if (jsonString.contains("\"message\":\"No result(s) found matching your request.")) {
+                    return null;
+                }
 
 
+                liveGames = JsonParse.parseLiveJson(jsonString, leagueID);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return liveGames;
+    }
+}
+ChatGPT
+Your code for handling notifications seems comprehensive, and I don't see any major issues with it. However, I have a few suggestions and improvements that might help:
+
+Notification Channel:
+
+Ensure that you create a notification channel before posting notifications. It's essential for Android versions 8.0 (Oreo) and above. You can create it in your application's initialization code or in the onCreate method of your main activity.
+java
+Copy code
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    NotificationChannel channel = new NotificationChannel("App_Title_id", "Your Channel Name", NotificationManager.IMPORTANCE_DEFAULT);
+    NotificationManager manager = context.getSystemService(NotificationManager.class);
+    manager.createNotificationChannel(channel);
+}
+Check Permissions:
+
+You have a check for POST_NOTIFICATIONS permission, but this permission does not exist. Ensure that you have the necessary permissions in your manifest file.
+Handle Network Operations on a Separate Thread:
+
+Network operations, such as fetching data from a URL, should be performed on a separate thread to avoid blocking the main thread. You might consider using an AsyncTask or other background processing mechanisms.
+Avoid Infinite Loop:
+
+Be cautious about the infinite loop in your run method. It might be a good idea to add a condition to exit the loop gracefully when needed, for example, when the application is paused or stopped.
+Use WorkManager or JobIntentService:
+
+Instead of using a custom thread for periodic tasks, consider using Android's WorkManager or JobIntentService for background tasks. These are more suitable for periodic and background tasks, and they handle the job scheduling efficiently.
+Ensure Unique Notification IDs:
+
+When generating notification IDs using the createID method, make sure the generated IDs are unique. You could use a more robust method, such as using a combination of event ID and timestamp.
+Log Notification Creation Failure:
+
+Add logging or error handling in case there's an issue creating or posting notifications. Check the logcat for any error messages related to notifications.
+Test on Multiple Devices:
+
+Test your notification code on multiple devices and Android versions to ensure compatibility.
+Handle Exception More Gracefully:
+
+Improve exception handling in your notificationSearch method. Consider logging or handling exceptions more gracefully to prevent crashes.
+Use Constants for API URL and Token:
+
+Consider using constants for the API URL and token to make your code more maintainable and easily configurable.
+Remember to adapt these suggestions based on your specific requirements and the architecture of your application. Additionally, check the Android documentation for any updates or changes related to notifications and background processing.
 
 
+2 / 2
+
+User
+here is my main activity
+
+package com.example.mobileappdevcoursework;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.example.mobileappdevcoursework.data.DatabaseRepository;
+import com.example.mobileappdevcoursework.databinding.ActivityMainBinding;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+
+public class MainActivity extends AppCompatActivity {
+    ActivityMainBinding binding;
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //setContentView(R.layout.activity_main);
 
 
+        //code for the navigation bar comes from https://www.youtube.com/watch?v=jOFLmKMOcK0 , accessed 14/11/2023 at 10am the switch case at 7:54 was adapted to a series of if else statements to fix a constant expression required error
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
 
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+
+        //replaceFragment(new HomeFragment());
+        NavController navController = navHostFragment.getNavController();
 
 
+        new Thread(() -> {
+            createNotificationChannel();
+            LiveViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(LiveViewModel.class);
+            DatabaseRepository databaseRepository = DatabaseRepository.getRepository(this);
+            Notifications notificationManager = new Notifications(this,  databaseRepository);
+            notificationManager.run();
+        }).start();
+
+
+        binding.bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.main) {
+                navController.navigate(R.id.HomeFragment);
+                return true;
+            } else if (item.getItemId() == R.id.profile) {
+                navController.navigate(R.id.userProfile);
+                return true;
+            } else if (item.getItemId() == R.id.live) {
+                navController.navigate(R.id.liveScores);
+                return true;
+            }
+            return false;
+        });
+
+
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is not in the Support Library.
+        final String CHANNEL_ID = "App_Title_id";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this.
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        Log.d("MainActivity", "Replacing fragment with " + fragment.getClass().getSimpleName());
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (fragment != null) {
+            fragmentTransaction.replace(R.id.frameLayout, fragment);
+            fragmentTransaction.commit();
+        } else {
+            Log.e("MainActivity", "Fragment is null");
+        }
+
+    }
+
+how do I check for permissions
+
+2 / 2
+
+ChatGPT
+To check for permissions in Android, you typically use the ContextCompat.checkSelfPermission() method. Here's an example of how you can check for a specific permission in your MainActivity:
+
+java
+Copy code
+import android.Manifest;
+import android.content.pm.PackageManager;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+// Inside your MainActivity class...
+
+private static final int MY_PERMISSION_REQUEST_CODE = 123; // You can use any value here
+
+// ...
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    // ...
+
+    // Check for permissions
+    if (checkPermissions()) {
+        // Permissions are already granted
+        // Proceed with your application logic
+    } else {
+        // Request permissions
+        requestPermissions();
+    }
+
+    // ...
+}
+
+private boolean checkPermissions() {
+    // Check if the required permission is granted
+    return ContextCompat.checkSelfPermission(this, Manifest.permission.YOUR_PERMISSION) == PackageManager.PERMISSION_GRANTED;
+}
+
+private void requestPermissions() {
+    // Request the permission
+    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.YOUR_PERMISSION}, MY_PERMISSION_REQUEST_CODE);
+}
+
+// ...
+
+// Override onRequestPermissionsResult to handle the result of the permission request
+@Override
+public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    if (requestCode == MY_PERMISSION_REQUEST_CODE) {
+        // Check if the permission was granted
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Permission granted, proceed with your application logic
+        } else {
+            // Permission denied, handle this situation (e.g., show a message, disable functionality)
+        }
+    }
+}
+Replace Manifest.permission.YOUR_PERMISSION with the actual permission you want to check.
+
+In this example, checkPermissions() checks if the permission is already granted, and if not, it calls requestPermissions() to request the permission. The result of the permission request is handled in the onRequestPermissionsResult method.
+
+Note: Make sure to declare the necessary permissions in your AndroidManifest.xml file.
 
 
 
