@@ -28,4 +28,10 @@ public class User {
     public void setFavouriteLeague(int favouriteLeague) {
         this.favouriteLeague = favouriteLeague;
     }
+
+    public User(@NonNull String name, int favouriteLeague) {
+        this.name = name;
+        this.favouriteLeague = favouriteLeague;
+    }
+
 }

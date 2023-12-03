@@ -156,19 +156,20 @@ public class UserProfile extends Fragment {
                     @Override
                     public void run() {
                         databaseRepository.deleteUser();
-                        User userUpdate = new User();
+//                        User userUpdate = new User();
+                        String name = "";
                         if(finalName == null || finalName.isEmpty()){
 
-                            String oldName = databaseRepository.getName();
-                            userUpdate.setName(oldName);
+                            name = databaseRepository.getName();
+//                            userUpdate.setName(oldName);
 
                         }else{
-                            userUpdate.setName(finalName);
+
+                            name = finalName;
                         }
 
+                        User userUpdate = new User(name, league);
 
-
-                        userUpdate.setFavouriteLeague(league);
                         databaseRepository.updateUser(userUpdate);
 
 

@@ -11,6 +11,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.mobileappdevcoursework.data.DatabaseRepository;
+import com.example.mobileappdevcoursework.data.User;
 import com.example.mobileappdevcoursework.databinding.ActivityMainBinding;
 
 import android.app.NotificationChannel;
@@ -23,6 +24,7 @@ import android.util.Log;
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     private static final int PERMISSION_REQUEST_CODE = 123; // You can use any integer value
+    private DatabaseRepository databaseRepository;
 
 
 
@@ -64,17 +66,19 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
-
         new Thread(() -> {
-            createNotificationChannel();
-            LiveViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(LiveViewModel.class);
-            DatabaseRepository databaseRepository = DatabaseRepository.getRepository(this);
-            Notifications notificationManager = new Notifications(this,  databaseRepository);
-            notificationManager.run();
+            databaseRepository = DatabaseRepository.getRepository(this);
+            if(databaseRepository.getLeague() == 0){ //if the user hasnt set up their profile this creates a default profile for them
+                User userUpdate = new User("user", 501);
+
+                databaseRepository.updateUser(userUpdate);
+            }
+            startNotifications();
         }).start();
+
+
+
+
 
 
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
@@ -93,7 +97,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+    private void startNotifications(){
 
+        createNotificationChannel();
+        LiveViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(LiveViewModel.class);
+        DatabaseRepository databaseRepository = DatabaseRepository.getRepository(this);
+        Notifications notificationManager = new Notifications(this,  databaseRepository);
+        notificationManager.run();
+
+    }
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is not in the Support Library.
