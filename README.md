@@ -33,26 +33,31 @@ The readme.md file should also include details of the app design (assessing LO1 
 
 <h2>App design</h2>
 <h3>Main page </h3>
+<p>The main page is where you can see upcoming games for your selected league, and gives you the option to view each game in more detail </p>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/6e585a1f-d106-46d2-9ac8-55ddbbf26541)
 <h3>Upcoming game details </h3>
+<p>The game details page shows you more specific information about the game you selected in the main page</p>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/9be0bb25-e36b-4dc9-a9cc-4b7b7c2b9c32)
 
 <h3>Live games </h3>
+<p>The live games page is where you can see all live games for your selected league, and gives you the option to view each game in more detail, as well as the option to add the game to your calender </p>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/0f853680-b1f3-4775-97d0-b795aa9bdd0f)
 
 <h3>Live game details </h3>
+<p>The live details page is accessable from either the live games page, or by clicking on a notification, and is where you can see the live score, as well as other events for your selected game. You can also enable notifications by following the game. </p>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/ebd1203a-06c5-463e-bb60-7b9968f6433d)
 
 <h3>User Profile </h3>
+<p>The user profile page allows you to choose your display name and which league you are interested in</p>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/2a1f920c-6795-4104-806b-dcbfc1d23f65)
 
 <h3>Notifications </h3>
-
+<p>here is an example of a notification, clicking on it will open the relevant live details page</p>
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/513d1629-4cb3-4cb5-a246-1368e5d3585a)
 
 
