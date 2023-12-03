@@ -1,11 +1,6 @@
 # cm3110-coursework-JakeMilne
 cm3110-coursework-JakeMilne created by GitHub Classroom
 
-gson <br> 
-
-colour/design<br>
-
-![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/3488d0de-8509-40bc-a9d7-52640eb9e9a0)
 
 <br>
 </br></br>
@@ -38,12 +33,28 @@ The readme.md file should also include details of the app design (assessing LO1 
 
 <h2>App design</h2>
 
+![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/6e585a1f-d106-46d2-9ac8-55ddbbf26541)
+![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/9be0bb25-e36b-4dc9-a9cc-4b7b7c2b9c32)
+![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/0f853680-b1f3-4775-97d0-b795aa9bdd0f)
+
+![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/ebd1203a-06c5-463e-bb60-7b9968f6433d)
+
+![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/2a1f920c-6795-4104-806b-dcbfc1d23f65)
+
+![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/513d1629-4cb3-4cb5-a246-1368e5d3585a)
+
+
 • A wireframe or screenshot of each page, describing the widgets used to display and
 receive information to/from the user and why, and the layout managers used to
 arrange them. <br>
 • Details of how the functionalities are implemented in each page, for example: <br>
 o How users navigate through the app. This can be a screenshot of the
 navigation graph visualisation, with appropriate description. <br>
+
+![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/7fe18649-0633-4ace-ab7a-7ece318c2b7a)
+
+
+
 
 <h3>Life cycle events</h3>
 <h4>Main Activity</h4>
