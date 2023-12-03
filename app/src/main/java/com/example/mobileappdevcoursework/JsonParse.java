@@ -96,7 +96,6 @@ public class JsonParse {
         try {
             //JsonParser jsonParser = new JsonParser();
             JsonElement root = JsonParser.parseString(jsonString);
-
             if (root.isJsonObject()) {
                 JsonObject jsonObject = root.getAsJsonObject();
                 // System.out.println(jsonObject);
@@ -107,14 +106,23 @@ public class JsonParse {
                         JsonArray eventsArray = dataObject.getAsJsonArray("events");
                         //System.out.println("          here          " + eventsArray);
                         List<Event> events = new ArrayList<>();
+
                         int homeTeamId, awayTeamId = 0;
+                        String homeName, awayName = "";
                         if (dataObject.getAsJsonArray("participants").get(0).getAsJsonObject().getAsJsonObject("meta").getAsJsonPrimitive("location").getAsString() == "home") {
                             homeTeamId = dataObject.getAsJsonArray("participants").get(0).getAsJsonObject().getAsJsonPrimitive("id").getAsInt();
+                            homeName = dataObject.getAsJsonArray("participants").get(0).getAsJsonObject().getAsJsonPrimitive("name").getAsString();
+
                             awayTeamId = dataObject.getAsJsonArray("participants").get(1).getAsJsonObject().getAsJsonPrimitive("id").getAsInt();
+                            awayName = dataObject.getAsJsonArray("participants").get(1).getAsJsonObject().getAsJsonPrimitive("name").getAsString();
 
                         } else {
                             homeTeamId = dataObject.getAsJsonArray("participants").get(1).getAsJsonObject().getAsJsonPrimitive("id").getAsInt();
+                            homeName = dataObject.getAsJsonArray("participants").get(1).getAsJsonObject().getAsJsonPrimitive("name").getAsString();
+
                             awayTeamId = dataObject.getAsJsonArray("participants").get(0).getAsJsonObject().getAsJsonPrimitive("id").getAsInt();
+                            awayName = dataObject.getAsJsonArray("participants").get(0).getAsJsonObject().getAsJsonPrimitive("name").getAsString();
+
 
                       }
                         for (JsonElement eventElement : eventsArray) {
@@ -130,19 +138,19 @@ public class JsonParse {
                             //JsonElement infoElement = eventObject.get("info");
                             //converting event ids to their equivalent values, which can be found by calling the endpoint /v3/core/types
                             if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 18) {
-                                eventName = "Substitution";
+                                eventName = "Substitution\n";
                             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 19) {
-                                eventName = "Yellow Card " + name;
+                                eventName = "Yellow Card \n" + name;
                             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 14) {
-                                eventName = "Goal " + name;
+                                eventName = "Goal \n" + name;
                             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 16) {
-                                eventName = "(P) Goal " + name; // penalty goal
+                                eventName = "(P) Goal \n" + name; // penalty goal
                             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 17) {
-                                eventName = "(P) Miss " + name; //penalty miss
+                                eventName = "(P) Miss \n" + name; //penalty miss
                             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 15) {
-                                eventName = "OG " + name; //own goal. not sure how the api classes the team id for this, so it might appear on the wrong side
+                                eventName = "OG \n" + name; //own goal. not sure how the api classes the team id for this, so it might appear on the wrong side
                             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 20 || eventObject.getAsJsonPrimitive("type_id").getAsInt() == 21) {//20 is straight red, 21 is second yellow so both have same outcome
-                                eventName = "red card " + name;
+                                eventName = "red card \n" + name;
                             }
 
 
@@ -152,12 +160,17 @@ public class JsonParse {
                             if (extraMinuteElement != null && !extraMinuteElement.isJsonNull()) {
                                 eventMinute += " + " + extraMinuteElement.getAsJsonPrimitive().getAsString(); // if extra minute isn't null the game is in injury time, and so the minute field gets combined with the extra_minute field to get the overall minute (i.e. 45+2)
                             }
+                            System.out.println(eventMinute);
                             String result = "";
                             JsonElement resultElement = eventObject.get("result");
-
                             if (resultElement != null && resultElement.isJsonPrimitive()) {
                                 result = resultElement.getAsJsonPrimitive().getAsString();
+                                if(result != null){
                                     lastResult = result;  // Update lastResult when result is non-null
+                                    System.out.println(result);
+
+
+                                }
                             }
 
                             String addition = "";
@@ -169,17 +182,16 @@ public class JsonParse {
 
                             int participantId = eventObject.getAsJsonPrimitive("participant_id").getAsInt();
                             String team = "";  // Initialize team to empty string
-
+                            boolean home = false;
                             if (eventName != "") {
                             if (participantId == homeTeamId) {
-                                team = "home";
-                                System.out.println("home");
+                                team = homeName;
+                                home = true;
                             } else if (participantId == awayTeamId) {
-                                team = "away";
-                                System.out.println("away");
+                                team = awayName;
                             }
 
-                            events.add(new Event(eventId, eventName, eventMinute, result, addition, team));
+                            events.add(new Event(eventId, eventName, eventMinute, result, addition, team, home));
 
                             }
 
@@ -187,7 +199,6 @@ public class JsonParse {
                         int id = dataObject.getAsJsonPrimitive("id").getAsInt();
                         String title = dataObject.getAsJsonPrimitive("name").getAsString();
                         String date = dataObject.getAsJsonPrimitive("starting_at").getAsString();
-                        System.out.println(dataObject.getAsJsonPrimitive("starting_at").getAsString());
                         int venueId = dataObject.getAsJsonPrimitive("venue_id").getAsInt();
 
                         JsonArray participants = dataObject.getAsJsonArray("participants");
@@ -224,40 +235,32 @@ public class JsonParse {
         return liveGames;
     }
 
+
+    private static String parseTeamName(String jsonData, int teamIndex) {
+        try {
+            JsonArray dataArray = JsonParser.parseString(jsonData).getAsJsonObject().getAsJsonArray("data");
+            JsonObject matchObject = dataArray.get(0).getAsJsonObject();
+            String[] teams = matchObject.getAsJsonPrimitive("name").getAsString().split(" vs ");
+
+            if (teamIndex >= 0 && teamIndex < teams.length) {
+                return teams[teamIndex];
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
     public static List<Event> parseEvents(JsonArray eventsArray) {
-//        List<Event> events = new ArrayList<>();
-//
-//        for (JsonElement eventElement : eventsArray) {
-//            JsonObject eventObject = eventElement.getAsJsonObject();
-//            int eventId = eventObject.getAsJsonPrimitive("id").getAsInt();
-//            String eventName = eventObject.getAsJsonPrimitive("type").getAsString();
-//            String eventMinute = eventObject.getAsJsonPrimitive("minute").getAsString();
-//            String addition = "";
-//            JsonElement additionElement = eventObject.get("addition");
-//
-//            if (additionElement != null && additionElement.isJsonPrimitive()) {
-//                addition = additionElement.getAsJsonPrimitive().getAsString();
-//            }
-//            String result = "";
-//            JsonElement resultElement = eventObject.get("result");
-//
-//            if (resultElement != null && resultElement.isJsonPrimitive()) {
-//                result = resultElement.getAsJsonPrimitive().getAsString();
-//                if (result != null) {
-//                    lastResult = result;  // Update lastResult when result is non-null
-//                }
-//            }
-//            events.add(new Event(eventId, eventName, eventMinute, "", addition, ""));
-//        }
-//
-//        return events;
+
         List<Event> events = new ArrayList<>();
         String lastResult = null;
 
 
         for (JsonElement eventElement : eventsArray) {
             JsonObject eventObject = eventElement.getAsJsonObject();
-            System.out.println(eventElement.toString());
             int eventId = eventObject.getAsJsonPrimitive("id").getAsInt();
             String eventName = "";
             //JsonElement infoElement = eventObject.get("info");
@@ -276,12 +279,7 @@ public class JsonParse {
             } else if (eventObject.getAsJsonPrimitive("type_id").getAsInt() == 20 || eventObject.getAsJsonPrimitive("type_id").getAsInt() == 21) {//20 is straight red, 21 is second yellow so both have same outcome
                 eventName = "red card \n" + eventObject.getAsJsonPrimitive("player_name").getAsString();
             }
-                    //18 sub
-                    //19 yellow
-                    //16 goal
-//                    if (infoElement != null && !infoElement.isJsonNull() && infoElement.isJsonPrimitive()) {
-//                        eventName = infoElement.getAsString();
-//                    }
+
 
             String eventMinute = eventObject.getAsJsonPrimitive("minute").getAsString();
             JsonElement extraMinuteElement = eventObject.get("extra_minute");
@@ -313,7 +311,6 @@ public class JsonParse {
                 StringBuilder content = new StringBuilder();
 
                 while ((inputLine = in.readLine()) != null) {
-                    //System.out.println(inputLine.toString());
                     content.append(inputLine);
                 }
                 in.close();
@@ -363,7 +360,7 @@ public class JsonParse {
 
 
 
-                    events.add(new Event(eventId, eventName, eventMinute, result, addition, teamName));
+                    events.add(new Event(eventId, eventName, eventMinute, result, addition, teamName, false));
 
 
         }
@@ -520,7 +517,6 @@ public class JsonParse {
 
     // takes json produced by /v3/football/venues/ and returns the name of the venue, this is necessary because some endpoints have venue ids, but not venue names
     public static String getVenue(String jsonData) {
-        System.out.println("getvenue ");
         Gson gson = new Gson();
         String venueName = "";
         JsonObject dataObject = gson.fromJson(jsonData, JsonObject.class);
@@ -528,7 +524,6 @@ public class JsonParse {
 
         // Access the venue name from the "data" object
         venueName = data.get("name").getAsString();
-        System.out.println(venueName);
         return venueName;
 
     }

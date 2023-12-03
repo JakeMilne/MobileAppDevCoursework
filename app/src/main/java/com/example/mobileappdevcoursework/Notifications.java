@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -28,6 +29,8 @@ class Notifications implements Runnable {
 
     private Context context;
     private DatabaseRepository databaseRepository;
+    private static final String TAG = "Notifications";
+
 
     public Notifications(Context context, DatabaseRepository databaseRepository) {
         this.context = context;
@@ -40,32 +43,37 @@ class Notifications implements Runnable {
     @Override // https://chat.openai.com/share/44cc401f-7c49-4484-830b-f51375a05d0a
     public void run() {
         while (true) {
-            long startTime = System.currentTimeMillis();
-            Map<Integer, Integer> followedGames = notifCheck();
+            List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
+            Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
             List<LiveGame> liveGames = this.notificationSearch();
             boolean shouldSleep = false;
-            if(followedGames == null){
+            if(followedGamesMap == null){
                 shouldSleep = true;
             } else{
                 //logic to send notifications
                 //for game in followed game
 //                int oldCount = databaseRepository.getEventCount() // followed game id
 
-                for (LiveGame game : liveGames){
-                    if(followedGames.get(game.getId()) != null){
+                for (LiveGame game : liveGames) {
+                    if (followedGamesMap.get(game.getId()) != null) {
                         int newCount = game.getEvents().size();
-                        int oldCount = followedGames.get(game.getId());
-                        if(newCount > oldCount){
-                            for(int i=newCount; i >oldCount; i++){
-                                sendNotif(game.getEventAtIndex(i), game.getId(), game.leagueId);
+                        int oldCount = followedGamesMap.get(game.getId());
+//                        Log.d(TAG, String.valueOf(newCount));
+//                        Log.d(TAG, String.valueOf(oldCount));
+                        if (newCount > oldCount) {
+                            for (int i = oldCount; i < newCount; i++) {
+                                if (i < game.getEvents().size()) {
+                                    Event event = game.getEventAtIndex(i);
+                                    sendNotif(event, game.getId(), game.leagueId);
+                                }
                             }
+                            FollowedGame followedGame = new FollowedGame(game.getId(), newCount);
+                            databaseRepository.updateFollowedGames(followedGame);
                         }
-
                     }
-
                 }
 
-                for (Map.Entry<Integer, Integer> entry : followedGames.entrySet()){ //https://chat.openai.com/share/99c6ed7e-ed94-4ab5-a15a-3c708848e7bb
+                for (Map.Entry<Integer, Integer> entry : followedGamesMap.entrySet()){ //https://chat.openai.com/share/99c6ed7e-ed94-4ab5-a15a-3c708848e7bb
                     Integer gameId = entry.getKey();
 
                     // Check if the game with gameId is in liveGames
@@ -77,9 +85,7 @@ class Notifications implements Runnable {
                     }
                 }
             }
-            //boolean shouldSleep = notifCheck(); // change to Map<Integer, Integer> followedGames, and do if !followedGames == null shouldSleep = true
-            long endTime = System.currentTimeMillis();
-            //System.out.println("Execution time: " + (endTime - startTime) + " ms");
+
 
             if (shouldSleep) {
                 try {
@@ -100,38 +106,6 @@ class Notifications implements Runnable {
         }
     }
 
-    //    private boolean notifCheck() {
-    private Map<Integer, Integer> notifCheck() {
-
-        long startTime = System.currentTimeMillis();
-        // Your code to be executed every 10 seconds
-        try {
-            // Perform network-related operation in a background thread
-            Thread.sleep(10000);
-            List<LiveGame> liveGames = this.notificationSearch();
-            if (liveGames == null) {
-                System.out.println("Sleep for 1 min");
-                Thread.sleep(60000);
-                return null; // Return true if you want to sleep for 1 minute
-            } else {
-                System.out.println(liveGames);
-                List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
-                Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
-
-
-
-                System.out.println("Executing myFunction every 10 seconds");
-                return followedGamesMap; // Return false if you don't want to sleep for 1 minute
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            long endTime = System.currentTimeMillis();
-            System.out.println("notifCheck execution time: " + (endTime - startTime) + " ms");
-        }
-    }
-
 
 
     private static Map<Integer, Integer> convertListToMap(List<FollowedGame> followedGamesList) {
@@ -145,19 +119,23 @@ class Notifications implements Runnable {
     public void sendNotif(Event event, int id, int leagueId) {
         // https://developer.android.com/develop/ui/views/notifications/build-notification#java
         // https://chat.openai.com/share/b2695ba0-3441-4722-9de4-665c551640c7
-        final String CHANNEL_ID = "App_Title_id";
+        final String CHANNEL_ID = "YouScore";
         List<String> notif = new ArrayList<>();
         notif = parseForNotif(event);
         String textTitle = notif.get(0);
         String textContent = notif.get(1);
         Context context = this.context;
-        Intent intent = new Intent(context, LiveGameDetails.class);
+        // Use the hosting Activity class instead of LiveGameDetails
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra("FRAGMENT_TYPE", "LiveGameDetails");
         intent.putExtra("ITEM_ID", id);
         intent.putExtra("LEAGUE_ID", leagueId);
+
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.baseline_live_tv_24)
                 .setContentTitle(textTitle)
                 .setContentText(textContent)
                 .setContentIntent(pendingIntent)
@@ -178,6 +156,7 @@ class Notifications implements Runnable {
             return;
         }
         notificationManager.notify(notificationId, builder.build());
+        Log.d(TAG, "Notification sent");
     }
 
     public static int createID(String input) {
@@ -198,20 +177,12 @@ class Notifications implements Runnable {
         List<String> notif = new ArrayList<>();
 
         //(new Event(eventId, eventName, eventMinute, result, addition, teamName))
-        if (event.getAddition().isEmpty()){
-            notif.add(event.getMinute() + "' "  + event.getName() + " " + event.getTeam() + " " + event.getResult());
-
-        }else{
-            notif.add(event.getMinute() + " + " + event.getAddition() + "' "  + event.getName() + " " + event.getTeam() + " " + event.getResult());
-        }
-        if (event.getAddition().isEmpty()){
-            notif.add(event.getName() + " for  " + event.getTeam() + " at minute " + event.getMinute() + "' "  +  " the score is: " + event.getResult());
 
 
-        }else{
-            notif.add(event.getName() + " for  " + event.getTeam() + " at minute " + event.getMinute() + " + " + event.getAddition() + "' "  +  " the score is: " + event.getResult());
+        notif.add(event.getMinute() + "' "  + event.getName() + " " + event.getTeam() + " " + event.getResult());
+        notif.add(event.getName() + " for " + event.getTeam() + " at minute " + event.getMinute() + "' "  +  " the score is: " + event.getResult());
 
-        }
+
 
 
 

@@ -28,4 +28,9 @@ public class FollowedGame {
     public int getEventCount() {
         return eventCount;
     }
+
+    public FollowedGame(int gameID, int eventCount) {
+        this.gameID = gameID;
+        this.eventCount = eventCount;
+    }
 }

@@ -106,7 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="164dp"
             android:layout_marginTop="32dp"
-            android:text="TextView"
+            android:text="@string/venue"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/scoreView" />
@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="160dp"
             android:layout_marginTop="32dp"
-            android:text="TextView"
+            android:text="@string/score"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/titleLiveTextView" />
@@ -130,7 +130,7 @@
             android:layout_marginTop="156dp"
             android:maxLines="100"
             android:scrollbars="vertical"
-            android:text="Your long text here"
+            android:text="@string/HomeEvents"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/kickOffView" />
 
@@ -138,11 +138,11 @@
             android:id="@+id/awayEventView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="596dp"
+            android:layout_marginStart="604dp"
             android:layout_marginTop="156dp"
             android:maxLines="100"
             android:scrollbars="vertical"
-            android:text="Your long text here"
+            android:text="@string/AwayEvents"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/kickOffView" />
 
@@ -152,7 +152,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="144dp"
             android:layout_marginTop="100dp"
-            android:text="TextView"
+            android:text="@string/minutes"
             app:layout_constraintStart_toStartOf="@+id/homeEventView"
             app:layout_constraintTop_toBottomOf="@+id/kickOffView" />
 

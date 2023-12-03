@@ -41,13 +41,13 @@ public class HomeViewModel extends AndroidViewModel {
     //function to get upcoming games
     public void loadData() {
 
-        // put it in a thread since it contains network and database operations
+        // using a background thread since it contains network and database operations
         executor.execute(new Runnable() {
             @Override
             public void run() {
 
-                List<Game> localData = databaseRepository.getAll(); //gets stored games from the database
-                gamesLiveData.postValue(localData); //updates live data
+                List<Game> localData = databaseRepository.getAll(); //gets stored games in the database
+                gamesLiveData.postValue(localData); //updates recycler view
 
                 List<Game> apiData = mainSearch(); //gets upcoming games from the API
 
@@ -55,7 +55,7 @@ public class HomeViewModel extends AndroidViewModel {
 
                 databaseRepository.insertGames(apiData); //adds games from the API to the database for the next time loadData is used
 
-                gamesLiveData.postValue(apiData); //updating livedata again, with the new set of upcoming games
+                gamesLiveData.postValue(apiData); //updating recycler view, with the new set of upcoming games
             }
         });
     }
@@ -81,7 +81,7 @@ public class HomeViewModel extends AndroidViewModel {
             connection.disconnect();
 
             String jsonString = content.toString();
-            System.out.println(jsonString);
+//            System.out.println(jsonString);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -94,10 +94,11 @@ public class HomeViewModel extends AndroidViewModel {
 
         int leagueID = databaseRepository.getLeague();
         try{
-
+            //LocalDate.now() and addMonth() are used so the API finds games within the next month,
+            // this may not show games towards the end of the period, I think this has to do with there being a limit
+            // on how many games the api is willing to send
 
             String baseURL = "https://api.sportmonks.com/v3/football/fixtures/between/" + LocalDate.now() + "/" + addMonth() + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID;
-            //LocalDate.now() and addMonth() are used so the API finds games within the next month, this may not show games towards the end of the period, I think this has to do with there being a limit on how many games the api is willing to send
             URL url = new URL(baseURL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 

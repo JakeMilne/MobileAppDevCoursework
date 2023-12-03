@@ -1,6 +1,8 @@
 package com.example.mobileappdevcoursework;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.Fragment;
@@ -13,29 +15,57 @@ import com.example.mobileappdevcoursework.databinding.ActivityMainBinding;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
+    private static final int PERMISSION_REQUEST_CODE = 123; // You can use any integer value
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_main);
-
-
         //code for the navigation bar comes from https://www.youtube.com/watch?v=jOFLmKMOcK0 , accessed 14/11/2023 at 10am the switch case at 7:54 was adapted to a series of if else statements to fix a constant expression required error
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
 
         //replaceFragment(new HomeFragment());
         NavController navController = navHostFragment.getNavController();
+
+        if (getIntent() != null) {
+            String fragmentType = getIntent().getStringExtra("FRAGMENT_TYPE");
+
+            if (fragmentType != null) {
+                switch (fragmentType) {
+                    case "LiveGameDetails":
+                        int itemId = getIntent().getIntExtra("ITEM_ID", -1);
+                        int leagueId = getIntent().getIntExtra("LEAGUE_ID", -1);
+
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("ITEM_ID", itemId);
+                        bundle.putInt("LEAGUE_ID", leagueId);
+
+                        // Show the LiveGameDetails fragment with the provided data
+                        navController.navigate(R.id.liveGameDetails, bundle);
+
+                        break;
+                    // Add more cases for other fragment types if needed
+                }
+            }
+        }
+        checkNotificationPermissions();
+
+
+
+
+
 
 
         new Thread(() -> {
@@ -67,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is not in the Support Library.
-        final String CHANNEL_ID = "App_Title_id";
+        final String CHANNEL_ID = "YouScore";
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
@@ -95,4 +125,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    private void checkNotificationPermissions() {
+        final String permission = android.Manifest.permission.POST_NOTIFICATIONS;
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            // The permission is not granted, request it
+            ActivityCompat.requestPermissions(this, new String[]{permission}, PERMISSION_REQUEST_CODE);
+        } else {
+            // The permission is already granted, proceed with your logic
+            Log.d("MainActivity", "Notification permission is already granted");
+        }
+    }
+
 }

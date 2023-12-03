@@ -1,66 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--    <?xml version="1.0" encoding="utf-8"?>-->
-<!--    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--        xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--        xmlns:tools="http://schemas.android.com/tools"-->
-<!--        android:id="@+id/frameLayout3"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        tools:context=".LiveGameDetails">-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/kickOffView"-->
-<!--            android:layout_width="140dp"-->
-<!--            android:layout_height="101dp"-->
-<!--            android:layout_marginStart="124dp"-->
-<!--            android:layout_marginTop="44dp"-->
-<!--            android:text="@string/gameTime"-->
-<!--            android:textSize="20sp"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/venueLiveView"-->
-<!--            tools:textAlignment="center" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/titleLiveTextView"-->
-<!--            android:layout_width="326dp"-->
-<!--            android:layout_height="47dp"-->
-<!--            android:layout_marginStart="40dp"-->
-<!--            android:layout_marginTop="64dp"-->
-<!--            android:text="@string/gameTitle"-->
-<!--            android:textSize="24sp"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            tools:textAlignment="center" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/venueLiveView"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="156dp"-->
-<!--            android:layout_marginTop="32dp"-->
-<!--            android:text="TextView"-->
-<!--            android:textSize="20sp"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/scoreView" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/scoreView"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="156dp"-->
-<!--            android:layout_marginTop="28dp"-->
-<!--            android:text="TextView"-->
-<!--            android:textSize="20sp"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/titleLiveTextView" />-->
-
-<!--        -->
-
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-
-
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -74,14 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Your existing views go here -->
 
         <TextView
             android:id="@+id/kickOffView"
-            android:layout_width="145dp"
-            android:layout_height="54dp"
-            android:layout_marginStart="140dp"
-            android:layout_marginTop="44dp"
+            android:layout_width="156dp"
+            android:layout_height="88dp"
+            android:layout_marginStart="136dp"
+            android:layout_marginTop="28dp"
             android:text="@string/gameTime"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -90,10 +28,10 @@
 
         <TextView
             android:id="@+id/titleLiveTextView"
-            android:layout_width="326dp"
-            android:layout_height="47dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="64dp"
+            android:layout_width="293dp"
+            android:layout_height="43dp"
+            android:layout_marginStart="76dp"
+            android:layout_marginTop="60dp"
             android:text="@string/gameTitle"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -102,22 +40,22 @@
 
         <TextView
             android:id="@+id/venueLiveView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="164dp"
-            android:layout_marginTop="32dp"
-            android:text="TextView"
+            android:layout_width="170dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="124dp"
+            android:layout_marginTop="36dp"
+            android:text="@string/venue"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/scoreView" />
 
         <TextView
             android:id="@+id/scoreView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="160dp"
+            android:layout_width="112dp"
+            android:layout_height="31dp"
+            android:layout_marginStart="144dp"
             android:layout_marginTop="32dp"
-            android:text="TextView"
+            android:text="@string/score"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/titleLiveTextView" />
@@ -126,11 +64,11 @@
             android:id="@+id/homeEventView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="160dp"
-            android:text="Your long text here"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="196dp"
             android:maxLines="100"
             android:scrollbars="vertical"
+            android:text="@string/HomeEvents"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/kickOffView" />
 
@@ -138,11 +76,11 @@
             android:id="@+id/awayEventView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="236dp"
-            android:layout_marginTop="160dp"
+            android:layout_marginStart="268dp"
+            android:layout_marginTop="196dp"
             android:maxLines="100"
             android:scrollbars="vertical"
-            android:text="Your long text here"
+            android:text="@string/AwayEvents"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/kickOffView" />
 
@@ -150,9 +88,9 @@
             android:id="@+id/minuteView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="136dp"
-            android:layout_marginTop="104dp"
-            android:text="TextView"
+            android:layout_marginStart="152dp"
+            android:layout_marginTop="108dp"
+            android:text="@string/minutes"
             app:layout_constraintStart_toStartOf="@+id/homeEventView"
             app:layout_constraintTop_toBottomOf="@+id/kickOffView" />
 

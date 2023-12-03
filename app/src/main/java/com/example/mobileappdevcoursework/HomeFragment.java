@@ -28,6 +28,7 @@ public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListe
     private MyAdapter adapter;
     private HomeViewModel viewModel;
     private DatabaseRepository databaseRepository;
+    private static final String TAG = "HomeFragment";
 
     public HomeFragment() {
     }
@@ -45,6 +46,7 @@ public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListe
         recyclerView.setAdapter(adapter);
         TextView welcomeView = view.findViewById(R.id.welcomeView);
 
+        //gets name from user table and sets the welcome textview to include the name
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -74,9 +76,9 @@ public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListe
         viewModel.getItems().observe(getViewLifecycleOwner(), new Observer<List<Game>>() {
             @Override
             public void onChanged(List<Game> games) {
-                Log.d("HomeFragment", "onChanged: LiveData updated with " + games.size() + " games");
+                Log.d(TAG, "onChanged: LiveData updated with " + games.size() + " games");
 
-                // Update the RecyclerView with the new list of games
+                // Update the RecyclerView with the new set of games
                 adapter.setGames(games);
             }
         });

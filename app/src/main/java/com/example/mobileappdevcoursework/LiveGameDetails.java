@@ -197,10 +197,7 @@ public class LiveGameDetails extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        FollowedGame followedGame = new FollowedGame();
-        followedGame.setGameID(itemId);
-        System.out.println(" event count      " + liveGame.eventCount());
-        followedGame.setEventCount(liveGame.eventCount());
+        FollowedGame followedGame = new FollowedGame(itemId, liveGame.eventCount());
 
         new Thread(new Runnable() {
             @Override

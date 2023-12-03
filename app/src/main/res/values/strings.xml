@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">MobileAppDevCoursework</string>
-    <string name="channel_name">App Title</string>
-    <string name="channel_description">Notifications for App Title</string>
+    <string name="app_name">YouScore</string>
+    <string name="channel_name">YouScore</string>
+    <string name="channel_description">Notifications for YouScore</string>
 
 
     <string name="gameTime">Time</string>
@@ -17,7 +17,7 @@
     <string name="calender">Add to calender</string>
     <string name="kickOff">kick off time</string>
     <string name="score">score</string>
-    <string name="time">ingame time</string>
+    <string name="time">in game time</string>
     <string name="selectLeague">Select a league</string>
     <string-array name="leagues">
         <item>Scottish Premiership</item>
@@ -32,5 +32,9 @@
     <string name="save">save settings</string>
     <string name="welcome">Welcome</string>
 
+    <string name="HomeEvents">home events here</string>
+    <string name="AwayEvents">away events here</string>
+    <string name="minutes">minute</string>
+    <string name="venue">venue name</string>
 
 </resources>

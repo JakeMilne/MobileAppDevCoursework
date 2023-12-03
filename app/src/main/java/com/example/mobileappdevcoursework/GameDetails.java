@@ -69,7 +69,6 @@ public class GameDetails extends Fragment{
         TextView awayPosView = view.findViewById(R.id.awayPosView);
         Button calendarBtn = view.findViewById(R.id.calendarBtn);
 
-        //calendarBtn.setOnClickListener(this);
 
 
         if (bundle != null) {
@@ -94,14 +93,13 @@ public class GameDetails extends Fragment{
                         StringBuilder content = new StringBuilder();
 
                         while ((inputLine = in.readLine()) != null) {
-                            //System.out.println(inputLine.toString());
                             content.append(inputLine);
                         }
                         in.close();
                         connection.disconnect();
 
                         String jsonString = content.toString();
-                        System.out.println(jsonString);
+//                        System.out.println(jsonString);
                         GameInstance thisGame = JsonParse.parseGame(jsonString);
 
 

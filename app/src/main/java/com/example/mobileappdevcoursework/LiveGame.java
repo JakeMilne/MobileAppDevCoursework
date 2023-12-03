@@ -38,9 +38,12 @@ public class LiveGame {
         this.awayPos = awayPos;
         if (events != null) {
             this.events = events;
+            setScores();//since the api returns an unordered list of events, we need to wait until the list of events is ordered to assign accurate scores to events that have null scores
+
         } else {
             this.events = new ArrayList<>();
         }
+
         sortEventsByMinute();
         this.score = score;
         this.leagueId = leagueId;
@@ -66,6 +69,17 @@ public class LiveGame {
                 ", score='" + score + '\'' +
                 ", leagueId=" + leagueId +
                 '}';
+    }
+    private void setScores(){
+        events.get(0).setResult("0-0");
+        for (int i= events.size() -1; i>0; i--){
+            while(events.get(i).getResult() == null){
+                events.get(i).setResult(events.get(i-1).getResult());
+                i--;
+            }
+        }
+        score = events.get(events.size()-1).getResult(); //since it may not be accurate coming out of the api
+
     }
 
     public String getTitle() {
@@ -161,7 +175,7 @@ public class LiveGame {
 //            stringBuilder.append("Event ID: ").append(event.getId()).append("\n");
 //            stringBuilder.append("Event Name: ").append(event.getName()).append("\n");
 //            stringBuilder.append("Event Minute: ").append(event.getMinute()).append("\n");
-            if(event.getTeam().equals("home")) {
+            if(event.isHome()) {
                 stringBuilder.append(event.getName()).append("\n");
                 System.out.println("added home event");
             }else{
@@ -181,7 +195,7 @@ public class LiveGame {
 //            stringBuilder.append("Event ID: ").append(event.getId()).append("\n");
 //            stringBuilder.append("Event Name: ").append(event.getName()).append("\n");
 //            stringBuilder.append("Event Minute: ").append(event.getMinute()).append("\n");
-            if(event.getTeam().equals("away")) {
+            if(!event.isHome()) {
                 stringBuilder.append(event.getName()).append("\n");
                 System.out.println("added away event");
             }else{
@@ -197,26 +211,26 @@ public class LiveGame {
     public String getMins(){
         StringBuilder stringBuilder = new StringBuilder();
         for (Event event: this.events){
-            stringBuilder.append(event.getMinute()).append("\n");
+            stringBuilder.append(event.getMinute()).append("\n\n");
 
         }
         return stringBuilder.toString();
     }
 
     public Event getEventAtIndex(int index) {
-        if (index >= 0 && index < events.size()) {
-            return events.get(index);
-        } else {
-            throw new IndexOutOfBoundsException("Invalid index: " + index);
-        }
+        System.out.println("index at " + index);
+        System.out.println("size is " + events.size());
+        System.out.println("event 1 is " + events.get(1));
+        return events.get(index);
+
     }
-    public void sortEventsByMinute() { // https://chat.openai.com/share/895a4d68-ea9e-4919-9c00-1bf9fbb1711d
+    public void sortEventsByMinute() {
         Collections.sort(events, new Comparator<Event>() {
             @Override
             public int compare(Event event1, Event event2) {
                 // Split on '+' if present to get the first part of the minute
-                String minute1 = event1.getMinute().split("\\+")[0];
-                String minute2 = event2.getMinute().split("\\+")[0];
+                String minute1 = event1.getMinute().split("\\+")[0].trim();  // Trim the string
+                String minute2 = event2.getMinute().split("\\+")[0].trim();  // Trim the string
 
                 // Convert to integers for comparison
                 int minuteValue1 = Integer.parseInt(minute1);

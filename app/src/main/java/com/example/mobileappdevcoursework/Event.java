@@ -7,17 +7,39 @@ public class Event {
     private String result;
     private String addition;
     private String team;
+    private boolean home;
 
-    public Event(int id, String name, String minute, String result, String addition, String team) {
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", minute='" + minute + '\'' +
+                ", result='" + result + '\'' +
+                ", addition='" + addition + '\'' +
+                ", team='" + team + '\'' +
+                '}';
+    }
+
+    public Event(int id, String name, String minute, String result, String addition, String team, boolean home) {
         this.id = id;
         this.name = name;
         this.minute = minute;
         this.result = result;
         this.addition = addition;
         this.team = team;
+        this.home = home;
     }
 
     // Getter methods...
+
+    public boolean isHome() {
+        return home;
+    }
+
+    public void setHome(boolean home) {
+        this.home = home;
+    }
 
     public int getId() {
         return id;
