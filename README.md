@@ -33,41 +33,39 @@ The readme.md file should also include details of the app design (assessing LO1 
 
 <h2>App design</h2>
 <h3>Main page </h3>
-<p>The main page is where you can see upcoming games for your selected league, and gives you the option to view each game in more detail </p>
+<p>The main page shows upcoming games for your selected league in a recyclerView, and gives you the option to view each game in more detail, by clicking on the respective button </p>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/6e585a1f-d106-46d2-9ac8-55ddbbf26541)
 <h3>Upcoming game details </h3>
-<p>The game details page shows you more specific information about the game you selected in the main page</p>
+<p>The game details page shows you more specific information about the game you selected in the main page using textViews. You can also add the game to your calender via the button</p>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/9be0bb25-e36b-4dc9-a9cc-4b7b7c2b9c32)
 
 <h3>Live games </h3>
-<p>The live games page is where you can see all live games for your selected league, and gives you the option to view each game in more detail, as well as the option to add the game to your calender </p>
+<p>The live games page shows all live games for your selected league, and gives you the option to view each game in more detail  </p>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/0f853680-b1f3-4775-97d0-b795aa9bdd0f)
 
 <h3>Live game details </h3>
-<p>The live details page is accessable from either the live games page, or by clicking on a notification, and is where you can see the live score, as well as other events for your selected game. You can also enable notifications by following the game. </p>
+<p>The live details page is accessable from either the live games page, or by clicking on a notification, and is where you can see the live score, as well as other events for your selected game via textViews and a scrollView. You can also enable notifications by following the game using the button. </p>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/ebd1203a-06c5-463e-bb60-7b9968f6433d)
 
 <h3>User Profile </h3>
-<p>The user profile page allows you to choose your display name and which league you are interested in</p>
+<p>The user profile page takes user input for the user table using an EditText and a Spinner</p>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/2a1f920c-6795-4104-806b-dcbfc1d23f65)
 
 <h3>Notifications </h3>
 <p>here is an example of a notification, clicking on it will open the relevant live details page</p>
+
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/513d1629-4cb3-4cb5-a246-1368e5d3585a)
 
 
 
-• A wireframe or screenshot of each page, describing the widgets used to display and
-receive information to/from the user and why, and the layout managers used to
-arrange them. <br>
-• Details of how the functionalities are implemented in each page, for example: <br>
-o How users navigate through the app. This can be a screenshot of the
-navigation graph visualisation, with appropriate description. <br>
+<h2>Navigation graph</h2>
+
+<p>Below is a screenshot of the navigation graph. When a user opens the app they are sent to the homepage fragment, and from there they can navigate using either buttons or the navigation bar</p>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/7fe18649-0633-4ace-ab7a-7ece318c2b7a)
 
@@ -76,7 +74,7 @@ navigation graph visualisation, with appropriate description. <br>
 
 <h3>Life cycle events</h3>
 <h4>Main Activity</h4>
-Main activity handles the navigation bar, handling the fragment switching in the onCreate method
+Main activity handles the navigation bar and fragment switching in the onCreate method
 <h4>Home Page/Upcoming Games and Live Scores</h4>
 The Home Page and Live Scores page have similar life cycle events, onCreateView handles the creation of the recyclerView via an istance of the HomeViewModel class, with the nested onChanged function updating the recycler view, onStart uses the instance of HomeViewClass to load data from the database and the api. onItemClick is used to handle redirects to the game details or live game details fragment. <br>
 
@@ -91,18 +89,20 @@ The onCreateView function is used to initialise and handle the user inputs via a
 
 
 <h2>Web Service</h2>
-App Title makes use of the Sportmonks api, which allows a user to access the scottish and danish first divisions, as well as each leagues playoff rounds.<br>
-The three endpoints that this app uses are /football/fixtures/, /football/livescores/inplay, and /football/venues/. A fourth endpoint(/core/types), which produces a list of events types, along with information about them such as ID and name, was used to help understand, and format the json for live games in a readable manner, however is no longer used. The showTypes method which called this endpoint is in HomeViewModel<br>
+YouScore makes use of the Sportmonks api, which allows a user to access the scottish and danish first divisions, as well as each leagues playoff rounds.<br>
+The three endpoints that this app uses are /football/fixtures/, /football/livescores/inplay, and /football/venues/. A fourth endpoint(/core/types), which produces a list of events types was used to help understand, and format the json for live games in a readable manner, however is no longer used. The showTypes method which called this endpoint is in HomeViewModel<br>
 The /football/fixtures/ endpoint was used in the mainSearch function in the homeviewmodel as well as gamedetails fragment to show details about upcoming matches. <br>
 The /football/livescores/inplay endpoint was used in the liveSearch function in the liveviewmodel as well as livegamedetails fragment to show details about live matches. <br>
 The /football/venues/ was used to retreive venue names, given an id. This was necessary since the livescores endpoint did not include venue name. <br>
+examples of the json produced are available in the jsonExamples.txt file <br>
 
 
 
 <h2>Room SQLite Database</h2>
-The Room SQLite database contains 2 tables, titled "GameDatabase" and "UserDatabase". <br>
-The game database is used to store upcoming games retrieved from the api so that the app can partially function without internet access, which allow the user to see the most recently retrieved set of upcoming games.
-The user database acts as a configuration file, storing the name and league preference of the user so that when the app is loaded, details the user previously entered can be used <br>
+The Room SQLite database contains 3 tables,"FollowedGameDatabase" "GameDatabase" and "UserDatabase". <br>
+GameDatabase is used to store upcoming games retrieved from the api so that the app can partially function without internet access, showing the user the last set of games when they load the app.
+UserDatabase acts as a configuration file, storing the name and league preference of the user so that when the app is loaded, details the user previously entered can be used.
+FollowedGameDatabase stores the id and amount of events for each game the user follows<br>
 
 
 <h2>Mobile Specific Functionalities</h2>
