@@ -1,0 +1,1366 @@
+using this as a reference
+ Map<Integer, Integer> followedGames = notifCheck();
+            List<LiveGame> liveGames = this.notificationSearch();
+            boolean shouldSleep = false;
+            if(followedGames == null){
+                shouldSleep = true;
+            } else{
+                //logic to send notifications
+                //for game in followed game
+//                int oldCount = databaseRepository.getEventCount() // followed game id
+
+                for (LiveGame game : liveGames){
+                    if(followedGames.get(game.getId()) != null){
+                        int newCount = game.getEvents().size();
+                        int oldCount = followedGames.get(game.getId());
+                        if(newCount > oldCount){
+                            for(int i=newCount; i >oldCount; i++){
+                                sendNotif(game.getEventAtIndex(i), game.getId(), game.leagueId);
+                            }
+                        }
+
+                    }
+                    
+                }
+
+how can I check if a followedgame is in livegames
+
+ChatGPT
+To check if a followedGame is in the liveGames list, you can iterate through the liveGames list and compare the id of each LiveGame with the keys in the followedGames map. If there is a match, it means that the followedGame is present in the liveGames list. Here's how you can modify your code to achieve this:
+
+java
+Copy code
+Map<Integer, Integer> followedGames = notifCheck();
+List<LiveGame> liveGames = this.notificationSearch();
+boolean shouldSleep = false;
+
+if (followedGames == null) {
+    shouldSleep = true;
+} else {
+    // Logic to send notifications for games in followedGames that are in liveGames
+    for (LiveGame game : liveGames) {
+        Integer followedGameCount = followedGames.get(game.getId());
+
+        if (followedGameCount != null) {
+            int newCount = game.getEvents().size();
+
+            if (newCount > followedGameCount) {
+                for (int i = newCount - 1; i >= followedGameCount; i--) {
+                    sendNotif(game.getEventAtIndex(i), game.getId(), game.getLeagueId());
+                }
+            }
+        }
+    }
+}
+In this modified code:
+
+I've used Integer followedGameCount = followedGames.get(game.getId()); to get the count of events for the corresponding game ID in followedGames.
+If followedGameCount is not null, it means the game is in the followedGames map.
+The code then compares newCount with followedGameCount to determine if there are new events for that game.
+If there are new events, it sends notifications for each new event from followedGameCount to newCount - 1.
+User
+I dont want to count them, I want to call a method if they arent featured
+ChatGPT
+If you want to call a method for the followedGame instances that are not in liveGames, you can iterate through the followedGames map and check if the corresponding game ID exists in the liveGames list. If it doesn't, you can call your method. Here's how you can modify your code for this purpose:
+
+java
+Copy code
+Map<Integer, Integer> followedGames = notifCheck();
+List<LiveGame> liveGames = this.notificationSearch();
+boolean shouldSleep = false;
+
+if (followedGames == null) {
+    shouldSleep = true;
+} else {
+    // Logic to send notifications for games in followedGames that are in liveGames
+    for (Map.Entry<Integer, Integer> entry : followedGames.entrySet()) {
+        Integer gameId = entry.getKey();
+
+        // Check if the game with gameId is in liveGames
+        boolean isGameInLiveGames = liveGames.stream().anyMatch(game -> game.getId() == gameId);
+
+        if (!isGameInLiveGames) {
+            // Call your method here for games that are in followedGames but not in liveGames
+            yourMethod(gameId);
+        }
+    }
+}
+In this modified code:
+
+I'm using followedGames.entrySet() to iterate through the entries (key-value pairs) of the followedGames map.
+For each entry, I extract the gameId using entry.getKey().
+I use the anyMatch method of the Stream API to check if there is any game in liveGames with the same gameId.
+If there is no match, it means the gameId is not in liveGames, and you can call your method (yourMethod(gameId)) for that game.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+given the following java code give me a method to sort events by minute, take into consideration that minute is a string in formats such as 57, or 45+1. It should be sorted by the first number first, so consider splitting on the + sign if there is one
+
+
+package com.example.mobileappdevcoursework;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+
+public class LiveGame {
+
+    String title;
+    int id;
+    String startTime;
+    int venueID;
+    String venue;
+    String homeName;
+    String awayName;
+    int homePos;
+    int awayPos;
+    List<Event> events;
+    String score;
+    int leagueId;
+
+    public LiveGame(String title, String date, int id, int venueID,
+                            String homeName, String awayName, int homePos, int awayPos,
+                            List<Event> events, String score, int leagueId) {
+        this.title = title;
+        this.startTime = date;
+        this.id = id;
+        this.venueID = venueID;
+        this.venue = getVenue();
+        this.homeName = homeName;
+        this.awayName = awayName;
+        this.homePos = homePos;
+        this.awayPos = awayPos;
+        if (events != null) {
+            this.events = events;
+        } else {
+            this.events = new ArrayList<>();
+        }
+        this.score = score;
+        this.leagueId = leagueId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return "LiveGame{" +
+                "title='" + title + '\'' +
+                ", id=" + id +
+                ", startTime='" + startTime + '\'' +
+                ", venueID=" + venueID +
+                ", venue='" + venue + '\'' +
+                ", homeName='" + homeName + '\'' +
+                ", awayName='" + awayName + '\'' +
+                ", homePos=" + homePos +
+                ", awayPos=" + awayPos +
+                ", events=" + events +
+                ", score='" + score + '\'' +
+                ", leagueId=" + leagueId +
+                '}';
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public int getVenueID() {
+        return venueID;
+    }
+
+
+    public String getHomeName() {
+        return homeName;
+    }
+
+    public String getAwayName() {
+        return awayName;
+    }
+
+    public int getHomePos() {
+        return homePos;
+    }
+
+    public int getAwayPos() {
+        return awayPos;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public String getScore() {
+        return score;
+    }
+
+    public int eventCount() {
+        return this.events.size();
+    }
+    public String getVenue() {
+        final StringBuilder venue = new StringBuilder();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("https://api.sportmonks.com/v3/football/venues/" + venueID + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String inputLine;
+                    StringBuilder content = new StringBuilder();
+
+                    while ((inputLine = in.readLine()) != null) {
+                        content.append(inputLine);
+                    }
+                    in.close();
+                    connection.disconnect();
+
+                    if (content != null) {
+                        String jsonString = content.toString();
+                        venue.append(jsonParser.getVenue(jsonString));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+
+        try {
+            // Wait for the thread to finish
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return venue.toString();
+    }
+
+
+
+    public String getHomeEventList() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Event event : this.events) {
+//            stringBuilder.append("Event ID: ").append(event.getId()).append("\n");
+//            stringBuilder.append("Event Name: ").append(event.getName()).append("\n");
+//            stringBuilder.append("Event Minute: ").append(event.getMinute()).append("\n");
+            if(event.getTeam() == "home") {
+                stringBuilder.append(event.getName()).append("\n");
+                System.out.println("added home event");
+            }else{
+                stringBuilder.append("---------------\n\n");
+            }
+
+
+        }
+
+        return stringBuilder.toString();
+    }
+
+    public String getAwayEventList() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (Event event : this.events) {
+//            stringBuilder.append("Event ID: ").append(event.getId()).append("\n");
+//            stringBuilder.append("Event Name: ").append(event.getName()).append("\n");
+//            stringBuilder.append("Event Minute: ").append(event.getMinute()).append("\n");
+            if(event.getTeam() == "away") {
+                stringBuilder.append(event.getName()).append("\n");
+                System.out.println("added away event");
+            }else{
+                stringBuilder.append("---------------\n\n");
+            }
+
+
+
+        }
+
+        return stringBuilder.toString();
+    }
+    public String getMins(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Event event: this.events){
+            stringBuilder.append(event.getMinute()).append("\n");
+
+        }
+        return stringBuilder.toString();
+    }
+
+    public Event getEventAtIndex(int index) {
+        if (index >= 0 && index < events.size()) {
+            return events.get(index);
+        } else {
+            throw new IndexOutOfBoundsException("Invalid index: " + index);
+        }
+    }
+ChatGPT
+To sort the events by minute, considering the minute is a string in formats such as "57" or "45+1," you can create a method in the LiveGame class. Here's an example of how you can achieve this using the Collections.sort method with a custom comparator:
+
+java
+Copy code
+import java.util.Comparator;
+
+public class LiveGame {
+
+    // ... (existing code)
+
+    // Add this method to sort events by minute
+    public void sortEventsByMinute() {
+        Collections.sort(events, new Comparator<Event>() {
+            @Override
+            public int compare(Event event1, Event event2) {
+                // Split on '+' if present to get the first part of the minute
+                String minute1 = event1.getMinute().split("\\+")[0];
+                String minute2 = event2.getMinute().split("\\+")[0];
+
+                // Convert to integers for comparison
+                int minuteValue1 = Integer.parseInt(minute1);
+                int minuteValue2 = Integer.parseInt(minute2);
+
+                // Compare the minutes
+                return Integer.compare(minuteValue1, minuteValue2);
+            }
+        });
+    }
+
+    // ... (existing code)
+
+}
+You can then call this method before using or displaying the events to ensure that they are sorted by minute. For example:
+
+java
+Copy code
+LiveGame liveGame = // create an instance of LiveGame
+liveGame.sortEventsByMinute();
+This will sort the events based on the numeric value of the minutes, even if there is a '+' sign indicating additional time.
+
+
+
+
+
+
+explain why 
+class Notifications implements Runnable {
+
+    private Context context;
+    private DatabaseRepository databaseRepository;
+
+    public Notifications(Context context, DatabaseRepository databaseRepository) {
+        this.context = context;
+        this.databaseRepository = databaseRepository;
+    }
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+    @Override
+    public void run() {
+        scheduler.scheduleAtFixedRate(() -> {
+            long startTime = System.currentTimeMillis();
+            notifCheck();
+            long endTime = System.currentTimeMillis();
+            System.out.println("Execution time: " + (endTime - startTime) + " ms");
+        }, 0, 10, TimeUnit.SECONDS);
+    }
+
+    private void notifCheck() {
+
+        // Your code to be executed every 10 seconds
+        long startTime = System.currentTimeMillis();
+        new Thread(() -> {
+            try{
+            // Perform network-related operation in a background thread
+                Thread.sleep(10000);
+            List<LiveGame> liveGames = this.notificationSearch();
+            if(liveGames == null){
+                Thread.sleep(60000);
+            } else {
+                System.out.println(liveGames.toString());
+                List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
+                Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
+                for (FollowedGame followedGame : followedGames) {
+                    // Check if the FollowedGame is not in liveGames
+                    boolean isFollowedGameInLiveGames = false;
+
+                    for (LiveGame liveGame : liveGames) {
+                        if (liveGame.getId() == followedGame.getGameID()) {
+                            isFollowedGameInLiveGames = true;
+                            break;
+                        }
+                    }
+
+                    // If the FollowedGame is not in liveGames, delete it
+                    if (!isFollowedGameInLiveGames) {
+                        databaseRepository.deleteFollowedGame(followedGame.getGameID());
+                    }
+                }
+                for (LiveGame game : liveGames) {
+                    if (followedGamesMap.get(game.getId()) != null) {
+                        if (game.eventCount() > followedGamesMap.get(game.getId())) {
+                            for (int i = followedGamesMap.get(game.getId()); i < game.eventCount(); i++) {
+                                Event event = game.getEventAtIndex(i);
+                                sendNotif(event);
+                            }
+                        }
+                    }
+                }
+
+                System.out.println("Executing myFunction every 10 seconds");
+            }
+            } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+            // Continue processing the data in the background thread
+
+        }).start();
+        long endTime = System.currentTimeMillis();
+        System.out.println("notifCheck execution time: " + (endTime - startTime) + " ms");
+
+    }
+
+
+
+    private static Map<Integer, Integer> convertListToMap(List<FollowedGame> followedGamesList) {
+        Map<Integer, Integer> gameIdToEventCountMap = new HashMap<>();
+        for (FollowedGame game : followedGamesList) {
+            gameIdToEventCountMap.put(game.getGameID(), game.getEventCount());
+        }
+        return gameIdToEventCountMap;
+    }
+
+    public void sendNotif(Event event) {
+        final String CHANNEL_ID = "App_Title_id";
+        List<String> notif = new ArrayList<>();
+        notif = parseForNotif(event);
+        String textTitle = notif.get(0);
+        String textContent = notif.get(1);
+        Context context = this.context;
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setContentTitle(textTitle)
+                .setContentText(textContent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        int notificationId = createID(textTitle);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        //this if statement auto generated by android studio
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        notificationManager.notify(notificationId, builder.build());
+    }
+
+    public static int createID(String input) {
+        int sum = 0;
+
+        // Check for null or empty string
+        if (input != null && !input.isEmpty()) {
+            // Iterate through each character in the string
+            for (char c : input.toCharArray()) {
+                // Add the ASCII value of the character to the sum
+                sum += (int) c;
+            }
+        }
+
+        return sum;
+    }
+    public static List<String> parseForNotif(Event event){
+        List<String> notif = new ArrayList<>();
+
+        //(new Event(eventId, eventName, eventMinute, result, addition, teamName))
+        if (event.getAddition().isEmpty()){
+            notif.add(event.getMinute() + "' "  + event.getName() + " " + event.getTeam() + " " + event.getResult());
+
+        }else{
+            notif.add(event.getMinute() + " + " + event.getAddition() + "' "  + event.getName() + " " + event.getTeam() + " " + event.getResult());
+        }
+        if (event.getAddition().isEmpty()){
+            notif.add(event.getName() + " for  " + event.getTeam() + " at minute " + event.getMinute() + "' "  +  " the score is: " + event.getResult());
+
+
+        }else{
+            notif.add(event.getName() + " for  " + event.getTeam() + " at minute " + event.getMinute() + " + " + event.getAddition() + "' "  +  " the score is: " + event.getResult());
+
+        }
+
+
+
+        return notif;
+    }
+
+    public List<LiveGame> notificationSearch() {
+        List<LiveGame> liveGames = new ArrayList<>();
+        int leagueID = databaseRepository.getLeague();
+
+        try {
+            //System.out.println(leagueID);
+            URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            connection.disconnect();
+
+            if (content != null) {
+                String jsonString = content.toString();
+                //System.out.println("here " + jsonString);
+                boolean shouldDelay = false;
+                System.out.println(shouldDelay);
+                System.out.println(jsonString);
+                if (jsonString.contains("No result(s) found")) {
+                    return null;
+                }
+
+
+                liveGames = jsonParser.parseLiveJson(jsonString);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return liveGames;
+    }
+}
+
+returns
+ {"message":"No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription.","subscription":[{"meta":[],"plans":[{"plan":"Football Free Plan","sport":"Football","category":"Standard"},{"plan":"Cricket Free Plan","sport":"Cricket","category":"Standard"}],"add_ons":[],"widgets":[]}],"rate_limit":{"resets_in_seconds":2775,"remaining":2927,"requested_entity":"Fixture"},"timezone":"UTC"}
+
+
+instead of null
+ChatGPT
+The issue seems to be related to the response you're getting from the API call in the notificationSearch method. The API response contains a message indicating that no results were found matching the request. This message is likely present in the jsonString:
+
+json
+Copy code
+{
+  "message": "No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription.",
+  "subscription": [...],
+  "rate_limit": {...},
+  "timezone": "UTC"
+}
+In your code, you have the following check:
+
+java
+Copy code
+if (jsonString.contains("No result(s) found")) {
+    return null;
+}
+This check is designed to return null if the response message contains "No result(s) found." However, the actual message in the response is:
+
+json
+Copy code
+"No result(s) found matching your request. Either the query did not return any results or you don't have access to it via your current subscription."
+To fix this issue, you should modify your check to account for the full message:
+
+java
+Copy code
+if (jsonString.contains("\"message\":\"No result(s) found matching your request.")) {
+    return null;
+}
+This modification ensures that you are checking for the exact message present in the API response. If the message matches, it means there are no results, and you can return null.
+
+2023-11-29 16:29:22.588 11772-11845 System.out              com.example.mobileappdevcoursework   I  sleep for 1 min
+2023-11-29 16:29:27.397 11772-11838 System.out              com.example.mobileappdevcoursework   I  notifCheck execution time: 0 ms
+2023-11-29 16:29:27.397 11772-11838 System.out              com.example.mobileappdevcoursework   I  Execution time: 0 ms
+2023-11-29 16:29:27.506 11772-11846 System.out              com.example.mobileappdevcoursework   I  sleep for 1 min
+2023-11-29 16:29:32.480 11772-11796 System.out              com.example.mobileappdevcoursework   I  notifCheck execution time: 0 ms
+2023-11-29 16:29:32.480 11772-11796 System.out              com.example.mobileappdevcoursework   I  Execution time: 0 ms
+2023-11-29 16:29:32.822 11772-11847 System.out              com.example.mobileappdevcoursework   I  sleep for 1 min
+2023-11-29 16:29:37.397 11772-11838 System.out              com.example.mobileappdevcoursework   I  notifCheck execution time: 1 ms
+2023-11-29 16:29:37.397 11772-11838 System.out              com.example.mobileappdevcoursework   I  Execution time: 1 ms
+2023-11-29 16:29:37.501 11772-11849 System.out              com.example.mobileappdevcoursework   I  sleep for 1 min
+
+from 
+package com.example.mobileappdevcoursework;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.example.mobileappdevcoursework.databinding.ActivityMainBinding;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+public class MainActivity extends AppCompatActivity {
+    ActivityMainBinding binding;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //setContentView(R.layout.activity_main);
+
+
+        //code for the navigation bar comes from https://www.youtube.com/watch?v=jOFLmKMOcK0 , accessed 14/11/2023 at 10am the switch case at 7:54 was adapted to a series of if else statements to fix a constant expression required error
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+
+        //replaceFragment(new HomeFragment());
+        NavController navController = navHostFragment.getNavController();
+
+
+        new Thread(() -> {
+            createNotificationChannel();
+            LiveViewModel viewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(LiveViewModel.class);
+            DatabaseRepository databaseRepository = DatabaseRepository.getRepository(this);
+            Notifications notificationManager = new Notifications(this,  databaseRepository);
+            notificationManager.run();
+        }).start();
+
+
+        binding.bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.main) {
+                navController.navigate(R.id.HomeFragment);
+                return true;
+            } else if (item.getItemId() == R.id.profile) {
+                navController.navigate(R.id.userProfile);
+                return true;
+            } else if (item.getItemId() == R.id.live) {
+                navController.navigate(R.id.liveScores);
+                return true;
+            }
+            return false;
+        });
+
+
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is not in the Support Library.
+        final String CHANNEL_ID = "App_Title_id";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this.
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        Log.d("MainActivity", "Replacing fragment with " + fragment.getClass().getSimpleName());
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (fragment != null) {
+            fragmentTransaction.replace(R.id.frameLayout, fragment);
+            fragmentTransaction.commit();
+        } else {
+            Log.e("MainActivity", "Fragment is null");
+        }
+
+    }
+}
+
+class Notifications implements Runnable {
+
+    private Context context;
+    private DatabaseRepository databaseRepository;
+
+    public Notifications(Context context, DatabaseRepository databaseRepository) {
+        this.context = context;
+        this.databaseRepository = databaseRepository;
+    }
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+    @Override
+    public void run() {
+        scheduler.scheduleAtFixedRate(() -> {
+            long startTime = System.currentTimeMillis();
+            notifCheck();
+            long endTime = System.currentTimeMillis();
+            System.out.println("Execution time: " + (endTime - startTime) + " ms");
+        }, 0, 10, TimeUnit.SECONDS);
+    }
+
+    private void notifCheck() {
+
+        // Your code to be executed every 10 seconds
+        long startTime = System.currentTimeMillis();
+        new Thread(() -> {
+            try{
+            // Perform network-related operation in a background thread
+                Thread.sleep(10000);
+            List<LiveGame> liveGames = this.notificationSearch();
+            if(liveGames == null){
+                System.out.println("sleep for 1 min");
+                Thread.sleep(60000);
+            } else {
+                System.out.println(liveGames.toString());
+                List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
+                Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
+                for (FollowedGame followedGame : followedGames) {
+                    // Check if the FollowedGame is not in liveGames
+                    boolean isFollowedGameInLiveGames = false;
+
+                    for (LiveGame liveGame : liveGames) {
+                        if (liveGame.getId() == followedGame.getGameID()) {
+                            isFollowedGameInLiveGames = true;
+                            break;
+                        }
+                    }
+
+                    // If the FollowedGame is not in liveGames, delete it
+                    if (!isFollowedGameInLiveGames) {
+                        databaseRepository.deleteFollowedGame(followedGame.getGameID());
+                    }
+                }
+                for (LiveGame game : liveGames) {
+                    if (followedGamesMap.get(game.getId()) != null) {
+                        if (game.eventCount() > followedGamesMap.get(game.getId())) {
+                            for (int i = followedGamesMap.get(game.getId()); i < game.eventCount(); i++) {
+                                Event event = game.getEventAtIndex(i);
+                                sendNotif(event);
+                            }
+                        }
+                    }
+                }
+
+                System.out.println("Executing myFunction every 10 seconds");
+            }
+            } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+            // Continue processing the data in the background thread
+
+        }).start();
+        long endTime = System.currentTimeMillis();
+        System.out.println("notifCheck execution time: " + (endTime - startTime) + " ms");
+
+    }
+
+
+
+    private static Map<Integer, Integer> convertListToMap(List<FollowedGame> followedGamesList) {
+        Map<Integer, Integer> gameIdToEventCountMap = new HashMap<>();
+        for (FollowedGame game : followedGamesList) {
+            gameIdToEventCountMap.put(game.getGameID(), game.getEventCount());
+        }
+        return gameIdToEventCountMap;
+    }
+
+    public void sendNotif(Event event) {
+        final String CHANNEL_ID = "App_Title_id";
+        List<String> notif = new ArrayList<>();
+        notif = parseForNotif(event);
+        String textTitle = notif.get(0);
+        String textContent = notif.get(1);
+        Context context = this.context;
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setContentTitle(textTitle)
+                .setContentText(textContent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        int notificationId = createID(textTitle);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        //this if statement auto generated by android studio
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        notificationManager.notify(notificationId, builder.build());
+    }
+
+    public static int createID(String input) {
+        int sum = 0;
+
+        // Check for null or empty string
+        if (input != null && !input.isEmpty()) {
+            // Iterate through each character in the string
+            for (char c : input.toCharArray()) {
+                // Add the ASCII value of the character to the sum
+                sum += (int) c;
+            }
+        }
+
+        return sum;
+    }
+    public static List<String> parseForNotif(Event event){
+        List<String> notif = new ArrayList<>();
+
+        //(new Event(eventId, eventName, eventMinute, result, addition, teamName))
+        if (event.getAddition().isEmpty()){
+            notif.add(event.getMinute() + "' "  + event.getName() + " " + event.getTeam() + " " + event.getResult());
+
+        }else{
+            notif.add(event.getMinute() + " + " + event.getAddition() + "' "  + event.getName() + " " + event.getTeam() + " " + event.getResult());
+        }
+        if (event.getAddition().isEmpty()){
+            notif.add(event.getName() + " for  " + event.getTeam() + " at minute " + event.getMinute() + "' "  +  " the score is: " + event.getResult());
+
+
+        }else{
+            notif.add(event.getName() + " for  " + event.getTeam() + " at minute " + event.getMinute() + " + " + event.getAddition() + "' "  +  " the score is: " + event.getResult());
+
+        }
+
+
+
+        return notif;
+    }
+
+    public List<LiveGame> notificationSearch() {
+        List<LiveGame> liveGames = new ArrayList<>();
+        int leagueID = databaseRepository.getLeague();
+
+        try {
+            //System.out.println(leagueID);
+            URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            connection.disconnect();
+
+            if (content != null) {
+                String jsonString = content.toString();
+                //System.out.println("here " + jsonString);
+                boolean shouldDelay = false;
+                if (jsonString.contains("\"message\":\"No result(s) found matching your request.")) {
+                    return null;
+                }
+
+
+                liveGames = jsonParser.parseLiveJson(jsonString);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return liveGames;
+    }
+}
+
+ChatGPT
+It looks like your log output is indicating that the notifCheck method is executing very quickly, with an execution time of 0 milliseconds. Additionally, there are sleep statements in your code (for 1 minute) that might be affecting the overall behavior.
+
+Here are a few observations and suggestions:
+
+Execution Time Calculation:
+The execution time is calculated before and after the notifCheck method is called. However, since the notifCheck method itself runs in a separate thread, the calculation of the execution time doesn't accurately represent the time taken by the entire operation. The start and end times should be measured within the same thread for accurate measurement.
+
+Thread.sleep Duration:
+You have sleep statements in your code, such as Thread.sleep(10000) and Thread.sleep(60000). These sleep statements can introduce delays in the overall execution and might affect the accuracy of the scheduled execution.
+
+Background Thread Use:
+You are already using a background thread for the notifCheck method. Ensure that the background thread is not being blocked unnecessarily, and it is allowed to complete its tasks before the scheduled execution interval.
+
+Here's a modified version of your code to address some of these concerns:
+
+java
+Copy code
+private void notifCheck() {
+    try {
+        // Perform network-related operation in a background thread
+        List<LiveGame> liveGames = this.notificationSearch();
+        if (liveGames == null) {
+            System.out.println("Sleep for 1 min");
+            Thread.sleep(60000);
+        } else {
+            System.out.println(liveGames.toString());
+            List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
+            Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
+
+            // ... rest of your code ...
+
+            System.out.println("Executing myFunction every 10 seconds");
+        }
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+}
+
+@Override
+public void run() {
+    while (true) {
+        long startTime = System.currentTimeMillis();
+        notifCheck();
+        long endTime = System.currentTimeMillis();
+        System.out.println("Execution time: " + (endTime - startTime) + " ms");
+
+        try {
+            // Sleep for 10 seconds before the next execution
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+This modification ensures that the notifCheck method runs within the background thread, and the execution time is measured within the same thread. Additionally, the loop with a 10-second sleep ensures that the notifCheck method is called every 10 seconds. Adjust the sleep duration and other aspects based on your specific requirements and observations.
+
+is it possible to move the sleep into the run method?
+ChatGPT
+Yes, you can move the sleep duration into the run method to control the overall execution interval directly within the Runnable. Here's an updated version of your code:
+
+java
+Copy code
+class Notifications implements Runnable {
+
+    private Context context;
+    private DatabaseRepository databaseRepository;
+
+    public Notifications(Context context, DatabaseRepository databaseRepository) {
+        this.context = context;
+        this.databaseRepository = databaseRepository;
+    }
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final long executionInterval = 10000; // 10 seconds
+
+    @Override
+    public void run() {
+        while (true) {
+            long startTime = System.currentTimeMillis();
+            notifCheck();
+            long endTime = System.currentTimeMillis();
+            System.out.println("Execution time: " + (endTime - startTime) + " ms");
+
+            try {
+                // Sleep for the specified interval before the next execution
+                Thread.sleep(executionInterval);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // rest of your code...
+}
+In this version, the run method contains a while loop that runs indefinitely. After each execution of the notifCheck method, the thread sleeps for the specified interval (executionInterval). This approach keeps the control of the execution interval within the run method, making it easier to adjust as needed.
+
+Please note that using an infinite loop (while (true)) in a background thread might be suitable for certain scenarios. However, in Android development, it's essential to manage the lifecycle of background threads properly to avoid memory leaks. Consider stopping the thread when your application is paused or destroyed to prevent issues.
+
+I meant the conditional minute long sleep
+ChatGPT
+Certainly! If you want to move the conditional sleep into the run method, you can modify it as follows:
+
+java
+Copy code
+class Notifications implements Runnable {
+
+    private Context context;
+    private DatabaseRepository databaseRepository;
+
+    public Notifications(Context context, DatabaseRepository databaseRepository) {
+        this.context = context;
+        this.databaseRepository = databaseRepository;
+    }
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final long executionInterval = 10000; // 10 seconds
+    private final long conditionalSleepDuration = 60000; // 1 minute
+
+    @Override
+    public void run() {
+        while (true) {
+            long startTime = System.currentTimeMillis();
+            notifCheck();
+            long endTime = System.currentTimeMillis();
+            System.out.println("Execution time: " + (endTime - startTime) + " ms");
+
+            if (shouldSleep()) {
+                try {
+                    // Sleep for 1 minute if the condition is met
+                    System.out.println("Sleep for 1 min");
+                    Thread.sleep(conditionalSleepDuration);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    // Sleep for the specified interval before the next execution
+                    Thread.sleep(executionInterval);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private boolean shouldSleep() {
+        // Add your condition to determine if the conditional sleep is needed
+        // For example, return true if a specific condition is met, otherwise false
+        // Replace the following condition with your actual logic
+        return false;
+    }
+
+    // rest of your code...
+}
+In this version, I added a shouldSleep method that returns a boolean based on your specific condition. If the condition is met, it sleeps for 1 minute; otherwise, it sleeps for the specified interval. Adjust the shouldSleep method according to the logic you need for the conditional sleep.
+
+how can I change shouldSleep from notifCheck
+ChatGPT
+To move the shouldSleep logic into the notifCheck method, you can make a few adjustments. Here's an updated version of the code:
+
+java
+Copy code
+class Notifications implements Runnable {
+
+    // ... (other members and methods)
+
+    @Override
+    public void run() {
+        while (true) {
+            long startTime = System.currentTimeMillis();
+            boolean shouldSleep = notifCheck();
+            long endTime = System.currentTimeMillis();
+            System.out.println("Execution time: " + (endTime - startTime) + " ms");
+
+            if (shouldSleep) {
+                try {
+                    // Sleep for 1 minute if the condition is met
+                    System.out.println("Sleep for 1 min");
+                    Thread.sleep(conditionalSleepDuration);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    // Sleep for the specified interval before the next execution
+                    Thread.sleep(executionInterval);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private boolean notifCheck() {
+        long startTime = System.currentTimeMillis();
+        // Your code to be executed every 10 seconds
+        try {
+            // Perform network-related operation in a background thread
+            Thread.sleep(10000);
+            List<LiveGame> liveGames = this.notificationSearch();
+            if (liveGames == null) {
+                System.out.println("Sleep for 1 min");
+                Thread.sleep(60000);
+                return true; // Return true if you want to sleep for 1 minute
+            } else {
+                System.out.println(liveGames.toString());
+                List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
+                Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
+
+                // ... rest of your code ...
+
+                System.out.println("Executing myFunction every 10 seconds");
+                return false; // Return false if you don't want to sleep for 1 minute
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            long endTime = System.currentTimeMillis();
+            System.out.println("notifCheck execution time: " + (endTime - startTime) + " ms");
+        }
+    }
+
+    // ... (other members and methods)
+}
+In this version, the notifCheck method returns a boolean (true or false) based on your condition. If the condition is met, the run method will sleep for 1 minute; otherwise, it will sleep for the specified interval. Adjust the notifCheck method and the condition inside it according to your specific requirements.
+
+what about conditionalSleepDuration
+ChatGPT
+If you want to determine the conditionalSleepDuration dynamically within the notifCheck method, you can modify it to return the appropriate sleep duration based on your conditions. Here's an example:
+
+java
+Copy code
+class Notifications implements Runnable {
+
+    private Context context;
+    private DatabaseRepository databaseRepository;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final long executionInterval = 10000; // 10 seconds
+
+    public Notifications(Context context, DatabaseRepository databaseRepository) {
+        this.context = context;
+        this.databaseRepository = databaseRepository;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            long startTime = System.currentTimeMillis();
+            long conditionalSleepDuration = notifCheck();
+            long endTime = System.currentTimeMillis();
+            System.out.println("Execution time: " + (endTime - startTime) + " ms");
+
+            try {
+                // Sleep for the determined duration
+                System.out.println("Sleep for " + conditionalSleepDuration + " ms");
+                Thread.sleep(conditionalSleepDuration);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private long notifCheck() {
+        long startTime = System.currentTimeMillis();
+        // Your code to be executed every 10 seconds
+        try {
+            // Perform network-related operation in a background thread
+            Thread.sleep(10000);
+            List<LiveGame> liveGames = this.notificationSearch();
+            if (liveGames == null) {
+                System.out.println("Sleep for 1 min");
+                Thread.sleep(60000);
+                return 60000; // Return the sleep duration in milliseconds
+            } else {
+                System.out.println(liveGames.toString());
+                List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
+                Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
+
+                // ... rest of your code ...
+
+                System.out.println("Executing myFunction every 10 seconds");
+                return executionInterval; // Return the default sleep duration
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return executionInterval; // Return the default sleep duration in case of an exception
+        } finally {
+            long endTime = System.currentTimeMillis();
+            System.out.println("notifCheck execution time: " + (endTime - startTime) + " ms");
+        }
+    }
+
+    // ... (other members and methods)
+}
+In this example, notifCheck now returns the sleep duration in milliseconds. If the condition is met, it returns the specified conditionalSleepDuration; otherwise, it returns the default executionInterval. Adjust the logic inside notifCheck as needed for your application's requirements.
+
+
+
+
+
+
+
+how would I edit this code:
+public void sendNotif(Event event, int id) {
+        final String CHANNEL_ID = "App_Title_id";
+        List<String> notif = new ArrayList<>();
+        notif = parseForNotif(event);
+        String textTitle = notif.get(0);
+        String textContent = notif.get(1);
+        Context context = this.context;
+        Intent intent = new Intent(context, liveGameDetails.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setContentTitle(textTitle)
+                .setContentText(textContent)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        int notificationId = createID(textTitle);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        //this if statement auto generated by android studio
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        notificationManager.notify(notificationId, builder.build());
+    }
+
+
+so that the id parameter gets passed into liveGameDetails so that it can be unpacked with the line:
+itemId = bundle.getInt("ITEM_ID", -1);
+ChatGPT
+To pass the id parameter to the liveGameDetails activity and retrieve it using the getIntent() method, you can modify the sendNotif method as follows:
+
+java
+Copy code
+public void sendNotif(Event event, int id) {
+    final String CHANNEL_ID = "App_Title_id";
+    List<String> notif = parseForNotif(event);
+    String textTitle = notif.get(0);
+    String textContent = notif.get(1);
+    Context context = this.context;
+
+    // Pass the 'id' parameter to the liveGameDetails activity
+    Intent intent = new Intent(context, liveGameDetails.class);
+    intent.putExtra("ITEM_ID", id);  // Add this line to pass the 'id' parameter
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+    PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle(textTitle)
+            .setContentText(textContent)
+            .setContentIntent(pendingIntent)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+    int notificationId = createID(textTitle);
+    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+    // Check for the permission
+    if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        // TODO: Handle the case where the permission is not granted
+        return;
+    }
+
+    notificationManager.notify(notificationId, builder.build());
+}
+Now, in the liveGameDetails activity, you can retrieve the id parameter as follows:
+
+java
+Copy code
+public class liveGameDetails extends AppCompatActivity {
+
+    private int itemId;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_live_game_details);
+
+        // Retrieve the 'id' parameter from the intent
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            itemId = bundle.getInt("ITEM_ID", -1);
+        }
+
+        // Rest of your code...
+    }
+}
+Now, the id parameter will be passed from the notification to the liveGameDetails activity, and you can unpack it using the getIntent().getExtras() method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
