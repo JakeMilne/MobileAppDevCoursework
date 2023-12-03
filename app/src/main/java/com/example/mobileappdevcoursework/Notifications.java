@@ -210,7 +210,6 @@ class Notifications implements Runnable {
 
             if (content != null) {
                 String jsonString = content.toString();
-                //System.out.println("here " + jsonString);
                 boolean shouldDelay = false;
                 if (jsonString.contains("\"message\":\"No result(s) found matching your request.")) {
                     return null;

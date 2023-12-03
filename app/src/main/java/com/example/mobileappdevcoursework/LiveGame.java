@@ -71,15 +71,16 @@ public class LiveGame {
                 '}';
     }
     private void setScores(){
-        events.get(0).setResult("0-0");
-        for (int i= events.size() -1; i>0; i--){
-            while(events.get(i).getResult() == null){
-                events.get(i).setResult(events.get(i-1).getResult());
-                i--;
+        if (!events.isEmpty()) {
+            events.get(0).setResult("0-0");
+            for (int i = events.size() - 1; i > 0; i--) {
+                while (events.get(i).getResult() == null) {
+                    events.get(i).setResult(events.get(i - 1).getResult());
+                    i--;
+                }
             }
+            score = events.get(events.size() - 1).getResult();
         }
-        score = events.get(events.size()-1).getResult(); //since it may not be accurate coming out of the api
-
     }
 
     public String getTitle() {
