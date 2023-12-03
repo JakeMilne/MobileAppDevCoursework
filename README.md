@@ -32,29 +32,29 @@ The readme.md file should also include details of the app design (assessing LO1 
 
 
 <h2>App design</h2>
+<h3>Main page </h3>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/6e585a1f-d106-46d2-9ac8-55ddbbf26541)
-<h2>Main page </h2>
+<h3>Upcoming game details </h3>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/9be0bb25-e36b-4dc9-a9cc-4b7b7c2b9c32)
 
-<h2>Upcoming game details </h2>
+<h3>Live games </h3>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/0f853680-b1f3-4775-97d0-b795aa9bdd0f)
 
-<h2>Live games </h2>
+<h3>Live game details </h3>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/ebd1203a-06c5-463e-bb60-7b9968f6433d)
 
-<h2>Live game details </h2>
+<h3>User Profile </h3>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/2a1f920c-6795-4104-806b-dcbfc1d23f65)
 
-<h2>User Profile </h2>
+<h3>Notifications </h3>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/513d1629-4cb3-4cb5-a246-1368e5d3585a)
 
-<h2>Notifications </h2>
 
 
 • A wireframe or screenshot of each page, describing the widgets used to display and
