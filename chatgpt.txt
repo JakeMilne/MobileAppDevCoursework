@@ -1876,6 +1876,55 @@ Note: Make sure to declare the necessary permissions in your AndroidManifest.xml
 
 
 
+explain how I would call an api in java, the api is https://api.sportmonks.com/ use [key] where the api key should go
+ChatGPT
+To call an API in Java, you'll need to use the HttpURLConnection class (or a higher-level library like HttpClient if you prefer). Here's a basic example of how you can make a GET request to the Sportmonks API using Java:
 
+java
+Copy code
+import java.net.*;
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            String apiKey = "[key]"; // Replace [key] with your actual API key
+
+            URL url = new URL("https://api.sportmonks.com/v2/endpoint"); // Replace endpoint with the specific endpoint you want to access
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Api-Token", apiKey);
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+
+            in.close();
+            connection.disconnect();
+
+            System.out.println(content.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+Here's what's happening in this code:
+
+Replace [key] with your actual API key.
+Create a URL object with the endpoint you want to access.
+Open a HttpURLConnection.
+Set the request method to "GET" (since you're making a GET request).
+Set the Api-Token header with your API key.
+Create a BufferedReader to read the response.
+Read the response line by line and append it to a StringBuilder.
+Close the input stream and disconnect the connection.
+Print the response.
+Make sure to handle exceptions appropriately in a real application. This example is very basic and does not include error handling.
+
+Keep in mind that you'll need to replace "https://api.sportmonks.com/v2/endpoint" with the actual endpoint you want to access. Make sure you're using the correct endpoint for the specific data you want to retrieve from the Sportmonks API.
 
 
