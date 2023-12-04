@@ -1,5 +1,10 @@
 package com.example.mobileappdevcoursework;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 /*
 This class is used in the GameDetails Fragment to store information about the game a User has selected in HomeFragment
  */
@@ -8,6 +13,7 @@ public class GameInstance {
     private String gameName;
     private String startTime;
     private String venue;
+    private String venueName;
     private int homeTeamPosition;
     private int awayTeamPosition;
     private String homeName;
@@ -40,7 +46,50 @@ public class GameInstance {
     }
 
     public String getVenue() {
-        return venue;
+        return this.venue;
+    }
+    public String getVenueName(){
+
+            final StringBuilder venue = new StringBuilder();
+
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        URL url = new URL("https://api.sportmonks.com/v3/football/venues/" + venue + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String inputLine;
+                        StringBuilder content = new StringBuilder();
+
+                        while ((inputLine = in.readLine()) != null) {
+                            content.append(inputLine);
+                        }
+                        in.close();
+                        connection.disconnect();
+
+
+                        String jsonString = content.toString();
+                        venue.append(JsonParse.getVenue(jsonString));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            thread.start();
+
+            try {
+                // Wait for the thread to finish
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return venue.toString();
+
     }
 
     public void setVenue(String venue) {

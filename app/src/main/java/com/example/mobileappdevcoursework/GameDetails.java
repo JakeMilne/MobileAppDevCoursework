@@ -23,16 +23,11 @@ import java.net.URL;
  * Use the {@link GameDetails#newInstance} factory method to
  * create an instance of this fragment.
  */
+//shows more in depth information about a chosen game, accessed from HomeFragment
 public class GameDetails extends Fragment{
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//    private static final String ARG_PARAM1 = "param1";
-//    private static final String ARG_PARAM2 = "param2";
-//
-//    private String mParam1;
-//    private String mParam2;
-
-    private DatabaseRepository databaseRepository;
+    private DatabaseRepository databaseRepository; //instance of roomDB database
+    private static final String TAG = "GameDetails";
 
     public GameDetails() {
         // Required empty public constructor
@@ -48,7 +43,7 @@ public class GameDetails extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("gameDetails", "onCreate: Fragment created");
+        Log.d(TAG, "onCreate: Fragment created");
         databaseRepository = databaseRepository.getRepository(getContext());
 
     }
@@ -60,6 +55,7 @@ public class GameDetails extends Fragment{
         Bundle bundle = getArguments();
         View view = inflater.inflate(R.layout.fragment_game_details, container, false);
 
+        //initialising textviews and calendar button
         TextView titleTextView = view.findViewById(R.id.titleTextView);
         TextView timeView = view.findViewById(R.id.timeView);
         TextView venueView = view.findViewById(R.id.venueView);
@@ -77,8 +73,8 @@ public class GameDetails extends Fragment{
             public void run() {
 
                     // Extract the item_id from the Bundle
-                    int itemId = bundle.getInt("ITEM_ID", -1);
-                    int leagueID = databaseRepository.getLeague();
+                    int itemId = bundle.getInt("ITEM_ID", -1); //get the id of the game chosen from HomeFragment
+                    int leagueID = databaseRepository.getLeague();  //get the users chosen league
                     String baseURL = "https://api.sportmonks.com/v3/football/fixtures/" + itemId + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID;
                     try{
 
@@ -99,42 +95,41 @@ public class GameDetails extends Fragment{
                         connection.disconnect();
 
                         String jsonString = content.toString();
-//                        System.out.println(jsonString);
-                        GameInstance thisGame = JsonParse.parseGame(jsonString);
+                        GameInstance thisGame = JsonParse.parseGame(jsonString); //creates a GameInstance object using the json
 
-
-                        URL url2 = new URL("https://api.sportmonks.com/v3/football/venues/" + thisGame.getVenue() + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
-                        HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
-
-                        BufferedReader in2 = new BufferedReader(new InputStreamReader(connection2.getInputStream()));
-                        String inputLine2;
-                        StringBuilder content2 = new StringBuilder();
-
-                        while ((inputLine2 = in2.readLine()) != null) {
-                            content2.append(inputLine2);
-                        }
-                        in2.close();
-                        connection2.disconnect();
-
-
-                        if (content2 != null) {
-                            String venue = JsonParse.getVenue(content2.toString());
-
-                            thisGame.setVenue(venue);
+//
+//                        URL url2 = new URL("https://api.sportmonks.com/v3/football/venues/" + thisGame.getVenue() + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
+//                        HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
+//
+//                        BufferedReader in2 = new BufferedReader(new InputStreamReader(connection2.getInputStream()));
+//                        String inputLine2;
+//                        StringBuilder content2 = new StringBuilder();
+//
+//                        while ((inputLine2 = in2.readLine()) != null) {
+//                            content2.append(inputLine2);
+//                        }
+//                        in2.close();
+//                        connection2.disconnect();
+//
+//
+//                        if (content2 != null) {
+//                            String venue = JsonParse.getVenue(content2.toString());
+//                            String venue = thisGame.getVenueName();
+//                            thisGame.setVenue(venue);
                             // Update the UI on the main thread
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
 
 
-                                    venueView.setText("Venue: " + thisGame.getVenue());
+                                    venueView.setText("Venue: " + thisGame.getVenueName());
 
 
                                 }
                             });
-                        } else {
-                            System.out.println("null venue");
-                        }
+//                        } else {
+//                            System.out.println("null venue");
+//                        }
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
