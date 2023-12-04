@@ -50,7 +50,7 @@ public class GameInstance {
     }
     public String getVenueName(){
 
-            final StringBuilder venue = new StringBuilder();
+            final StringBuilder venueString = new StringBuilder();
 
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -71,7 +71,7 @@ public class GameInstance {
 
 
                         String jsonString = content.toString();
-                        venue.append(JsonParse.getVenue(jsonString));
+                        venueString.append(JsonParse.getVenue(jsonString));
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -88,7 +88,7 @@ public class GameInstance {
                 e.printStackTrace();
             }
 
-            return venue.toString();
+            return venueString.toString();
 
     }
 

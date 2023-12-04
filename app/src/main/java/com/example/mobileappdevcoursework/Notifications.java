@@ -47,7 +47,7 @@ class Notifications implements Runnable {
             Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
             List<LiveGame> liveGames = this.notificationSearch();
             boolean shouldSleep = false;
-            if(followedGamesMap == null){
+            if(followedGamesMap == null || liveGames == null){
                 shouldSleep = true;
             } else{
                 //logic to send notifications
