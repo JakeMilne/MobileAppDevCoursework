@@ -1,35 +1,21 @@
 package com.example.mobileappdevcoursework.data;
 
 import androidx.room.*;
-//import androidx.room.PrimaryKey;
 
+//The Game class is used to store the items that are shown in the recyclerView in HomeFragment
 @Entity
 public class Game {
 
     @PrimaryKey
-    @ColumnInfo(name = "gameID")
+    @ColumnInfo(name = "gameID") //id of the game = used to search for the game when GameDetails is opened
     int gameID;
 
-    @ColumnInfo(name = "game_name")
+    @ColumnInfo(name = "game_name") //name in the format Home vs Away
     String gameName;
 
-    @ColumnInfo(name = "start_time")
+    @ColumnInfo(name = "start_time") //date + time of kick off, the recyclerView is sorted by this
     String startTime;
 
-//    @ColumnInfo(name = "venue_name")
-//    String venue;
-//
-//    @ColumnInfo(name = "home_pos")
-//    int homeTeamPosition;
-//
-//    @ColumnInfo(name = "away_pos")
-//    int awayTeamPosition;
-//
-//    @ColumnInfo(name = "home_name")
-//    String homeName;
-//
-//    @ColumnInfo(name = "away_name")
-//    String awayName;
 
     public int getGameID() {
         return gameID;
@@ -55,43 +41,4 @@ public class Game {
         this.startTime = startTime;
     }
 
-//    public String getVenue() {
-//        return venue;
-//    }
-//
-//    public void setVenue(String venue) {
-//        this.venue = venue;
-//    }
-//
-//    public int getHomeTeamPosition() {
-//        return homeTeamPosition;
-//    }
-//
-//    public void setHomeTeamPosition(int homeTeamPosition) {
-//        this.homeTeamPosition = homeTeamPosition;
-//    }
-//
-//    public int getAwayTeamPosition() {
-//        return awayTeamPosition;
-//    }
-//
-//    public void setAwayTeamPosition(int awayTeamPosition) {
-//        this.awayTeamPosition = awayTeamPosition;
-//    }
-//
-//    public String getHomeName() {
-//        return homeName;
-//    }
-//
-//    public void setHomeName(String homeName) {
-//        this.homeName = homeName;
-//    }
-//
-//    public String getAwayName() {
-//        return awayName;
-//    }
-//
-//    public void setAwayName(String awayName) {
-//        this.awayName = awayName;
-//    }
 }

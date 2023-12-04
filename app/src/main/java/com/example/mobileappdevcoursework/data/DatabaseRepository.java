@@ -14,12 +14,12 @@ public class DatabaseRepository {
 
     private Context context;
 
-
+    //repository for the 3 tables
     private DatabaseRepository(Context context){
         super();
         this.context = context;
 
-        // setup DAOs for accessing the databases
+        // setup DAOs for accessing the tables
         mGameDao = GameDatabase.getDatabase(context).GameDAO();
         mUserDao = UserDatabase.getDatabase(context).UserDAO();
         mFollowedGameDao = FollowedGameDatabase.getDatabase(context).followedGameDAO();
