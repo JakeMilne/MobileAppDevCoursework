@@ -83,6 +83,7 @@ public class UserProfile extends Fragment {
                 });
             }
         }).start();
+        //spinner code from https://code.tutsplus.com/how-to-add-a-dropdown-menu-in-android-studio--cms-37860t, accessed 26th November 2023
 
         Spinner spinnerLanguages = view.findViewById(R.id.leagueSpinner); //dropdown used for selecting leagues
 
