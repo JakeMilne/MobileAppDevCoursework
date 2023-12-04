@@ -3,9 +3,6 @@ package com.example.mobileappdevcoursework;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -23,28 +20,27 @@ import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
-    private static final int PERMISSION_REQUEST_CODE = 123; // You can use any integer value
+    private static final int PERMISSION_REQUEST_CODE = 123; // notification request code
     private DatabaseRepository databaseRepository;
+    private static final String TAG = "MainActivity";
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
         //code for the navigation bar comes from https://www.youtube.com/watch?v=jOFLmKMOcK0 , accessed 14/11/2023 at 10am the switch case at 7:54 was adapted to a series of if else statements to fix a constant expression required error
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
 
-        //replaceFragment(new HomeFragment());
         NavController navController = navHostFragment.getNavController();
 
         if (getIntent() != null) {
             String fragmentType = getIntent().getStringExtra("FRAGMENT_TYPE");
 
-            if (fragmentType != null) {
+            if (fragmentType != null) {//if the user loads from a notification it sends them to LiveGameDetails, with the gameid and leagueid of the game the notification refers to
                 switch (fragmentType) {
                     case "LiveGameDetails":
                         int itemId = getIntent().getIntExtra("ITEM_ID", -1);
@@ -54,11 +50,9 @@ public class MainActivity extends AppCompatActivity {
                         bundle.putInt("ITEM_ID", itemId);
                         bundle.putInt("LEAGUE_ID", leagueId);
 
-                        // Show the LiveGameDetails fragment with the provided data
                         navController.navigate(R.id.liveGameDetails, bundle);
 
                         break;
-                    // Add more cases for other fragment types if needed
                 }
             }
         }
@@ -68,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         new Thread(() -> {
             databaseRepository = DatabaseRepository.getRepository(this);
-            if(databaseRepository.getLeague() == 0){ //if the user hasnt set up their profile this creates a default profile for them
+            if(databaseRepository.getLeague() == 0){ //if the user hasnt set up their profile this creates a default profile for them, without this the app crashes if a profile doesnt exist
                 User userUpdate = new User("user", 501);
 
                 databaseRepository.updateUser(userUpdate);
@@ -80,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+        //navbar fragment switching
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.main) {
                 navController.navigate(R.id.HomeFragment);
@@ -97,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    //method to create the notification channel and manager
     private void startNotifications(){
 
         createNotificationChannel();
@@ -124,19 +120,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void replaceFragment(Fragment fragment) {
-        Log.d("MainActivity", "Replacing fragment with " + fragment.getClass().getSimpleName());
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        if (fragment != null) {
-            fragmentTransaction.replace(R.id.frameLayout, fragment);
-            fragmentTransaction.commit();
-        } else {
-            Log.e("MainActivity", "Fragment is null");
-        }
-
-    }
 
     private void checkNotificationPermissions() {
         final String permission = android.Manifest.permission.POST_NOTIFICATIONS;
@@ -145,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{permission}, PERMISSION_REQUEST_CODE);
         } else {
             // The permission is already granted, proceed with your logic
-            Log.d("MainActivity", "Notification permission is already granted");
+            Log.d(TAG, "Notification permission is already granted");
         }
     }
 

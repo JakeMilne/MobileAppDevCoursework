@@ -14,12 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mobileappdevcoursework.data.Game;
 
+//adapter used for the recyclerview in HomeFragment
 public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private Context context;
     private List<Game> games;
-    private List<LiveGame> LiveGames;
     private OnItemClickListener onItemClickListener;
+    private static final String TAG = "MyAdapter";
+
 
 
     public MyAdapter(Context context, List<Game> games) {
@@ -36,13 +38,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
 
     public void setGames(List<Game> games) {
-        Log.d("MyAdapter", "setItems: Setting items in adapter, count=" + games.size());
+        Log.d(TAG, "setItems: Setting items in adapter, count=" + games.size());
 
         // Sort the list of games by startTime in ascending order
-        Collections.sort(games, new Comparator<Game>() {
+        Collections.sort(games, new Comparator<Game>() {//sorting the list of games, so the ones that start soonest appear at the top
             @Override
             public int compare(Game game1, Game game2) {
-                // Assuming startTime is a String, you may need to convert it to a comparable format
                 return game1.getStartTime().compareTo(game2.getStartTime());
             }
         });
@@ -81,7 +82,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
             @Override
             public void onClick(View v) {
                 if (onItemClickListener != null) {
-                    onItemClickListener.onItemClick(currentGame.getGameID());
+                    onItemClickListener.onItemClick(currentGame.getGameID()); //used to
                 }
             }
         });
@@ -94,7 +95,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     }
 
     public interface OnItemClickListener {
-        //void onBindViewHolder(MyViewHolder holder, int position);
+
 
         void onItemClick(int itemId);
     }

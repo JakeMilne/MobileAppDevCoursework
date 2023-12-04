@@ -44,31 +44,30 @@ class Notifications implements Runnable {
     public void run() {
         while (true) {
             List<FollowedGame> followedGames = databaseRepository.getAllFollowed();
-            Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames);
+            Map<Integer, Integer> followedGamesMap = convertListToMap(followedGames); //storing the games in a map with gameID being the key, and eventcount being the value. This should make it faster to access the data
             List<LiveGame> liveGames = this.notificationSearch();
             boolean shouldSleep = false;
-            if(followedGamesMap == null || liveGames == null){
+            if(followedGamesMap == null || liveGames == null){ //if the user doesnt have any games followed. or there arent any live games, shouldSleep is true
                 shouldSleep = true;
             } else{
-                //logic to send notifications
-                //for game in followed game
-//                int oldCount = databaseRepository.getEventCount() // followed game id
+                //logic to check for + send notifications
+
 
                 for (LiveGame game : liveGames) {
                     if (followedGamesMap.get(game.getId()) != null) {
+                        //getting event count for the live game, and the event count from the last time the match was checked for events
                         int newCount = game.getEvents().size();
                         int oldCount = followedGamesMap.get(game.getId());
-//                        Log.d(TAG, String.valueOf(newCount));
-//                        Log.d(TAG, String.valueOf(oldCount));
-                        if (newCount > oldCount) {
-                            for (int i = oldCount; i < newCount; i++) {
+
+                        if (newCount > oldCount) { //if newCount is > oldCount an event has occurred, so a notification should be sent
+                            for (int i = oldCount; i < newCount; i++) { //gets the new events using game.getEventAtIndex(i) and sends them
                                 if (i < game.getEvents().size()) {
                                     Event event = game.getEventAtIndex(i);
                                     sendNotif(event, game.getId(), game.leagueId);
                                 }
                             }
                             FollowedGame followedGame = new FollowedGame(game.getId(), newCount);
-                            databaseRepository.updateFollowedGames(followedGame);
+                            databaseRepository.updateFollowedGames(followedGame); //updates the database with the new count
                         }
                     }
                 }
@@ -80,7 +79,7 @@ class Notifications implements Runnable {
                     boolean isGameInLiveGames = liveGames.stream().anyMatch(game -> game.getId() == gameId);
 
                     if (!isGameInLiveGames) {
-                        // Call your method here for games that are in followedGames but not in liveGames
+                        // if the followed game isn't in liveGames, it gets deleted
                         databaseRepository.deleteFollowedGame(gameId);
                     }
                 }
@@ -89,16 +88,15 @@ class Notifications implements Runnable {
 
             if (shouldSleep) {
                 try {
-                    // Sleep for 1 minute if the condition is met
-                    System.out.println("Sleep for 1 min");
+                    // Sleep for an extra minute if the there aren't any games to track
                     Thread.sleep(60000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             } else {
                 try {
-                    // Sleep for the specified interval before the next execution
-                    Thread.sleep(10000);
+                    // Sleep for the specified interval before the next execution, this could be lowered to receive notifications more often
+                    Thread.sleep(60000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -108,6 +106,7 @@ class Notifications implements Runnable {
 
 
 
+    //method to convert the list of games to a map.
     private static Map<Integer, Integer> convertListToMap(List<FollowedGame> followedGamesList) {
         Map<Integer, Integer> gameIdToEventCountMap = new HashMap<>();
         for (FollowedGame game : followedGamesList) {
@@ -127,13 +126,14 @@ class Notifications implements Runnable {
         Context context = this.context;
         // Use the hosting Activity class instead of LiveGameDetails
         Intent intent = new Intent(context, MainActivity.class);
-        intent.putExtra("FRAGMENT_TYPE", "LiveGameDetails");
-        intent.putExtra("ITEM_ID", id);
-        intent.putExtra("LEAGUE_ID", leagueId);
+        intent.putExtra("FRAGMENT_TYPE", "LiveGameDetails"); //directs the user to LiveGameDetails if they click the notification
+        intent.putExtra("ITEM_ID", id); //game id of the game the notification refers to
+        intent.putExtra("LEAGUE_ID", leagueId); //league id of the game the notification refers to
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
+        //same icon as LiveScores on the navbar
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.baseline_live_tv_24)
                 .setContentTitle(textTitle)
@@ -159,6 +159,7 @@ class Notifications implements Runnable {
         Log.d(TAG, "Notification sent");
     }
 
+    //psuedo random number for the notification id, so that if there's a duplicate notification it replaces the old one
     public static int createID(String input) {
         int sum = 0;
 
@@ -173,28 +174,30 @@ class Notifications implements Runnable {
 
         return sum;
     }
+    //formatting text for the notification
     public static List<String> parseForNotif(Event event){
         List<String> notif = new ArrayList<>();
-
-        //(new Event(eventId, eventName, eventMinute, result, addition, teamName))
-
 
         notif.add(event.getMinute() + "' "  + event.getName() + " " + event.getTeam() + " " + event.getResult());
         notif.add(event.getName() + " for " + event.getTeam() + " at minute " + event.getMinute() + "' "  +  " the score is: " + event.getResult());
 
-
-
-
-
         return notif;
     }
 
+    //search live games to get a list of LiveGames
     public List<LiveGame> notificationSearch() {
         List<LiveGame> liveGames = new ArrayList<>();
         int leagueID = databaseRepository.getLeague();
+        //I have realised on the day before the
+        // deadline that this bit renders passing league id through notifications into LiveGameDetails Obsolete,
+        //I don't have the opportunity to test this but it might be possible to either change the url to have all the leagues
+        //(like having fixtureLeagues:501,271,513,1659 on the end of the url instead of fixtureLeagues:" + leagueID)) or change
+        // the FollowedGame database to also store leagueids, change the part with the map
+        // and then get all unique league ids from the database and search that way
+        //I know you can search multiple leagues at once  on the fixtures endpoint, so I assume would work here on the livescores
+        //endpoint, but I can't test it and I am scared of breaking it.
 
         try {
-            //System.out.println(leagueID);
             URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -210,8 +213,8 @@ class Notifications implements Runnable {
 
             if (content != null) {
                 String jsonString = content.toString();
-                boolean shouldDelay = false;
-                if (jsonString.contains("\"message\":\"No result(s) found matching your request.")) {
+
+                if (jsonString.contains("\"message\":\"No result(s) found matching your request.")) { //if there aren't any live games this is the start of the message the API returns
                     return null;
                 }
 

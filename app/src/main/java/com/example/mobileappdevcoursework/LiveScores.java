@@ -20,44 +20,26 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link LiveScores#newInstance} factory method to
- * create an instance of this fragment.
- */
+
+//LiveScores fragment shows all live games in the users chosen league, LiveViewModel handles the API and MyLiveAdapter handles the recyclerView
 public class LiveScores extends Fragment implements MyLiveAdapter.OnItemClickListener{
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private RecyclerView recyclerView;
     private MyLiveAdapter adapter;
     private LiveViewModel viewModel;
+    private static final String TAG = "LiveScores Fragment";
+
 
     public LiveScores() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment LiveScores.
-     */
-    // TODO: Rename and change types and number of parameters
     public static LiveScores newInstance(String param1, String param2) {
         LiveScores fragment = new LiveScores();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,10 +47,7 @@ public class LiveScores extends Fragment implements MyLiveAdapter.OnItemClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
@@ -77,7 +56,7 @@ public class LiveScores extends Fragment implements MyLiveAdapter.OnItemClickLis
         View rootView = inflater.inflate(R.layout.fragment_live_scores, container, false);
 
         recyclerView = rootView.findViewById(R.id.liveRecycler);
-        TextView noLiveGamesTextView = rootView.findViewById(R.id.noLiveGamesTextView);
+        TextView noLiveGamesTextView = rootView.findViewById(R.id.noLiveGamesTextView);//if there aren't any live games, this textview shows saying so
 
         adapter = new MyLiveAdapter(getActivity().getApplicationContext(), new ArrayList<>(), this);
 
@@ -89,7 +68,7 @@ public class LiveScores extends Fragment implements MyLiveAdapter.OnItemClickLis
         viewModel.getGames().observe(getViewLifecycleOwner(), new Observer<List<LiveGame>>() {
             @Override
             public void onChanged(List<LiveGame> LiveGames) {
-                Log.d("LiveScores", "onChanged: LiveData updated with " + LiveGames.size() + " live games");
+                Log.d(TAG, "onChanged: LiveData updated with " + LiveGames.size() + " live games");
 
                 if (LiveGames != null && !LiveGames.isEmpty()) {
                     noLiveGamesTextView.setVisibility(View.GONE);
@@ -112,6 +91,7 @@ public class LiveScores extends Fragment implements MyLiveAdapter.OnItemClickLis
         viewModel.loadData();
     }
 
+    //same idea as OnItemClick in HomeFragment
     @Override
     public void onItemClick(int itemId) {
         Toast.makeText(requireContext(), "Item Clicked: " + itemId, Toast.LENGTH_SHORT).show();

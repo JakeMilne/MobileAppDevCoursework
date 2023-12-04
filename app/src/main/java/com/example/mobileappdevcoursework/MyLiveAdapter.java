@@ -19,6 +19,7 @@ public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
     private Context context;
     private List<LiveGame> LiveGames;
     private OnItemClickListener onItemClickListener;
+    private static final String TAG = "MyLiveAdapter";
 
 
     public MyLiveAdapter(Context context, List<LiveGame> games) {
@@ -27,6 +28,7 @@ public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
     }
 
 
+    //constructer that includes the on clicklistener for item
     public MyLiveAdapter(Context context, List<LiveGame> games, OnItemClickListener onItemClickListener) {
         this.context = context;
         this.LiveGames = games;
@@ -35,7 +37,7 @@ public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
 
     public void setLiveGames(List<LiveGame> games){
-        Log.d("MyAdapter", "setItems: Setting items in adapter, count=" + games.size());
+        Log.d(TAG, "setItems: Setting items in adapter, count=" + games.size());
 
 
         // Sort the list of games by startTime in ascending order
@@ -57,7 +59,7 @@ public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
             }
         });
 
-        LiveGames.clear();
+        LiveGames.clear(); //gets rid of anything in the recyclerview before adding the new sorted list
         LiveGames.addAll(games);
 
         notifyDataSetChanged();// Notify the adapter that the data has changed

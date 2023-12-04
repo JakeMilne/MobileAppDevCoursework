@@ -22,6 +22,9 @@ import com.example.mobileappdevcoursework.data.Game;
 import java.util.ArrayList;
 import java.util.List;
 
+
+//HomeFragment shows all upcoming games in the users chosen league, HomeViewModel handles the API and MyAdapter handles the recyclerView
+
 public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListener{
 
     private RecyclerView recyclerView;

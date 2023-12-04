@@ -15,9 +15,10 @@
     import java.util.ArrayList;
     import java.util.List;
 
+    //works with LiveScores and MyLiveAdapter to show live games
     public class LiveViewModel extends AndroidViewModel {
 
-        private MutableLiveData<List<LiveGame>> liveGamesLiveData;
+        private MutableLiveData<List<LiveGame>> liveGamesLiveData; //https://developer.android.com/topic/libraries/architecture/livedata
         private DatabaseRepository databaseRepository;
 
         private boolean isDataLoading = false;
@@ -41,7 +42,7 @@
                 // Don't start a new data loading process if one is already in progress
                 return;
             }
-            new Thread(new Runnable() {
+            new Thread(new Runnable() { //calling the api in a background thread
                 @Override
                 public void run() {
                     isDataLoading = true;
@@ -60,10 +61,9 @@
 
         public List<LiveGame> liveSearch() {
             List<LiveGame> liveGames = new ArrayList<>();
-            int leagueID = databaseRepository.getLeague();
+            int leagueID = databaseRepository.getLeague(); //getting league from UserDatabase
 
             try {
-                //System.out.println(leagueID);
                 URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -82,7 +82,7 @@
 
 
                     liveGames = JsonParse.parseLiveJson(jsonString, leagueID);
-                    liveGamesLiveData.postValue(liveGames);
+                    liveGamesLiveData.postValue(liveGames); //sending liveGames to the adapter
                 }
 
             } catch (Exception e) {
