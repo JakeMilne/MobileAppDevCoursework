@@ -19,7 +19,7 @@ public class DatabaseRepository {
         super();
         this.context = context;
 
-        // setup for taskDao for accessing the database
+        // setup DAOs for accessing the databases
         mGameDao = GameDatabase.getDatabase(context).GameDAO();
         mUserDao = UserDatabase.getDatabase(context).UserDAO();
         mFollowedGameDao = FollowedGameDatabase.getDatabase(context).followedGameDAO();
