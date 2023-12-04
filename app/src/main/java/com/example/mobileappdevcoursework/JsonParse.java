@@ -37,12 +37,13 @@ public class JsonParse {
                     String gameName = jsonItem.get("name").getAsString();
                     String startTime = jsonItem.get("starting_at").getAsString();
 
+                    //create an instance of Game with the data from the API
                     Game game = new Game();
                     game.setGameID(gameID);
                     game.setGameName(gameName);
                     game.setStartTime(startTime);
 
-
+                    //adding the game to the List
                     games.add(game);
                 }
             }
@@ -79,8 +80,8 @@ public class JsonParse {
                         JsonArray eventsArray = dataObject.getAsJsonArray("events"); //storing all "events" (goals, yellow cards etc) in a json array
                         List<Event> events = new ArrayList<>(); //creating a list of Event to be passed into the LiveGame
 
-                        int homeTeamId, awayTeamId = 0;
-                        String homeName, awayName = "";
+                        int homeTeamId, awayTeamId = 0; //team ids
+                        String homeName, awayName = "";// team names
                         homeTeamId = dataObject.getAsJsonArray("participants").get(0).getAsJsonObject().getAsJsonPrimitive("id").getAsInt();
                         homeName = dataObject.getAsJsonArray("participants").get(0).getAsJsonObject().getAsJsonPrimitive("name").getAsString();
 
@@ -96,7 +97,7 @@ public class JsonParse {
                             JsonElement playerNameElement = eventObject.get("player_name");
                             String name = "";
                             if (playerNameElement != null && playerNameElement.isJsonPrimitive()) { //is primitive checks if its a valid type https://www.javadoc.io/doc/com.google.code.gson/gson/2.6.2/com/google/gson/JsonPrimitive.html
-                                name = playerNameElement.getAsJsonPrimitive().getAsString();
+                                name = playerNameElement.getAsJsonPrimitive().getAsString(); //player name
                             }
                             //JsonElement infoElement = eventObject.get("info");
                             //converting event ids to their equivalent values, which can be found by calling the endpoint /v3/core/types
@@ -137,14 +138,14 @@ public class JsonParse {
                             }
 
                             String addition = "";
-                            JsonElement additionElement = eventObject.get("addition");
+                            JsonElement additionElement = eventObject.get("addition"); //additional information about the event, an example would be "1st goal" or "2nd goal"
 
                             if (additionElement != null && additionElement.isJsonPrimitive()) {
                                 addition = additionElement.getAsJsonPrimitive().getAsString();
                             }
 
-                            int participantId = eventObject.getAsJsonPrimitive("participant_id").getAsInt();
-                            String team = "";  // Initialize team to empty string
+                            int participantId = eventObject.getAsJsonPrimitive("participant_id").getAsInt();//team id that the event refers to
+                            String team = "";  // team name of the team that the event refers to
                             boolean home = false;
                             if (eventName != "") {
                             if (participantId == homeTeamId) {
@@ -154,7 +155,7 @@ public class JsonParse {
                                 team = awayName;
                             }
 
-                            events.add(new Event(eventId, eventName, eventMinute, result, addition, team, home));
+                            events.add(new Event(eventId, eventName, eventMinute, result, addition, team, home)); //adding new event to list, which is then passed into the LiveGame
 
                             }
 
@@ -176,7 +177,7 @@ public class JsonParse {
                         JsonElement homeTeamPositionElement = homeTeam.getAsJsonObject("meta").get("position");
                         JsonElement awayTeamPositionElement = awayTeam.getAsJsonObject("meta").get("position");
 
-                        // Handle null values for team positions
+                        // Handle null values for team positions, positions refers to the league standings, ie 1 = first in the league
                         int homeTeamPosition = 0;
                         if(homeTeamPositionElement != null){
                             homeTeamPosition = homeTeamPositionElement.getAsInt();
@@ -190,7 +191,7 @@ public class JsonParse {
                         liveGames.add(liveGame);
                     }
                 }else {
-                    Log.e("jsonParser", "dataArray is null");
+                    Log.e("jsonParse", "dataArray is null");
                 }
             }
         } catch (Exception e) {
@@ -202,19 +203,19 @@ public class JsonParse {
 
 
 
-    //used for game details since the game objects that get stored in the database dont have all the details needed.
+    //used for game details since the game objects that get stored in the database don't have all the details needed.
     public static GameInstance parseGame(String jsonString) {
         JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
         JsonObject dataObject = jsonObject.getAsJsonObject("data");
 
-        String gameName = dataObject.get("name").getAsString();
-        String startTime = dataObject.get("starting_at").getAsString();
-        String venue = dataObject.get("venue_id").getAsString();
+        String gameName = dataObject.get("name").getAsString(); //game name, in the format Home vs Away
+        String startTime = dataObject.get("starting_at").getAsString();//date + time of kick-off
+        String venue = dataObject.get("venue_id").getAsString(); //id of the venue the game is played at
         JsonArray participants = dataObject.getAsJsonArray("participants");
 
         String homeName = participants.get(0).getAsJsonObject().get("name").getAsString();
         String awayName = participants.get(1).getAsJsonObject().get("name").getAsString();
-        int homeTeamPosition = participants.get(0).getAsJsonObject().getAsJsonObject("meta").get("position").getAsInt();
+        int homeTeamPosition = participants.get(0).getAsJsonObject().getAsJsonObject("meta").get("position").getAsInt();// positions refers to the league standings, ie 1 = first in the league (same as in LiveGame)
         int awayTeamPosition = participants.get(1).getAsJsonObject().getAsJsonObject("meta").get("position").getAsInt();
 
         return new GameInstance(gameName, startTime, venue, homeTeamPosition, awayTeamPosition, homeName, awayName);
@@ -240,8 +241,5 @@ public class JsonParse {
 
     }
 
-    public static int countEvents(){ // dont call this??? delete sometime soon
-        return 2;
-    }
 }
 

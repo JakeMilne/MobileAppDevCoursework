@@ -43,7 +43,7 @@ public class GameDetails extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: Fragment created");
+        Log.d(TAG, " onCreate");
         databaseRepository = databaseRepository.getRepository(getContext());
 
     }

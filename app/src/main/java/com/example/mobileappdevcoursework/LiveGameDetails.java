@@ -87,10 +87,11 @@ public class LiveGameDetails extends Fragment implements View.OnClickListener{
         Button followBtn = view.findViewById(R.id.followBtn);
         followBtn.setOnClickListener(this);
         if (bundle != null) {
-            // Extract the item_id from the Bundle
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    // Extract the item_id and league_id from the Bundle
+
                     itemId = bundle.getInt("ITEM_ID", -1);
                     int leagueid = bundle.getInt("LEAGUE_ID", -1);
 
@@ -101,10 +102,10 @@ public class LiveGameDetails extends Fragment implements View.OnClickListener{
                         if (leagueid == -1) {
                             leagueid = databaseRepository.getLeague();
                         }
-                        //denmark 1
+
+                        //inplay doesnt have an option for
                         URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueid);
-                        //scotland 1
-                        // URL url = new URL("https://api.sportmonks.com/v3/football/livescores/inplay?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:501");
+
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -118,7 +119,7 @@ public class LiveGameDetails extends Fragment implements View.OnClickListener{
                         connection.disconnect();
                         if (content != null) {
 
-                            List<LiveGame> liveGames = JsonParse.parseLiveJson(content.toString(), leagueid);
+                            List<LiveGame> liveGames = JsonParse.parseLiveJson(content.toString(), leagueid); //leagueid is needed for notifications
                             for (LiveGame game : liveGames) {
                                 if (game.getId() == itemId) {
 

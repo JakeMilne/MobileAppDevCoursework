@@ -37,13 +37,16 @@ public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("HomeFragment", "onCreateView: Fragment created");
+        Log.d(TAG, " onCreateView");
         databaseRepository = databaseRepository.getRepository(requireContext());
         View view = inflater.inflate(R.layout.fragment_main_page, container, false);
+        //creating recycler view
         recyclerView = view.findViewById(R.id.recycler);
         adapter = new MyAdapter(getActivity().getApplicationContext(), new ArrayList<>(), this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
+
+        //creating the textview that says welcome + the users name
         TextView welcomeView = view.findViewById(R.id.welcomeView);
 
         //gets name from user table and sets the welcome textview to include the name
@@ -69,7 +72,7 @@ public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListe
 
 
 
-        // Initialize the ViewModel
+        // Initialize the ViewModel, which is used to call the API
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         // Observe the data changes in the ViewModel
         viewModel.getItems().observe(getViewLifecycleOwner(), new Observer<List<Game>>() {
@@ -93,13 +96,14 @@ public class HomeFragment extends Fragment implements MyAdapter.OnItemClickListe
         viewModel.loadData();
     }
 
+    // on click method for when the user presses View Details
     @Override
     public void onItemClick(int itemId) {
         Toast.makeText(requireContext(), "Item Clicked: " + itemId, Toast.LENGTH_SHORT).show();
 
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
         Bundle bundle = new Bundle();
-        bundle.putInt("ITEM_ID", itemId);
+        bundle.putInt("ITEM_ID", itemId); //itemId is used to get the chosen game from the API in GameDetails
         navController.navigate(R.id.action_homeFragment_to_gameDetails, bundle);
     }
 }
