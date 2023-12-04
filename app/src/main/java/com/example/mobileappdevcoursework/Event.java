@@ -1,13 +1,14 @@
 package com.example.mobileappdevcoursework;
 
+//used to store events which have occurred in live games
 public class Event {
-    private int id;
-    private String name;
-    private String minute;
-    private String result;
-    private String addition;
-    private String team;
-    private boolean home;
+    private int id; //event id
+    private String name; // name of event, such as goal {player name}
+    private String minute; //minute of the event
+    private String result; //score if the event was a goal
+    private String addition; //additional information
+    private String team; //name of team that the event refers to
+    private boolean home;//was the event for the home team
 
     @Override
     public String toString() {
