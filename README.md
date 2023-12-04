@@ -2,15 +2,8 @@
 cm3110-coursework-JakeMilne created by GitHub Classroom
 
 
-<br>
-</br></br>
-App Description
-<br>
-Your readme.md file should include an app overview (assessing LO1 and LO3) (up to 300
-words):
 
-
-<b>Jake Milne 2102515</b>         <h1>YouScore</h1><br>
+<h1><b>Jake Milne 2102515</b>         YouScore</h1><br>
 Your scores, your football, without the bookies <br>
 
 YouScore allows you to keep track of your favourite teams and leagues in realtime, without the temptations and distractions of the gambling sponsers which cast a shadow over the industry. We allow you to track goals, bookings and more! <br>
