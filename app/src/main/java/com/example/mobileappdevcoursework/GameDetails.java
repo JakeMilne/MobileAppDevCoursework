@@ -68,7 +68,7 @@ public class GameDetails extends Fragment{
 
 
         if (bundle != null) {
-        new Thread(new Runnable() {
+        new Thread(new Runnable() { //getting data from API and filling textViews
             @Override
             public void run() {
 
@@ -97,39 +97,19 @@ public class GameDetails extends Fragment{
                         String jsonString = content.toString();
                         GameInstance thisGame = JsonParse.parseGame(jsonString); //creates a GameInstance object using the json
 
-//
-//                        URL url2 = new URL("https://api.sportmonks.com/v3/football/venues/" + thisGame.getVenue() + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr");
-//                        HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
-//
-//                        BufferedReader in2 = new BufferedReader(new InputStreamReader(connection2.getInputStream()));
-//                        String inputLine2;
-//                        StringBuilder content2 = new StringBuilder();
-//
-//                        while ((inputLine2 = in2.readLine()) != null) {
-//                            content2.append(inputLine2);
-//                        }
-//                        in2.close();
-//                        connection2.disconnect();
-//
-//
-//                        if (content2 != null) {
-//                            String venue = JsonParse.getVenue(content2.toString());
-//                            String venue = thisGame.getVenueName();
-//                            thisGame.setVenue(venue);
-                            // Update the UI on the main thread
-                            requireActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+
+                        // Update the UI on the ui thread
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 
 
-                                    venueView.setText("Venue: " + thisGame.getVenueName());
+                                venueView.setText("Venue: " + thisGame.getVenueName());
 
 
-                                }
-                            });
-//                        } else {
-//                            System.out.println("null venue");
-//                        }
+                            }
+                        });
+
 
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
@@ -162,13 +142,6 @@ public class GameDetails extends Fragment{
             }).start();
 
         };
-
-
-
-
         return view;
     }
-
-
-
 }

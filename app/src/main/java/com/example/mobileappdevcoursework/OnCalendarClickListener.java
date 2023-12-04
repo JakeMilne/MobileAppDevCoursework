@@ -9,7 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-//custom OnClickListener so I can pass a GameInstance into the calendar app
+//custom OnClickListener so I can pass a GameInstance into the calendar app. https://stackoverflow.com/a/10614751 accessed 28th november 2023
 public class OnCalendarClickListener implements View.OnClickListener {
     private GameInstance thisGame;
 
@@ -33,6 +33,8 @@ public class OnCalendarClickListener implements View.OnClickListener {
         v.getContext().startActivity(i);
     }
 
+    //converting the date string into milliseconds
+    //so that the calendar can load the kick-off time correctly
     private long getMilliseconds(String dateString) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
