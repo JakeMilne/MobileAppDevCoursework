@@ -1,9 +1,5 @@
-# cm3110-coursework-JakeMilne
-cm3110-coursework-JakeMilne created by GitHub Classroom
-
-
-
-<h1><b>Jake Milne 2102515</b>         YouScore</h1><br>
+<b>Jake Milne 2102515</b> 
+<h1>YouScore</h1><br>
 Your scores, your football, without the bookies. <br><br>
 
 YouScore allows you to keep track of your favourite teams and leagues in real-time, without the temptations and distractions of the gambling sponsors which cast a shadow over the industry. We allow you to track goals, bookings and more! <br>
