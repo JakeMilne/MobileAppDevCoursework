@@ -47,7 +47,7 @@ The live games page shows all ongoing games in the chosen league. Selecting a ga
 
 <h2>Navigation graph</h2>
 
-<p>Below is a screenshot of the navigation graph. When a user opens the app they are sent to the homepage fragment, and from there they can navigate using either buttons or the navigation bar</p>
+<p>Below is a screenshot of the navigation graph. When a user opens the app they are sent to the homepage fragment, and from there they can navigate using either buttons or the navigation bar. If the user opens the app from a notification, they will be sent to the relevant live game details page</p>
 
 ![image](https://github.com/RobertGordonUniversity/cm3110-coursework-JakeMilne/assets/91962700/7fe18649-0633-4ace-ab7a-7ece318c2b7a)
 
