@@ -1,0 +1,14 @@
+Android studio generated tests:
+
+All of the non-roomdb classes (any that aren't in the data folder) were tested using android studios test feature
+using JUnit4, and testing all available methods. These tests are available in the com.example.mobileappdevcoursework (test) folder.
+100% of tests were passed after implementing a minor fix to the 3 database files. The fix was disabling schema exporting.
+
+Manual testing:
+The app was also tested manually, by using the app on 2 emulators. 1 of which was a pixel 3a running API 34, and the other was a pixel 6 running API 31.
+Testing included wiping data from the phone, loading the app for the first time, changing settings in the use profile fragment and restarting the app to see if the user database was functional.
+the main and live pages were tested by compared the data shown onscreen to schedules available at: https://spfl.co.uk/league/premiership/fixtures and https://www.flashscore.com/football/denmark/superliga/fixtures/
+It is worth noting that there are no Danish superliga games until february. The live details page and notifications were testing by comparing the data and notifications shown to what was occurring in real-time in a live game.
+The add to calendar button on the game details page was tested using google calendars, which is pre-installed on most android devices.
+1 error was found in the manual testing, if a user hadn't already set up a profile the app would crash istantly, preventing any users without an existing profile from accessing the app. This was due to the 
+notification class trying to use null data. This was fixed at line 66 in main activity, which creates a basic profile if there isn't an existing profile in the database
