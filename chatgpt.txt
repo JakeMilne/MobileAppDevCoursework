@@ -1928,3 +1928,213 @@ Make sure to handle exceptions appropriately in a real application. This example
 Keep in mind that you'll need to replace "https://api.sportmonks.com/v2/endpoint" with the actual endpoint you want to access. Make sure you're using the correct endpoint for the specific data you want to retrieve from the Sportmonks API.
 
 
+
+
+
+
+
+
+
+why do I get
+C:\Users\Jake\AndroidStudioProjects\MobileAppDevCoursework\app\src\main\java\com\example\mobileappdevcoursework\data\FollowedGameDatabase.java:11: warning: Schema export directory is not provided to the annotation processor so we cannot export the schema. You can either provide `room.schemaLocation` annotation processor argument OR set exportSchema to false.
+public abstract class FollowedGameDatabase extends RoomDatabase {
+                ^
+C:\Users\Jake\AndroidStudioProjects\MobileAppDevCoursework\app\src\main\java\com\example\mobileappdevcoursework\data\GameDatabase.java:7: warning: Schema export directory is not provided to the annotation processor so we cannot export the schema. You can either provide `room.schemaLocation` annotation processor argument OR set exportSchema to false.
+public abstract class GameDatabase extends RoomDatabase{
+                ^
+C:\Users\Jake\AndroidStudioProjects\MobileAppDevCoursework\app\src\main\java\com\example\mobileappdevcoursework\data\UserDatabase.java:7: warning: Schema export directory is not provided to the annotation processor so we cannot export the schema. You can either provide `room.schemaLocation` annotation processor argument OR set exportSchema to false.
+public abstract class UserDatabase extends RoomDatabase{
+                ^
+Note: C:\Users\Jake\AndroidStudioProjects\MobileAppDevCoursework\app\src\main\java\com\example\mobileappdevcoursework\MainActivity.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+when I run JUnit4 tests on
+package com.example.mobileappdevcoursework;
+
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import com.example.mobileappdevcoursework.data.DatabaseRepository;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link GameDetails#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+//shows more in depth information about a chosen game, accessed from HomeFragment
+public class GameDetails extends Fragment{
+
+    private DatabaseRepository databaseRepository; //instance of roomDB database
+    private static final String TAG = "GameDetails";
+
+    public GameDetails() {
+        // Required empty public constructor
+    }
+
+    public static GameDetails newInstance() {
+        GameDetails fragment = new GameDetails();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG, " onCreate");
+        databaseRepository = databaseRepository.getRepository(getContext());
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        Bundle bundle = getArguments();
+        View view = inflater.inflate(R.layout.fragment_game_details, container, false);
+
+        //initialising textviews and calendar button
+        TextView titleTextView = view.findViewById(R.id.titleTextView);
+        TextView timeView = view.findViewById(R.id.timeView);
+        TextView venueView = view.findViewById(R.id.venueView);
+        TextView homeView = view.findViewById(R.id.homeView);
+        TextView awayView = view.findViewById(R.id.awayView);
+        TextView homePosView = view.findViewById(R.id.homePosView);
+        TextView awayPosView = view.findViewById(R.id.awayPosView);
+        Button calendarBtn = view.findViewById(R.id.calendarBtn);
+
+
+
+        if (bundle != null) {
+        new Thread(new Runnable() { //getting data from API and filling textViews
+            @Override
+            public void run() {
+
+                    // Extract the item_id from the Bundle
+                    int itemId = bundle.getInt("ITEM_ID", -1); //get the id of the game chosen from HomeFragment
+                    int leagueID = databaseRepository.getLeague();  //get the users chosen league
+                    String baseURL = "https://api.sportmonks.com/v3/football/fixtures/" + itemId + "?api_token=vHnHu2OZtUGbhPvHGl9NhDXH5iv7lSGOSPvOhJ6gYwD91Q9X3NoA2CjA1xzr&include=events;participants&filters=fixtureLeagues:" + leagueID;
+                    try{
+
+
+                        URL url = new URL(baseURL);
+
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+
+                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String inputLine;
+                        StringBuilder content = new StringBuilder();
+
+                        while ((inputLine = in.readLine()) != null) {
+                            content.append(inputLine);
+                        }
+                        in.close();
+                        connection.disconnect();
+
+                        String jsonString = content.toString();
+                        GameInstance thisGame = JsonParse.parseGame(jsonString); //creates a GameInstance object using the json
+
+
+                        // Update the UI on the ui thread
+                        requireActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+
+                                venueView.setText("Venue: " + thisGame.getVenueName());
+
+
+                            }
+                        });
+
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                titleTextView.setText(thisGame.getGameName());
+                                timeView.setText(thisGame.getStartTime());
+                                homeView.setText(thisGame.getHomeName());
+                                awayView.setText(thisGame.getAwayName());
+                                homePosView.setText(String.valueOf(thisGame.getHomeTeamPosition()));
+                                awayPosView.setText(String.valueOf(thisGame.getAwayTeamPosition()));
+
+                                // Set the click listener for calendarBtn here
+                                calendarBtn.setOnClickListener(new OnCalendarClickListener(thisGame));
+
+
+
+                            }
+                        });
+
+
+
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            }).start();
+
+        };
+        return view;
+    }
+}
+
+ChatGPT
+The warning you are seeing is related to Room, which is an Android Architecture Component used for working with databases. The warning suggests that you haven't specified a location for exporting the Room database schema.
+
+To fix this issue, you need to provide a location for exporting the schema. You can do this by adding the room.schemaLocation annotation processor argument to your Gradle build file. Here's an example of how you can do it:
+
+Open your app-level build.gradle file.
+
+Inside the android block, add the following:
+
+gradle
+Copy code
+android {
+    // ...
+
+    defaultConfig {
+        // ...
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+
+    // ...
+}
+This configuration tells the Room annotation processor to export the schema to the "schemas" directory in your project.
+
+After making this change, sync your project with Gradle.
+
+Once you've done this, the warning should disappear. Make sure to replace "schemas" with the desired directory path where you want to store the Room database schema files.
+
+If you don't want to export the schema at all, you can set the exportSchema option to false in your Room database class:
+
+java
+Copy code
+@Database(entities = {YourEntity.class}, version = 1, exportSchema = false)
+public abstract class YourDatabase extends RoomDatabase {
+    // ...
+}
+Adding this line to your database class will also suppress the warning.
