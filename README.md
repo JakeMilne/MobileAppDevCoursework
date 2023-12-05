@@ -1,4 +1,5 @@
-<b>Jake Milne 2102515</b> 
+<b>Jake Milne 2102515</b> <br>
+The submission is on the main branch <br>
 <h1>YouScore</h1><br>
 Your scores, your football, without the bookies. <br><br>
 
