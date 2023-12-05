@@ -4,6 +4,8 @@ import android.content.Context;
 
 import java.util.List;
 
+//repository for the 3 tables
+//all roomDB code is taken and adapted from the topic 9 lab
 public class DatabaseRepository {
 
     private GameDAO mGameDao;
@@ -14,7 +16,6 @@ public class DatabaseRepository {
 
     private Context context;
 
-    //repository for the 3 tables
     private DatabaseRepository(Context context){
         super();
         this.context = context;

@@ -116,7 +116,9 @@ class Notifications implements Runnable {
     }
 
     public void sendNotif(Event event, int id, int leagueId) {
-        // https://developer.android.com/develop/ui/views/notifications/build-notification#java
+        //ANDROID DEVELOPERS, 2023. Create a notification. [online]. Palo Alto, California: Android. Available from: https://developer.android.com/develop/ui/views/notifications/build-notification#java [Accessed 1 December 2023].
+
+
         // https://chat.openai.com/share/b2695ba0-3441-4722-9de4-665c551640c7
         final String CHANNEL_ID = "YouScore";
         List<String> notif = new ArrayList<>();

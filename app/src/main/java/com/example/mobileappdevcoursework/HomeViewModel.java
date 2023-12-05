@@ -22,7 +22,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 public class HomeViewModel extends AndroidViewModel {
 
-    private MutableLiveData<List<Game>> gamesLiveData; //https://developer.android.com/topic/libraries/architecture/livedata
+    //ANDROID DEVELOPERS, 2023. LiveData overview. [online]. Palo Alto, California: Android. Available from: https://developer.android.com/topic/libraries/architecture/livedata [Accessed 28 november 2023].
+    private MutableLiveData<List<Game>> gamesLiveData;
     private Executor executor = Executors.newSingleThreadExecutor(); // Executor for background tasks
     private DatabaseRepository databaseRepository;
 
@@ -124,9 +125,7 @@ public class HomeViewModel extends AndroidViewModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        for (Item item : items) {
-//            System.out.println("Item(Title: " + item.getTitle() + ", date: " + item.getDate() + ")");
-//        }
+
         return games;
     }
 

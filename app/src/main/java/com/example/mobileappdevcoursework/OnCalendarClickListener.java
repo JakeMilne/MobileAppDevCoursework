@@ -8,8 +8,8 @@ import android.view.View;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-//custom OnClickListener so I can pass a GameInstance into the calendar app. https://stackoverflow.com/a/10614751 accessed 28th november 2023
+//EL KHATIB, S., 2012. How to pass parameters to OnClickListener?. [online]. Place of publication: StackOverflow.com. Available from: https://stackoverflow.com/a/10614751 [Accessed 28th november 2023].
+//custom OnClickListener so I can pass a GameInstance into the calendar app.
 public class OnCalendarClickListener implements View.OnClickListener {
     private GameInstance thisGame;
 

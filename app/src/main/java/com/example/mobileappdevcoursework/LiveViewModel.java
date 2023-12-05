@@ -18,7 +18,8 @@
     //works with LiveScores and MyLiveAdapter to show live games
     public class LiveViewModel extends AndroidViewModel {
 
-        private MutableLiveData<List<LiveGame>> liveGamesLiveData; //https://developer.android.com/topic/libraries/architecture/livedata
+        //ANDROID DEVELOPERS, 2023. LiveData overview. [online]. Palo Alto, California: Android. Available from: https://developer.android.com/topic/libraries/architecture/livedata [Accessed 28 november 2023].
+        private MutableLiveData<List<LiveGame>> liveGamesLiveData;
         private DatabaseRepository databaseRepository;
 
         private boolean isDataLoading = false;

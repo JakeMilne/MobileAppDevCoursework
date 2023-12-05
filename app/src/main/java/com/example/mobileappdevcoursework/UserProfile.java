@@ -83,7 +83,9 @@ public class UserProfile extends Fragment {
                 });
             }
         }).start();
-        //spinner code from https://code.tutsplus.com/how-to-add-a-dropdown-menu-in-android-studio--cms-37860t, accessed 26th November 2023
+
+
+        //ARIF, A., 2021. How to Add a Dropdown Menu in Android Studio. [online]. Place of publication: tutsplus.com. Available from: https://code.tutsplus.com/how-to-add-a-dropdown-menu-in-android-studio--cms-37860t [Accessed 26th November 2023].
 
         Spinner spinnerLanguages = view.findViewById(R.id.leagueSpinner); //dropdown used for selecting leagues
 

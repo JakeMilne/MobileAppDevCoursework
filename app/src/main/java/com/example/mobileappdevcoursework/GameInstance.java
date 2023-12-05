@@ -5,9 +5,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/*
-This class is used in the GameDetails Fragment to store information about the game a User has selected in HomeFragment
- */
+
+//This class is used in the GameDetails Fragment to store information about the game a User has selected in HomeFragment
+
 public class GameInstance {
 
     private String gameName; //ie Home vs Away

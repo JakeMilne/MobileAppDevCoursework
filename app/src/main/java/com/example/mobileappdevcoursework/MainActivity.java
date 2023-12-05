@@ -29,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //code for the navigation bar comes from https://www.youtube.com/watch?v=jOFLmKMOcK0 , accessed 14/11/2023 at 10am the switch case at 7:54 was adapted to a series of if else statements to fix a constant expression required error
+        //FOXANDROID, 2023. Bottom Navigation Bar - Android Studio | Fragments | Java | 2023. [online video].  21 May 2023. Available from: https://www.youtube.com/watch?v=jOFLmKMOcK0 [Accessed 14 November 2023].
+        //code for the navigation bar comes from the above video, the switch case at 7:54 was adapted to a series of if else statements to fix a constant expression required error
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         new Thread(() -> {
             databaseRepository = DatabaseRepository.getRepository(this);
-            if(databaseRepository.getLeague() == 0){ //if the user hasnt set up their profile this creates a default profile for them, without this the app crashes if a profile doesnt exist
+            if(databaseRepository.getLeague() == 0){ //if the user hasn't set up their profile this creates a default profile for them, without this the app crashes if a profile doesnt exist
                 User userUpdate = new User("user", 501);
 
                 databaseRepository.updateUser(userUpdate);

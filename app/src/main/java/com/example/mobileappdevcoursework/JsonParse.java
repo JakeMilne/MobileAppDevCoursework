@@ -21,10 +21,10 @@ public class JsonParse {
         List<Game> games = new ArrayList<>();
 
         try {
-            JsonElement root = JsonParser.parseString(jsonString);
+            JsonElement base = JsonParser.parseString(jsonString);
 
-            if (root.isJsonObject()) {
-                JsonObject jsonObject = root.getAsJsonObject();
+            if (base.isJsonObject()) {
+                JsonObject jsonObject = base.getAsJsonObject();
                 JsonArray dataArray = jsonObject.getAsJsonArray("data"); // games are in the "data" tag in the json
 
                 for (JsonElement itemElement : dataArray) { // looping for each Game in the json
@@ -63,9 +63,9 @@ public class JsonParse {
 
 
         try {
-            JsonElement root = JsonParser.parseString(jsonString);
-            if (root.isJsonObject()) {
-                JsonObject jsonObject = root.getAsJsonObject();
+            JsonElement base = JsonParser.parseString(jsonString); //converting the string into a JsonElement
+            if (base.isJsonObject()) {
+                JsonObject jsonObject = base.getAsJsonObject();
                 JsonArray dataArray = jsonObject.getAsJsonArray("data");
                 if (dataArray != null) {
                     for (JsonElement dataElement : dataArray) {
@@ -101,7 +101,10 @@ public class JsonParse {
                             }
                             //JsonElement infoElement = eventObject.get("info");
                             //converting event ids to their equivalent values, which can be found by calling the endpoint /v3/core/types
-                            int eventCode = eventObject.getAsJsonPrimitive("type_id").getAsInt(); //https://www.javadoc.io/doc/com.google.code.gson/gson/2.6.1/com/google/gson/JsonElement.html
+
+
+                            //SIGNH, I. LEITCH, J, 2016. Class JsonElement. [online]. Place of publication: Javadoc.io. Available from: https://www.javadoc.io/doc/com.google.code.gson/gson/2.6.1/com/google/gson/JsonElement.html [Accessed 21st November 2023].
+                            int eventCode = eventObject.getAsJsonPrimitive("type_id").getAsInt();
 
                             if (eventCode == 18) { // originally I had eventObject.getAsJsonPrimitive("type_id").getAsInt() in each if instead of eventCode, This shouldn't be a problem but I can't test it, in case this part breaks using eventObject.getAsJsonPrimitive("type_id").getAsInt() was what was working when I tested it. but I think eventCode is better for speed
                                 eventName = "Substitution\n";

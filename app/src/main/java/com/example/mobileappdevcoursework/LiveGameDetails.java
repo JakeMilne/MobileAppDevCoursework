@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.mobileappdevcoursework.data.DatabaseRepository;
 import com.example.mobileappdevcoursework.data.FollowedGame;
+import com.google.android.material.tabs.TabLayout;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -29,20 +31,14 @@ public class LiveGameDetails extends Fragment implements View.OnClickListener{
     private int itemId; //id of the chosen game
     private LiveGame liveGame; //instance of LiveGame which is used to store data about the chosen game
     private DatabaseRepository databaseRepository;
+    private static final String TAG = "LiveGameDetails";
+
 
     public LiveGameDetails() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment LiveGameDetails.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static LiveGameDetails newInstance(String param1, String param2) {
         LiveGameDetails fragment = new LiveGameDetails();
         Bundle args = new Bundle();
@@ -124,7 +120,7 @@ public class LiveGameDetails extends Fragment implements View.OnClickListener{
                                 @Override
                                 public void run() {
 
-                                    //System.out.println(venue);
+                                    //Log.d(TAG, liveGame.getVenue()); // used to test if the code that coverts venue id to name is working
                                     if (liveGame != null) {
                                         //setting textviews using liveGame
                                         timeView.setText("Started at: " + liveGame.getStartTime());

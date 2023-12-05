@@ -28,7 +28,7 @@ public class MyLiveAdapter extends RecyclerView.Adapter<MyViewHolder> {
     }
 
 
-    //constructer that includes the on clicklistener for item
+    //constructor that includes the OnClicklistener for item
     public MyLiveAdapter(Context context, List<LiveGame> games, OnItemClickListener onItemClickListener) {
         this.context = context;
         this.LiveGames = games;
