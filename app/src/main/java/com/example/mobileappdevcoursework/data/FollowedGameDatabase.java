@@ -7,7 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 
-@Database(entities = {FollowedGame.class}, version = 1)
+@Database(entities = {FollowedGame.class}, version = 1, exportSchema = false)
 public abstract class FollowedGameDatabase extends RoomDatabase {
 
     public abstract FollowedGameDAO followedGameDAO();

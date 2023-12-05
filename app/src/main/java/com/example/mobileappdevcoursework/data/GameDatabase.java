@@ -3,7 +3,7 @@ import android.content.Context;
 
 import androidx.room.*;
 
-@Database(entities = {Game.class}, version = 1)
+@Database(entities = {Game.class}, version = 1, exportSchema = false)
 public abstract class GameDatabase extends RoomDatabase{
     public abstract GameDAO GameDAO();
 
